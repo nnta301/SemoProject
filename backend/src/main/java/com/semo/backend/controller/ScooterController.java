@@ -19,8 +19,9 @@ public class ScooterController {
     private final ScooterRepository scooterRepository;
     private final ScooterService scooterService;
 
-    public ScooterController(ScooterRepository scooterRepository) {
+    public ScooterController(ScooterRepository scooterRepository, ScooterService scooterService) {
         this.scooterRepository = scooterRepository;
+        this.scooterService = scooterService;
     }
 
     @PostMapping
