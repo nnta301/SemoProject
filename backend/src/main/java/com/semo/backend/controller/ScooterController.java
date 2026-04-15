@@ -1,10 +1,14 @@
 package com.semo.backend.controller;
 
+import com.semo.backend.dto.ScooterRequestDTO;
+import com.semo.backend.dto.ScooterResponseDTO;
 import com.semo.backend.entity.Scooter;
 import com.semo.backend.repository.ScooterRepository;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.semo.backend.service.ScooterService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -13,9 +17,16 @@ import java.util.List;
 public class ScooterController {
 
     private final ScooterRepository scooterRepository;
+    private final ScooterService scooterService;
 
     public ScooterController(ScooterRepository scooterRepository) {
         this.scooterRepository = scooterRepository;
+    }
+
+    @PostMapping
+    public ResponseEntity<ScooterResponseDTO> createScooter(@Valid @RequestBody ScooterRequestDTO requestDTO) {
+        ScooterResponseDTO responseDTO = scooterService.createScooter(requestDTO);
+        return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
     }
 
     @GetMapping
