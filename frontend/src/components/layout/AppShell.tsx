@@ -10,6 +10,8 @@ import {
   BarChart3,
   LogOut,
   MapPinned,
+  Settings,
+  Bell,
 } from 'lucide-react'
 import SemoIcon from '@/assets/semo-icon.svg?react';
 
@@ -40,6 +42,7 @@ const adminNavItems: NavItem[] = [
   { label: 'Rentals', to: ROUTES.RENTALS, icon: <Receipt  {...ICON_PROPS} /> },
   { label: 'Maintenance', to: ROUTES.MAINTENANCE, icon: <Wrench   {...ICON_PROPS} /> },
   { label: 'Analytics', to: ROUTES.ANALYTICS, icon: <BarChart3 {...ICON_PROPS} /> },
+  { label: 'Settings', to: ROUTES.SETTINGS, icon: <Settings {...ICON_PROPS} /> },
 ]
 
 // 2. Định nghĩa Props cho component NavList
@@ -198,6 +201,12 @@ export default function AppShell({ mode = 'user', children }: AppShellProps) {
           </div>
 
           <div className="flex items-center flex-wrap">
+            {isAdminMode && (
+              <button className="relative p-2 mr-3 text-text-muted hover:text-cyan-soft transition-colors" title="Notifications (Pending API)">
+                <Bell size={20} strokeWidth={2} />
+                <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-[var(--danger)] animate-pulse"></span>
+              </button>
+            )}
             <span className="inline-flex items-center justify-center min-h-8 px-4
               rounded-full text-sm font-semibold tracking-wider
               bg-[rgba(0,209,255,0.12)] border border-[rgba(0,209,255,0.3)]
