@@ -1,4 +1,4 @@
-import { AlertTriangle, X } from 'lucide-react'
+import { AlertTriangle, MapPinned, X } from 'lucide-react'
 import Button from './Button'
 
 export default function GeofenceWarningModal({ open, scooterName, onClose }) {
@@ -16,25 +16,26 @@ export default function GeofenceWarningModal({ open, scooterName, onClose }) {
                             Cảnh báo geofence
                         </h3>
                         <p>
-                            {scooterName || 'Xe đang chọn'} đã đi ra khỏi vùng hoạt động cho phép. Kiểm tra ngay để
-                            tránh bị khóa dịch vụ hoặc phát sinh cảnh báo vận hành.
+                            {scooterName || 'Xe đang chọn'} đã đi ra khỏi vùng hoạt động cho phép.
                         </p>
                     </div>
                     <button className="btn btn--ghost btn--sm btn--icon" onClick={onClose} aria-label="Đóng">
                         <X size={18} />
                     </button>
                 </div>
+
                 <div className="modal__body">
                     <div className="warning-note">
-                        <AlertTriangle size={20} />
+                        <MapPinned size={20} />
                         <div>
-                            <strong>Warning active</strong>
+                            <strong>Xe đang ngoài vùng an toàn</strong>
                             <p style={{ margin: '4px 0 0' }}>
-                                Trong khi cảnh báo còn bật, người dùng cần đưa xe về vùng an toàn hoặc kết thúc chuyến.
+                                Hãy di chuyển xe trở lại vùng geofence hoặc kết thúc chuyến để tránh khóa dịch vụ.
                             </p>
                         </div>
                     </div>
                 </div>
+
                 <div className="modal__footer">
                     <Button onClick={onClose}>Đã hiểu</Button>
                 </div>

@@ -528,11 +528,16 @@ img {
   align-items: start;
 }
 
+.booking-layout > * {
+  min-width: 0;
+}
+
 .panel {
   background: rgba(255, 255, 255, 0.92);
   border: 1px solid rgba(215, 227, 240, 0.95);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
+  min-width: 0;
 }
 
 .panel__header {
@@ -546,6 +551,7 @@ img {
 
 .panel__body {
   padding: 20px;
+  min-width: 0;
 }
 
 .panel__title {
@@ -785,238 +791,155 @@ img {
   color: var(--primary);
 }
 
-.map-panel__stage {
-  display: grid;
-  gap: 20px;
-}
-
-.mock-map {
-  position: relative;
-  min-height: 420px;
-  border-radius: 22px;
-  overflow: hidden;
-  border: 1px solid rgba(215, 227, 240, 0.95);
-  background:
-          linear-gradient(rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.3)),
-          linear-gradient(90deg, rgba(170, 196, 224, 0.24) 1px, transparent 1px),
-          linear-gradient(rgba(170, 196, 224, 0.24) 1px, transparent 1px),
-          linear-gradient(180deg, #dff2ff 0%, #eef8ff 52%, #dbf0df 100%);
-  background-size: auto, 52px 52px, 52px 52px, auto;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.48);
-}
-
-.mock-map__overlay {
-  position: absolute;
-  inset: 16px;
-  border-radius: 20px;
-  border: 2px dashed rgba(15, 111, 236, 0.18);
-  pointer-events: none;
-}
-
-.mock-map__legend {
-  position: absolute;
-  inset: 18px auto auto 18px;
-  padding: 12px 14px;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.88);
-  border: 1px solid rgba(215, 227, 240, 0.9);
+.right-column-stack {
   display: flex;
   flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+  position: relative;
+  z-index: 2;
+}
+
+.map-panel {
+  min-width: 0;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+.map-panel .panel__body {
+  padding: 0;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.booking-map {
+  width: 100%;
+  height: 720px;
+  overflow: hidden;
+  position: relative;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+
+.booking-map .leaflet-container {
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 1;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+
+.booking-map .leaflet-pane,
+.booking-map .leaflet-top,
+.booking-map .leaflet-bottom {
+  z-index: 1 !important;
+}
+
+.booking-map .leaflet-control {
+  z-index: 2 !important;
+}
+
+.booking-map .leaflet-popup {
+  z-index: 3 !important;
+}
+
+.map-dot-wrapper {
+  background: transparent;
+  border: 0;
+}
+
+.map-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  border: 3px solid white;
+  box-shadow: 0 6px 16px rgba(15, 38, 71, 0.2);
+}
+
+.map-dot--user {
+  background: #0f6fec;
+}
+
+.map-dot--scooter {
+  background: #0f9f6e;
+}
+
+.map-dot--selected {
+  background: #d14343;
+  transform: scale(1.1);
+}
+
+.scooter-card__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 14px 0 10px;
+}
+
+.stat-chip {
+  display: inline-flex;
+  align-items: center;
   gap: 8px;
+  background: var(--surface-soft);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 8px 12px;
   font-size: 13px;
   color: var(--text-soft);
 }
 
-.legend-row {
+.scooter-card__location {
   display: flex;
   align-items: center;
   gap: 8px;
+  margin-bottom: 12px;
+  color: var(--text-soft);
+  font-size: 13px;
 }
 
-.legend-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-}
-
-.legend-dot--safe {
-  background: var(--success);
-}
-
-.legend-dot--warning {
-  background: var(--warning);
-}
-
-.legend-dot--danger {
-  background: var(--danger);
-}
-
-.map-pin {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  border: 0;
-  cursor: pointer;
-  background: transparent;
+.ride-panel {
   display: flex;
   flex-direction: column;
+  gap: 16px;
+}
+
+.ride-panel__hero h3 {
+  margin: 0 0 6px;
+}
+
+.ride-panel__hero p {
+  margin: 0;
+  color: var(--text-soft);
+}
+
+.ride-panel__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ride-meta-row {
+  display: flex;
   align-items: center;
+  gap: 10px;
+  color: var(--text-soft);
+}
+
+.ride-timeline {
+  display: flex;
+  flex-direction: column;
   gap: 8px;
-}
-
-.map-pin__bubble {
-  width: 42px;
-  height: 42px;
-  border-radius: 18px;
-  display: grid;
-  place-items: center;
-  color: #fff;
-  box-shadow: var(--shadow-sm);
-  border: 3px solid rgba(255, 255, 255, 0.95);
-}
-
-.map-pin__bubble--available {
-  background: linear-gradient(135deg, #0f9f6e 0%, #1dc18b 100%);
-}
-
-.map-pin__bubble--in_use {
-  background: linear-gradient(135deg, #d38c18 0%, #ffb03a 100%);
-}
-
-.map-pin__bubble--maintenance,
-.map-pin__bubble--decommissioned {
-  background: linear-gradient(135deg, #d14343 0%, #f46e6e 100%);
-}
-
-.map-pin__bubble--selected {
-  box-shadow: 0 0 0 8px rgba(15, 111, 236, 0.16), var(--shadow-sm);
-}
-
-.map-pin__label {
-  padding: 6px 10px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.92);
-  border: 1px solid rgba(215, 227, 240, 0.92);
-  font-size: 12px;
-  font-weight: 800;
-  color: var(--text);
-}
-
-.simulation-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-}
-
-.detail-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
-}
-
-.detail-item {
   padding: 14px;
-  border-radius: 16px;
+  border-radius: 14px;
   background: var(--surface-alt);
-  border: 1px solid rgba(215, 227, 240, 0.72);
-}
-
-.detail-item__label {
-  display: block;
-  font-size: 12px;
-  color: var(--text-muted);
-  margin-bottom: 4px;
-}
-
-.detail-item__value {
-  font-size: 15px;
-  font-weight: 800;
-}
-
-.ride-stage-timeline {
-  display: grid;
-  gap: 10px;
-}
-
-.ride-stage-row {
-  display: flex;
-  gap: 14px;
-  align-items: flex-start;
-}
-
-.ride-stage-row__dot {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  margin-top: 5px;
-  background: rgba(128, 145, 167, 0.34);
-}
-
-.ride-stage-row--active .ride-stage-row__dot,
-.ride-stage-row--done .ride-stage-row__dot {
-  background: var(--primary);
-}
-
-.ride-stage-row--done .ride-stage-row__dot {
-  background: var(--success);
-}
-
-.ride-stage-row__label {
-  font-weight: 800;
-  margin-bottom: 2px;
-}
-
-.ride-stage-row__desc {
-  color: var(--text-soft);
+  border: 1px solid var(--line);
   font-size: 14px;
 }
 
-.action-stack {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.status-grid {
+.ride-actions {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: 1fr 1fr;
   gap: 12px;
-}
-
-.status-card {
-  padding: 14px;
-  border-radius: 16px;
-  background: var(--surface-alt);
-  border: 1px solid rgba(215, 227, 240, 0.72);
-}
-
-.status-card__label {
-  display: block;
-  font-size: 12px;
-  color: var(--text-muted);
-  margin-bottom: 6px;
-}
-
-.status-card__value {
-  font-size: 15px;
-  font-weight: 800;
-}
-
-.meta-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.meta-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  color: var(--text-soft);
-  font-size: 14px;
-}
-
-.meta-row strong {
-  color: var(--text);
 }
 
 .admin-placeholder,
@@ -1055,49 +978,47 @@ img {
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(9, 26, 52, 0.42);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  z-index: 40;
+  background: rgba(8, 18, 32, 0.45);
+  display: grid;
+  place-items: center;
+  z-index: 100;
+  padding: 20px;
 }
 
 .modal {
-  width: min(100%, 520px);
+  width: min(560px, 100%);
   background: white;
-  border-radius: 28px;
-  border: 1px solid rgba(215, 227, 240, 0.95);
+  border-radius: 24px;
   box-shadow: var(--shadow-lg);
   overflow: hidden;
 }
 
+.modal__header,
+.modal__body,
+.modal__footer {
+  padding: 20px 24px;
+}
+
 .modal__header {
-  padding: 24px 24px 14px;
+  border-bottom: 1px solid var(--line);
   display: flex;
-  align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
+  gap: 16px;
 }
 
 .modal__header h3 {
-  margin: 0;
-  font-size: 24px;
+  margin: 0 0 8px;
 }
 
 .modal__header p {
-  margin: 8px 0 0;
+  margin: 0;
   color: var(--text-soft);
 }
 
-.modal__body {
-  padding: 0 24px 24px;
-}
-
 .modal__footer {
+  border-top: 1px solid var(--line);
   display: flex;
   justify-content: flex-end;
-  padding: 0 24px 24px;
 }
 
 .semo-toast {
@@ -1141,6 +1062,10 @@ img {
   .scooter-list {
     max-height: none;
   }
+
+  .booking-map {
+    height: 520px;
+  }
 }
 
 @media (max-width: 960px) {
@@ -1151,6 +1076,16 @@ img {
   .auth-aside {
     order: -1;
     min-height: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .ride-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-map {
+    height: 420px;
   }
 }
 

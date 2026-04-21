@@ -1,4 +1,4 @@
-import { BatteryCharging, Gauge, MapPin, ShieldAlert } from 'lucide-react'
+import { BatteryCharging, Gauge, MapPin, Navigation, ShieldAlert } from 'lucide-react'
 import { getAutoDecommissionReason } from '../services/alertService'
 import Button from './Button'
 import StatusBadge from './StatusBadge'
@@ -16,30 +16,28 @@ export default function ScooterCard({ scooter, selected, onSelect }) {
                 <StatusBadge status={scooter.status} />
             </div>
 
-            <div className="metric-list">
-                <div className="metric">
-                    <span className="metric__label">Battery</span>
-                    <span className="metric__value">{scooter.batteryLevel}%</span>
+            <div className="scooter-card__stats">
+                <div className="stat-chip">
+                    <BatteryCharging size={16} />
+                    <span>{scooter.batteryLevel}% pin</span>
                 </div>
-                <div className="metric">
-                    <span className="metric__label">Khoảng cách</span>
-                    <span className="metric__value">{scooter.distanceKm} km</span>
+
+                <div className="stat-chip">
+                    <Gauge size={16} />
+                    <span>{scooter.estimatedMinutesAway ?? 0} phút</span>
                 </div>
-                <div className="metric">
-                    <span className="metric__label">ETA</span>
-                    <span className="metric__value">{scooter.estimatedMinutesAway} phút</span>
+
+                <div className="stat-chip">
+                    <Navigation size={16} />
+                    <span>{(scooter.distanceKm ?? 0).toFixed(2)} km</span>
                 </div>
             </div>
 
-            <div className="inline-info">
-        <span className="scooter-card__meta">
-          <BatteryCharging size={14} style={{ marginRight: 6, verticalAlign: 'text-bottom' }} />
-            {scooter.batteryLevel >= 60 ? 'Pin tốt' : scooter.batteryLevel >= 30 ? 'Pin trung bình' : 'Pin thấp'}
-        </span>
-                <span className="scooter-card__meta">
-          <Gauge size={14} style={{ marginRight: 6, verticalAlign: 'text-bottom' }} />
-                    {scooter.speedKmh || 0} km/h
-        </span>
+            <div className="scooter-card__location">
+                <MapPin size={16} />
+                <span>
+                    {Number(scooter.currentLat).toFixed(5)}, {Number(scooter.currentLng).toFixed(5)}
+                </span>
             </div>
 
             {scooter.geoFence?.outOfZone ? (
@@ -63,10 +61,14 @@ export default function ScooterCard({ scooter, selected, onSelect }) {
             ) : null}
 
             <div className="scooter-card__bottom">
-        <span className="scooter-card__meta">
-          {scooter.status === 'available' ? 'Sẵn sàng để đặt' : 'Không thể đặt ngay lúc này'}
-        </span>
-                <Button variant={selected ? 'secondary' : 'primary'} size="sm" onClick={() => onSelect(scooter)}>
+                <span className="scooter-card__meta">
+                    {scooter.status === 'available' ? 'Sẵn sàng để đặt' : 'Không thể đặt ngay lúc này'}
+                </span>
+                <Button
+                    variant={selected ? 'secondary' : 'primary'}
+                    size="sm"
+                    onClick={() => onSelect(scooter)}
+                >
                     {selected ? 'Đang chọn' : 'Chọn xe'}
                 </Button>
             </div>

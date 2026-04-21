@@ -2,10 +2,10 @@ import apiClient from './apiClient'
 import { defaultMockUsers } from '../mock/mockData'
 import { STORAGE_KEYS, normalizeRole, safeJsonParse } from '../utils/auth'
 
-const MOCK_LOGIN_ENDPOINT = '/api/auth/login'
-const MOCK_REGISTER_ENDPOINT = '/api/auth/register'
+const LOGIN_ENDPOINT = '/api/auth/login'
+const REGISTER_ENDPOINT = '/api/auth/register'
 
-function wait(ms = 500) {
+function wait(ms = 250) {
     return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
@@ -26,11 +26,11 @@ function saveUsers(users) {
     window.localStorage.setItem(STORAGE_KEYS.MOCK_USERS, JSON.stringify(users))
 }
 
-function createSessionPayload(user) {
-    const normalizedRole = normalizeRole(user.role)
+function createSessionPayload(user, token) {
+    const normalizedRole = normalizeRole(user?.role)
 
     return {
-        token: `mock-token-${btoa(`${user.email}:${normalizedRole}`)}`,
+        token: token || `mock-token-${btoa(`${user.email}:${normalizedRole}`)}`,
         role: normalizedRole,
         user: {
             id: user.id,
@@ -51,38 +51,42 @@ function shouldFallback(error) {
 
 function parseAuthResponse(payload) {
     const role = normalizeRole(payload?.role || payload?.user?.role)
+    const token = payload?.token || payload?.accessToken || payload?.jwt || ''
+    const userPayload = payload?.user || payload || {}
 
     return {
-        token: payload?.token,
+        token,
         role,
         user: {
-            id: payload?.user?.id ?? payload?.id,
-            name: payload?.user?.name ?? payload?.name,
-            email: payload?.user?.email ?? payload?.email,
+            id: userPayload?.id,
+            name: userPayload?.name || userPayload?.fullName || userPayload?.username || 'SEMO User',
+            email: userPayload?.email || '',
             role,
         },
     }
 }
 
-export async function login(credentials) {
-    try {
-        const response = await apiClient.post(MOCK_LOGIN_ENDPOINT, credentials)
-        const session = parseAuthResponse(response.data)
-        persistSession(session)
-        return session
-    } catch (error) {
-        if (!shouldFallback(error)) {
-            throw new Error(error.response?.data?.message || 'Đăng nhập thất bại.')
-        }
+async function loginWithBackend(credentials) {
+    const response = await apiClient.post(LOGIN_ENDPOINT, credentials)
+    const session = parseAuthResponse(response.data)
+
+    if (!session?.token || !session?.user?.role) {
+        throw new Error('Phản hồi đăng nhập từ backend không hợp lệ.')
     }
 
+    persistSession(session)
+    return session
+}
+
+async function loginWithLocalFallback(credentials) {
     await wait()
 
     const users = getUsers()
+    const normalizedEmail = String(credentials?.email || '').trim().toLowerCase()
+    const password = String(credentials?.password || '')
+
     const matchedUser = users.find(
-        (user) =>
-            user.email.toLowerCase() === credentials.email.trim().toLowerCase() &&
-            user.password === credentials.password,
+        (user) => user.email.toLowerCase() === normalizedEmail && user.password === password,
     )
 
     if (!matchedUser) {
@@ -94,37 +98,61 @@ export async function login(credentials) {
     return session
 }
 
-export async function register(payload) {
+export async function login(credentials) {
     try {
-        const response = await apiClient.post(MOCK_REGISTER_ENDPOINT, payload)
-        return parseAuthResponse(response.data)
+        return await loginWithBackend(credentials)
     } catch (error) {
         if (!shouldFallback(error)) {
-            throw new Error(error.response?.data?.message || 'Đăng ký thất bại.')
+            throw new Error(
+                error?.response?.data?.message || error?.message || 'Không thể đăng nhập.',
+            )
         }
-    }
 
+        return await loginWithLocalFallback(credentials)
+    }
+}
+
+async function registerWithBackend(payload) {
+    const response = await apiClient.post(REGISTER_ENDPOINT, payload)
+    return parseAuthResponse(response.data)
+}
+
+async function registerWithLocalFallback(payload) {
     await wait()
 
     const users = getUsers()
-    const existingUser = users.find(
-        (user) => user.email.toLowerCase() === payload.email.trim().toLowerCase(),
-    )
+    const normalizedEmail = String(payload?.email || '').trim().toLowerCase()
 
-    if (existingUser) {
-        throw new Error('Email này đã được sử dụng.')
+    const existedUser = users.find((user) => user.email.toLowerCase() === normalizedEmail)
+
+    if (existedUser) {
+        throw new Error('Email này đã được đăng ký.')
     }
 
     const newUser = {
         id: `usr-${Date.now()}`,
-        name: payload.name.trim(),
-        email: payload.email.trim().toLowerCase(),
-        password: payload.password,
-        role: 'user',
+        name: String(payload?.name || '').trim(),
+        email: normalizedEmail,
+        password: String(payload?.password || ''),
+        role: normalizeRole(payload?.role || 'user'),
     }
 
     saveUsers([...users, newUser])
     return createSessionPayload(newUser)
+}
+
+export async function register(payload) {
+    try {
+        return await registerWithBackend(payload)
+    } catch (error) {
+        if (!shouldFallback(error)) {
+            throw new Error(
+                error?.response?.data?.message || error?.message || 'Không thể đăng ký.',
+            )
+        }
+
+        return await registerWithLocalFallback(payload)
+    }
 }
 
 export function logout() {
@@ -147,5 +175,3 @@ export const authService = {
     getStoredSession,
     saveSession,
 }
-
-// TODO: Khi backend auth hoàn thiện, đổi MOCK_*_ENDPOINT sang endpoint thật và bỏ fallback localStorage.
