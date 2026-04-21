@@ -3,6 +3,7 @@ package com.semo.backend.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,9 +16,11 @@ import com.semo.backend.repository.UserRepository;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     /**
@@ -35,7 +38,7 @@ public class UserService {
 
         User user = new User(
                 requestDTO.getEmail(),
-                requestDTO.getPassword(),
+                passwordEncoder.encode(requestDTO.getPassword()), // Hash password
                 requestDTO.getFullName(),
                 requestDTO.getPhoneNumber());
 
@@ -119,8 +122,8 @@ public class UserService {
         if (requestDTO.getPhoneNumber() != null) {
             existingUser.setPhoneNumber(requestDTO.getPhoneNumber());
         }
-        if (requestDTO.getPassword() != null) {
-            existingUser.setPassword(requestDTO.getPassword());
+        if (requestDTO.getPassword() != null && !requestDTO.getPassword().isEmpty()) {
+            existingUser.setPassword(passwordEncoder.encode(requestDTO.getPassword())); // Hash new password
         }
 
         User updatedUser = userRepository.save(existingUser);

@@ -3,22 +3,57 @@ package com.semo.backend.seeder;
 import java.util.Arrays;
 
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.semo.backend.entity.Scooter;
+import com.semo.backend.entity.User;
 import com.semo.backend.repository.ScooterRepository;
+import com.semo.backend.repository.UserRepository;
 
 @Component
 public class DatabaseSeeder implements CommandLineRunner {
 
     private final ScooterRepository scooterRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public DatabaseSeeder(ScooterRepository scooterRepository) {
+    public DatabaseSeeder(ScooterRepository scooterRepository, UserRepository userRepository,
+            PasswordEncoder passwordEncoder) {
         this.scooterRepository = scooterRepository;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public void run(String... args) throws Exception {
+        // Seed admin user
+        if (!userRepository.existsByEmail("admin@semo.com")) {
+            User admin = new User(
+                    "admin@semo.com",
+                    passwordEncoder.encode("Admin@123"),
+                    "Admin User",
+                    "0123456789",
+                    "ADMIN");
+            userRepository.save(admin);
+            System.out.println("✅ Đã tạo tài khoản Admin thành công!");
+            System.out.println("   Admin: admin@semo.com / Admin@123");
+        }
+
+        // Seed customer user
+        if (!userRepository.existsByEmail("customer@semo.com")) {
+            User customer = new User(
+                    "customer@semo.com",
+                    passwordEncoder.encode("Customer@123"),
+                    "Customer User",
+                    "0987654321",
+                    "CUSTOMER");
+            userRepository.save(customer);
+            System.out.println("✅ Đã tạo tài khoản Customer thành công!");
+            System.out.println("   Customer: customer@semo.com / Customer@123");
+        }
+
+        // Seed scooters
         if (scooterRepository.count() == 0) {
             Scooter s1 = new Scooter("VinFast Feliz S", 100, "AVAILABLE");
             Scooter s2 = new Scooter("Honda Vision 2023", 45, "IN_USE");
