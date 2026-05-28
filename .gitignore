@@ -13,3 +13,5 @@
 .vscode/
 postman/
 .postman/
+
+.DS_Store
