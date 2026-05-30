@@ -35,17 +35,19 @@ public class RentalService {
         Scooter scooter = scooterRepository.findById(requestDTO.getScooterId())
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy Xe"));
 
+        if (!"ADMIN".equals(user.getRole()) && user.getBalance() < 50000.0) {
+            throw new RuntimeException("Số dư tài khoản không đủ để bắt đầu chuyến đi. Vui lòng đảm bảo trong ví có ít nhất 50.000 VNĐ.");
+        }
+
         if (!"AVAILABLE".equals(scooter.getStatus())) {
             throw new RuntimeException("Xe này hiện không khả dụng để thuê!");
         }
 
         scooter.setStatus("IN_USE");
-        scooterRepository.save(scooter);
 
         Rental rental = new Rental(user, scooter);
-        Rental savedRental = rentalRepository.save(rental);
 
-        return mapToDTO(savedRental);
+        return mapToDTO(rental);
     }
 
     @Transactional
@@ -57,18 +59,26 @@ public class RentalService {
             throw new RuntimeException("Chuyến đi này đã được thanh toán rồi!");
 
         rental.setEndTime(LocalDateTime.now());
-        long minutes = Duration.between(rental.getStartTime(), rental.getEndTime()).toMinutes();
 
-        if (minutes < 1) minutes = 1;
-        rental.setTotalPrice(minutes * 1000.0);
+        User user = rental.getUser();
+        Scooter scooter = rental.getScooter();
+
+        long minutes = Duration.between(rental.getStartTime(), rental.getEndTime()).toMinutes();
+        if (minutes < 1)
+            minutes = 1;
+
+        double amount = minutes * 1000.0;
+        if ("ADMIN".equals(user.getRole()))
+            amount = 0.0;
+
+        rental.setTotalPrice(amount);
         rental.setStatus("COMPLETED");
 
-        Scooter scooter = rental.getScooter();
         scooter.setStatus("AVAILABLE");
-        scooterRepository.save(scooter);
 
-        Rental savedRental = rentalRepository.save(rental);
-        return mapToDTO(savedRental);
+        user.subtractBalance(amount);
+
+        return mapToDTO(rental);
     }
 
     private RentalResponseDTO mapToDTO(Rental rental) {

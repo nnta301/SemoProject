@@ -3,12 +3,13 @@ package com.semo.backend.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.semo.backend.dto.UserRequestDTO;
-import com.semo.backend.dto.UserResponseDTO;
+import com.semo.backend.dto.*;
 import com.semo.backend.entity.User;
 import com.semo.backend.repository.UserRepository;
 
@@ -40,7 +41,9 @@ public class UserService {
                 requestDTO.getEmail(),
                 passwordEncoder.encode(requestDTO.getPassword()), // Hash password
                 requestDTO.getFullName(),
-                requestDTO.getPhoneNumber());
+                requestDTO.getPhoneNumber(),
+                "CUSTOMER",
+                0.0);
 
         User savedUser = userRepository.save(user);
         return mapToResponseDTO(savedUser);
@@ -240,5 +243,20 @@ public class UserService {
         dto.setCreatedAt(user.getCreatedAt());
         dto.setUpdatedAt(user.getUpdatedAt());
         return dto;
+    }
+
+    @Transactional
+    public DepositResponseDTO deposit(DepositRequestDTO requestDTO) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy tài khoản người dùng"));
+
+        user.addBalance(requestDTO.getAmount());
+
+        userRepository.save(user);
+
+        return new DepositResponseDTO("Nạp tiền thành công!", user.getBalance());
     }
 }

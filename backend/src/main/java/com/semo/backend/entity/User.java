@@ -45,24 +45,20 @@ public class User {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(name = "balance", nullable = false)
+    private Double balance = 0.0;
+
     // --- Constructors ---
     public User() {
     }
 
-    public User(String email, String password, String fullName, String phoneNumber) {
-        this.email = email;
-        this.password = password;
-        this.fullName = fullName;
-        this.phoneNumber = phoneNumber;
-        this.role = "CUSTOMER";
-    }
-
-    public User(String email, String password, String fullName, String phoneNumber, String role) {
+    public User(String email, String password, String fullName, String phoneNumber, String role, Double balance) {
         this.email = email;
         this.password = password;
         this.fullName = fullName;
         this.phoneNumber = phoneNumber;
         this.role = role;
+        this.balance = balance;
     }
 
     // --- Getters & Setters ---
@@ -128,5 +124,25 @@ public class User {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(Double balance) {
+        this.balance = balance;
+    }
+
+    public void addBalance(Double amount) {
+        if (amount != null && amount > 0) {
+            this.balance += amount;
+        }
+    }
+
+    public void subtractBalance(Double amount) {
+        if (amount != null && amount > 0) {
+            this.balance -= amount;
+        }
     }
 }

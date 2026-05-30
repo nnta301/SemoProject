@@ -36,7 +36,9 @@ public class AuthService {
                 requestDTO.getEmail(),
                 passwordEncoder.encode(requestDTO.getPassword()),
                 requestDTO.getFullName(),
-                requestDTO.getPhoneNumber());
+                requestDTO.getPhoneNumber(),
+                "CUSTOMER",
+                0.0);
 
         User savedUser = userRepository.save(user);
         return mapToUserResponseDTO(savedUser);
