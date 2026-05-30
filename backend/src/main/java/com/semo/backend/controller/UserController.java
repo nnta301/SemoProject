@@ -18,10 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.semo.backend.dto.AdminResetPasswordRequestDTO;
-import com.semo.backend.dto.PasswordChangeRequestDTO;
-import com.semo.backend.dto.UserRequestDTO;
-import com.semo.backend.dto.UserResponseDTO;
+import com.semo.backend.dto.*;
 import com.semo.backend.service.UserService;
 
 import jakarta.validation.Valid;
@@ -172,5 +169,11 @@ public class UserController {
 
         userService.changePassword(id, requestDTO.getCurrentPassword(), requestDTO.getNewPassword());
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/wallet/deposit")
+    public ResponseEntity<DepositResponseDTO> depositWallet(@Valid @RequestBody DepositRequestDTO requestDTO) {
+        DepositResponseDTO response = userService.deposit(requestDTO);
+        return ResponseEntity.ok(response);
     }
 }

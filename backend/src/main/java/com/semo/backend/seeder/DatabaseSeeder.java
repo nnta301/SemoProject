@@ -19,7 +19,7 @@ public class DatabaseSeeder implements CommandLineRunner {
     private final PasswordEncoder passwordEncoder;
 
     public DatabaseSeeder(ScooterRepository scooterRepository, UserRepository userRepository,
-            PasswordEncoder passwordEncoder) {
+                          PasswordEncoder passwordEncoder) {
         this.scooterRepository = scooterRepository;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
@@ -34,7 +34,8 @@ public class DatabaseSeeder implements CommandLineRunner {
                     passwordEncoder.encode("Admin@123"),
                     "Admin User",
                     "0123456789",
-                    "ADMIN");
+                    "ADMIN",
+                    0.0);
             userRepository.save(admin);
             System.out.println("✅ Đã tạo tài khoản Admin thành công!");
             System.out.println("   Admin: admin@semo.com / Admin@123");
@@ -47,7 +48,8 @@ public class DatabaseSeeder implements CommandLineRunner {
                     passwordEncoder.encode("Customer@123"),
                     "Customer User",
                     "0987654321",
-                    "CUSTOMER");
+                    "CUSTOMER",
+                    100000.0);
             userRepository.save(customer);
             System.out.println("✅ Đã tạo tài khoản Customer thành công!");
             System.out.println("   Customer: customer@semo.com / Customer@123");
