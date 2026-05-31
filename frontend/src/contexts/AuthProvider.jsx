@@ -1,10 +1,11 @@
 // Provider that owns auth state, persistence, and session actions.
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import { ROLES } from '../constants/roles'
 import { STORAGE_KEYS } from '../constants/storageKeys'
 import { decodeJwtPayload } from '../utils/jwt'
 import { login as loginRequest, register as registerRequest } from '../features/auth/api'
+import { useLocalStorage } from '../hooks/useLocalStorage'
 import { AuthContext } from './authContext'
 
 function readStoredUser() {
@@ -36,23 +37,9 @@ function readStoredUser() {
   }
 }
 
-function persistSession(token, user) {
-  if (token) {
-    localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, token)
-  } else {
-    localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN)
-  }
-
-  if (user) {
-    localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(user))
-  } else {
-    localStorage.removeItem(STORAGE_KEYS.AUTH_USER)
-  }
-}
-
 export function AuthProvider({ children }) {
-  const [token, setToken] = useState(() => localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN))
-  const [user, setUser] = useState(() => readStoredUser())
+  const [token, setToken, clearToken] = useLocalStorage(STORAGE_KEYS.AUTH_TOKEN, null)
+  const [user, setUser, clearUser] = useLocalStorage(STORAGE_KEYS.AUTH_USER, readStoredUser())
 
   const isAuthenticated = Boolean(token)
   const isAdmin = user?.role === ROLES.ADMIN
@@ -68,10 +55,9 @@ export function AuthProvider({ children }) {
 
     setToken(response.token)
     setUser(nextUser)
-    persistSession(response.token, nextUser)
 
     return response
-  }, [])
+  }, [setToken, setUser])
 
   const register = useCallback(async (request) => {
     const response = await registerRequest(request)
@@ -79,17 +65,15 @@ export function AuthProvider({ children }) {
   }, [])
 
   const logout = useCallback(() => {
-    setToken(null)
-    setUser(null)
-    persistSession(null, null)
-  }, [])
+    clearToken()
+    clearUser()
+  }, [clearToken, clearUser])
 
   const updateUser = useCallback(
     (nextUser) => {
       setUser(nextUser)
-      persistSession(token, nextUser)
     },
-    [token],
+    [setUser],
   )
 
   const value = useMemo(
