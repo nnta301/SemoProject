@@ -8,6 +8,9 @@ import com.semo.backend.entity.User;
 import com.semo.backend.repository.RentalRepository;
 import com.semo.backend.repository.ScooterRepository;
 import com.semo.backend.repository.UserRepository;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +32,12 @@ public class RentalService {
 
     @Transactional
     public RentalResponseDTO startRental(RentalRequestDTO requestDTO) {
-        User user = userRepository.findById(requestDTO.getUserId())
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
+            throw new RuntimeException("Truy cập bị từ chối: Vui lòng đăng nhập lại!");
+        }
+        
+        User user = userRepository.findByEmail(auth.getName())
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy Khách hàng"));
 
         Scooter scooter = scooterRepository.findById(requestDTO.getScooterId())
@@ -45,7 +53,11 @@ public class RentalService {
 
         scooter.setStatus("IN_USE");
 
+        if (!"ADMIN".equals(user.getRole()))
+            user.subtractBalance(50000.0);
+
         Rental rental = new Rental(user, scooter);
+        rental = rentalRepository.save(rental);
 
         return mapToDTO(rental);
     }
