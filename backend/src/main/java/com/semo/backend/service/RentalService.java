@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class RentalService {
@@ -105,6 +106,23 @@ public class RentalService {
             rentalOwner.subtractBalance(amount - 50000.0);
 
         return mapToDTO(rental);
+    }
+
+    @Transactional(readOnly = true)
+    public List<RentalResponseDTO> getMyRentalHistory() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
+            throw new RuntimeException("Truy cập bị từ chối: Vui lòng đăng nhập lại!");
+        }
+
+        User user = userRepository.findByEmail(auth.getName())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng hệ thống"));
+
+        List<Rental> rentals = rentalRepository.findByUserOrderByStartTimeDesc(user);
+
+        return rentals.stream()
+                .map(this::mapToDTO)
+                .toList();
     }
 
     private RentalResponseDTO mapToDTO(Rental rental) {
