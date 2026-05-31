@@ -83,6 +83,9 @@ public class ScooterService {
         }
         dto.setName(scooter.getCodeName());
         dto.setBatteryLevel(scooter.getBatteryLevel());
+        dto.setCycleCount(scooter.getCycleCount());
+        dto.setStateOfHealth(scooter.getStateOfHealth());
+        dto.setTemperature(scooter.getTemperature());
         dto.setStatus(scooter.getStatus());
         dto.setCurrentLat(scooter.getCurrentLat());
         dto.setCurrentLng(scooter.getCurrentLng());

@@ -73,10 +73,13 @@ export default function UsersPage() {
   }, [users])
 
   const columns = [
+    { key: 'id', label: 'ID' },
     { key: 'fullName', label: 'Name' },
     { key: 'email', label: 'Email' },
     { key: 'phoneNumber', label: 'Phone' },
+    { key: 'balance', label: 'Balance', render: (row) => (row.balance == null ? '-' : `${row.balance.toFixed(0)} VND`) },
     { key: 'role', label: 'Role' },
+    { key: 'createdAt', label: 'Created', render: (row) => formatDateTime(row.createdAt) || '-' },
     { key: 'updatedAt', label: 'Updated', render: (row) => formatDateTime(row.updatedAt || row.createdAt) || '-' },
     {
       key: 'actions',

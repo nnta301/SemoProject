@@ -9,7 +9,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.semo.backend.dto.*;
+import com.semo.backend.dto.DepositRequestDTO;
+import com.semo.backend.dto.DepositResponseDTO;
+import com.semo.backend.dto.UserRequestDTO;
+import com.semo.backend.dto.UserResponseDTO;
 import com.semo.backend.entity.User;
 import com.semo.backend.repository.UserRepository;
 
@@ -242,6 +245,7 @@ public class UserService {
         dto.setRole(user.getRole());
         dto.setCreatedAt(user.getCreatedAt());
         dto.setUpdatedAt(user.getUpdatedAt());
+        dto.setBalance(user.getBalance());
         return dto;
     }
 

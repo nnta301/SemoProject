@@ -127,7 +127,7 @@ public class User {
     }
 
     public Double getBalance() {
-        return balance;
+        return balance == null ? 0.0 : balance;
     }
 
     public void setBalance(Double balance) {
@@ -136,12 +136,16 @@ public class User {
 
     public void addBalance(Double amount) {
         if (amount != null && amount > 0) {
+            if (this.balance == null)
+                this.balance = 0.0;
             this.balance += amount;
         }
     }
 
     public void subtractBalance(Double amount) {
         if (amount != null && amount > 0) {
+            if (this.balance == null)
+                this.balance = 0.0;
             this.balance -= amount;
         }
     }

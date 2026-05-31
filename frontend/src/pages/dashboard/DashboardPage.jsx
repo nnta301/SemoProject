@@ -1,12 +1,15 @@
 // Dashboard landing page backed by live scooter data from the API.
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useContext } from 'react'
 
 import { SectionHeader } from '../../components/layout'
-import { Card, Table } from '../../components/ui'
+import { Card, Table, TextField, Button, Modal, Alert } from '../../components/ui'
 import ScooterMap from '../../components/map/ScooterMap'
 import { getAllScooters } from '../../features/scooters'
 import { SCOOTER_STATUSES } from '../../constants/statuses'
-import { formatBatteryLevel, formatDateTime } from '../../utils/formatters'
+import { formatBatteryLevel, formatDateTime, formatCurrency } from '../../utils/formatters'
+import { startRental, endRental, getActiveRental } from '../../features/rentals'
+import { AuthContext } from '../../contexts/authContext'
+import { getApiErrorMessage } from '../../utils/apiError'
 
 const statusMeta = {
   [SCOOTER_STATUSES.AVAILABLE]: { label: 'Available', className: 'is-available' },
@@ -23,11 +26,35 @@ function getStatusClassName(status) {
 }
 
 export default function DashboardPage() {
+  const { user } = useContext(AuthContext)
+  const [rentalScooterId, setRentalScooterId] = useState('')
+  // rentalIdToEnd removed: backend assigns rental to user; we end activeRental only
+  const [rentalLoading, setRentalLoading] = useState(false)
+  const [rentalError, setRentalError] = useState(null)
+  const [rentalSuccess, setRentalSuccess] = useState(null)
+  const [rentalResult, setRentalResult] = useState(null)
+  const [isRentalResultOpen, setIsRentalResultOpen] = useState(false)
+  const [activeRental, setActiveRental] = useState(null)
   const [scooters, setScooters] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
   useEffect(() => {
+    // restore active rental on refresh for authenticated user
+    let activeMounted = true
+    async function restoreActive() {
+      if (!user?.id) return
+      try {
+        const resp = await getActiveRental(Number(user.id))
+        if (!activeMounted) return
+        if (resp) setActiveRental(resp)
+      } catch (err) {
+        // ignore if no active rental or errors; keep UX simple
+      }
+    }
+
+    restoreActive()
+
     let isActive = true
 
     async function loadScooters() {
@@ -88,6 +115,11 @@ export default function DashboardPage() {
 
   const scooterColumns = [
     {
+      key: 'id',
+      label: 'ID',
+      render: (row) => row.id,
+    },
+    {
       key: 'name',
       label: 'Scooter',
       render: (row) => row.name || `#${row.id}`,
@@ -135,6 +167,104 @@ export default function DashboardPage() {
         />
         {error && <div className="ui-alert ui-alert--error dashboard__error">{error}</div>}
         <ScooterMap scooters={scooters} />
+      </Card>
+
+      <Card>
+        <SectionHeader eyebrow="Rent" title="Start / End rental" description="Start a trip by scooter ID or end a trip using rental ID." />
+
+        {rentalError && <Alert>{rentalError}</Alert>}
+        {rentalSuccess && <Alert tone="success">{rentalSuccess}</Alert>}
+
+        <div className="two-column-grid">
+          <div>
+            <h4>Start rental</h4>
+            <p>Logged in as: {user?.email || '—'}</p>
+            <TextField
+              label="Scooter ID"
+              value={rentalScooterId}
+              onChange={(e) => setRentalScooterId(e.target.value)}
+              type="number"
+              placeholder="Enter scooter ID"
+            />
+            <Button
+              onClick={async () => {
+                setRentalLoading(true)
+                setRentalError(null)
+                setRentalSuccess(null)
+                try {
+                  const resp = await startRental({ userId: Number(user?.id), scooterId: Number(rentalScooterId) })
+                  // Keep the rental as active so user can end it later.
+                  setActiveRental(resp)
+                  // clear input but do not auto-end or show success notification
+                  setRentalScooterId('')
+                } catch (err) {
+                  setRentalError(getApiErrorMessage(err, 'Unable to start rental'))
+                } finally {
+                  setRentalLoading(false)
+                }
+              }}
+              disabled={rentalLoading || !rentalScooterId}
+            >
+              {rentalLoading ? 'Starting…' : 'Start rental'}
+            </Button>
+          </div>
+
+          <div>
+            <h4>End rental</h4>
+            <p>Rentals are assigned to your account automatically. Use the "End active rental" button below to finish and calculate price.</p>
+          </div>
+        </div>
+
+        <Modal
+          open={isRentalResultOpen}
+          title="Rental result"
+          onClose={() => setIsRentalResultOpen(false)}
+          footer={<div className="modal-actions"><Button onClick={() => setIsRentalResultOpen(false)}>Close</Button></div>}
+        >
+          {rentalResult && (
+            <div className="result-list">
+              <div><strong>Rental ID:</strong> {rentalResult.id}</div>
+              <div><strong>Status:</strong> {rentalResult.status}</div>
+              <div><strong>Start:</strong> {formatDateTime(rentalResult.startTime) || '-'}</div>
+              <div><strong>End:</strong> {formatDateTime(rentalResult.endTime) || '-'}</div>
+              <div><strong>Total price:</strong> {formatCurrency(rentalResult.totalPrice)}</div>
+            </div>
+          )}
+        </Modal>
+        {activeRental && (
+          <div className="card card--active-rental">
+            <h4>Active rental</h4>
+            <p>
+              <strong>Rental ID:</strong> {activeRental.id} — <strong>Status:</strong> {activeRental.status}
+            </p>
+            <p>
+              <strong>Scooter:</strong> {activeRental.scooterId || activeRental.scooter?.id || '-'}
+            </p>
+            <div className="card-actions">
+              <Button
+                tone="danger"
+                onClick={async () => {
+                  setRentalLoading(true)
+                  setRentalError(null)
+                  try {
+                    const resp = await endRental(Number(activeRental.id))
+                    setRentalResult(resp)
+                    setRentalSuccess('Rental ended successfully')
+                    setIsRentalResultOpen(true)
+                    setActiveRental(null)
+                  } catch (err) {
+                    setRentalError(getApiErrorMessage(err, 'Unable to end active rental'))
+                  } finally {
+                    setRentalLoading(false)
+                  }
+                }}
+                disabled={rentalLoading}
+              >
+                {rentalLoading ? 'Ending…' : 'End active rental'}
+              </Button>
+            </div>
+          </div>
+        )}
       </Card>
 
       <Card>
