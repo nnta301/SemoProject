@@ -81,9 +81,41 @@ The frontend is configured to talk to `http://localhost:8888` by default.
 - Map visualization for scooter locations and analytics results
 - Upload support for avatars and scooter images
 
-## API Reference
+## How to Use Swagger UI (API Wrapper)
 
-See [API_DOCUMENTATION.md](API_DOCUMENTATION.md) for the endpoint list.
+Swagger UI is a visual interface that allows you to read documentation and test APIs directly in your browser without needing third-party software (like Postman).
+
+### Accessing the Interface
+After starting the Spring Boot application, open your web browser and navigate to the following URL. For example, with port *8888*:
+**[http://localhost:8888/swagger-ui/index.html](http://localhost:8888/swagger-ui/index.html)**
+
+### Authentication Guide (Attaching JWT Token)
+Because the SEMO system is secured, you need to "unlock" it before calling APIs that require login privileges (such as Start Rental, End Rental, View History).
+
+1. Scroll to the top of the Swagger UI page, find and click the **`Authorize`** button (with the padlock icon 🔓).
+2. A dialog box will appear. In the **Value** field, paste your **JWT Token** string.
+   *(This token is obtained from the `Response Body` after you successfully call the Login API).*
+3. Click the green **`Authorize`** button, then click **`Close`**.
+4. At this point, the padlock will change to a locked state 🔒. The system will automatically attach the VIP pass (Header: `Authorization: Bearer <token>`) to every API you call afterward.
+
+### How to Test an API (Try it out)
+To test any API (e.g., `POST /api/rentals/start`), follow these steps:
+
+1. Click to expand the API you want to test from the list.
+2. Click the **`Try it out`** button in the top right corner.
+3. If the API requires input data (Request Body or Path Variable), the input fields will unlock for you to fill in the information.
+    * *Example of entering a JSON Body to start a rental:*
+      ```json
+      {
+        "scooterId": 1
+      }
+      ```
+4. Click the blue **`Execute`** button to send the Request.
+5. Scroll down to the **`Responses`** section to see the result returned from the Server:
+    * **Code:** HTTP status code (200 OK, 201 Created, 400 Bad Request, 500 Error...).
+    * **Response body:** JSON data or error message from the Backend.
+
+> **Note:** If the Server returns a **401 Unauthorized** or **403 Forbidden** error, double-check if the JWT padlock has been set with the correct token, or if that token has expired.
 
 ## Quick Start
 
