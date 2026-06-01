@@ -14,6 +14,7 @@ import com.semo.backend.dto.DepositResponseDTO;
 import com.semo.backend.dto.UserRequestDTO;
 import com.semo.backend.dto.UserResponseDTO;
 import com.semo.backend.entity.User;
+import com.semo.backend.repository.RentalRepository;
 import com.semo.backend.repository.UserRepository;
 
 @Service
@@ -21,10 +22,13 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RentalRepository rentalRepository;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,
+            RentalRepository rentalRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.rentalRepository = rentalRepository;
     }
 
     /**
@@ -145,6 +149,9 @@ public class UserService {
     public void deleteUser(Integer id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy User với ID: " + id));
+        // Remove rentals associated with this user first to avoid foreign key
+        // constraint
+        rentalRepository.deleteByUserId(id);
         userRepository.delete(user);
     }
 
