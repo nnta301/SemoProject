@@ -10,5 +10,6 @@ import java.util.List;
 
 @Repository
 public interface RentalRepository extends JpaRepository<Rental, Integer> {
+    void deleteByUserId(Integer userId);
     List<Rental> findByUserOrderByStartTimeDesc(User user);
 }

@@ -24,6 +24,9 @@ function resolveMarkerStyle(status) {
 }
 
 function MapClickHandler({ onClick }) {
+  // Only attach the click handler when a parent provided an onClick handler.
+  if (!onClick) return null
+
   useMapEvents({
     click(e) {
       const { lat, lng } = e.latlng
@@ -59,15 +62,17 @@ export default function ScooterMap({ scooters = [], stations = [], onMapClick })
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        {/* Click handler to notify parent and show a preview marker */}
-        <MapClickHandler
-          onClick={(pos) => {
-            setPreview(pos)
-            onMapClick?.(pos)
-          }}
-        />
+        {/* Only attach click handler and show preview when parent provided `onMapClick` (admin). */}
+        {onMapClick && (
+          <MapClickHandler
+            onClick={(pos) => {
+              setPreview(pos)
+              onMapClick?.(pos)
+            }}
+          />
+        )}
 
-        {preview && (
+        {preview && onMapClick && (
           <CircleMarker
             center={[preview.lat, preview.lng]}
             radius={8}
@@ -122,11 +127,12 @@ export default function ScooterMap({ scooters = [], stations = [], onMapClick })
               }}
             >
               <Tooltip direction="top" offset={[0, -8]} opacity={1} permanent>
-                {scooter.name || `#${scooter.id}`}
+                {scooter.name ? `${scooter.name} — ID:${scooter.id}` : `ID:${scooter.id}`}
               </Tooltip>
               <Popup>
                 <div className="scooter-map__popup">
                   <strong>{scooter.name || `Scooter #${scooter.id}`}</strong>
+                  <p>ID: {scooter.id}</p>
                   <p>Status: {scooter.status || '-'}</p>
                   <p>Battery: {formatBatteryLevel(scooter.batteryLevel) || '-'}</p>
                   <p>Position: {formatCoordinates(scooter.currentLat, scooter.currentLng) || '-'}</p>

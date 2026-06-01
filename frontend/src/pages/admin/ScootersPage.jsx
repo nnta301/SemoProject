@@ -79,15 +79,20 @@ export default function ScootersPage() {
   }, [scooters])
 
   const columns = [
+    { key: 'id', label: 'ID' },
     { key: 'name', label: 'Scooter' },
     { key: 'batteryLevel', label: 'Battery', render: (row) => formatBatteryLevel(row.batteryLevel) },
     { key: 'status', label: 'Status', render: (row) => getStatusLabel(row.status) },
+    { key: 'cycleCount', label: 'Cycles' },
+    { key: 'stateOfHealth', label: 'SOH', render: (row) => (row.stateOfHealth != null ? `${row.stateOfHealth.toFixed(2)}` : '-') },
+    { key: 'temperature', label: 'Temp (°C)', render: (row) => (row.temperature != null ? `${row.temperature.toFixed(1)}` : '-') },
     {
       key: 'location',
       label: 'Location',
       render: (row) =>
         row.currentLat && row.currentLng ? `${Number(row.currentLat).toFixed(5)}, ${Number(row.currentLng).toFixed(5)}` : '-',
     },
+    { key: 'createdAt', label: 'Created', render: (row) => formatDateTime(row.createdAt) || '-' },
     { key: 'updatedAt', label: 'Updated', render: (row) => formatDateTime(row.updatedAt || row.createdAt) || '-' },
     {
       key: 'actions',
