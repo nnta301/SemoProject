@@ -254,8 +254,12 @@ public class UserService {
 
     @Transactional
     public DepositResponseDTO deposit(DepositRequestDTO requestDTO) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
+            throw new RuntimeException("Truy cập bị từ chối: Vui lòng đăng nhập lại!");
+        }
+
+        String email = auth.getName();
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy tài khoản người dùng"));

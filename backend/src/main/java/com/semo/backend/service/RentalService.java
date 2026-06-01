@@ -8,11 +8,15 @@ import com.semo.backend.entity.User;
 import com.semo.backend.repository.RentalRepository;
 import com.semo.backend.repository.ScooterRepository;
 import com.semo.backend.repository.UserRepository;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class RentalService {
@@ -29,7 +33,12 @@ public class RentalService {
 
     @Transactional
     public RentalResponseDTO startRental(RentalRequestDTO requestDTO) {
-        User user = userRepository.findById(requestDTO.getUserId())
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
+            throw new RuntimeException("Truy cập bị từ chối: Vui lòng đăng nhập lại!");
+        }
+        
+        User user = userRepository.findByEmail(auth.getName())
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy Khách hàng"));
 
         Scooter scooter = scooterRepository.findById(requestDTO.getScooterId())
@@ -45,22 +54,39 @@ public class RentalService {
 
         scooter.setStatus("IN_USE");
 
+        if (!"ADMIN".equals(user.getRole()))
+            user.subtractBalance(50000.0);
+
         Rental rental = new Rental(user, scooter);
+        rental = rentalRepository.save(rental);
 
         return mapToDTO(rental);
     }
 
     @Transactional
     public RentalResponseDTO endRental(Integer rentalId) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
+            throw new RuntimeException("Truy cập bị từ chối: Vui lòng đăng nhập lại!");
+        }
+
+        User loggedInUser = userRepository.findByEmail(auth.getName())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng hệ thống"));
+
         Rental rental = rentalRepository.findById(rentalId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy chuyến đi"));
+
+        User rentalOwner = rental.getUser();
+
+        if (!rentalOwner.getId().equals(loggedInUser.getId()) && !"ADMIN".equals(loggedInUser.getRole())) {
+            throw new RuntimeException("Lỗi bảo mật: Bạn không có quyền kết thúc chuyến đi của người khác!");
+        }
 
         if ("COMPLETED".equals(rental.getStatus()))
             throw new RuntimeException("Chuyến đi này đã được thanh toán rồi!");
 
         rental.setEndTime(LocalDateTime.now());
 
-        User user = rental.getUser();
         Scooter scooter = rental.getScooter();
 
         long minutes = Duration.between(rental.getStartTime(), rental.getEndTime()).toMinutes();
@@ -68,7 +94,7 @@ public class RentalService {
             minutes = 1;
 
         double amount = minutes * 1000.0;
-        if ("ADMIN".equals(user.getRole()))
+        if ("ADMIN".equals(rentalOwner.getRole()))
             amount = 0.0;
 
         rental.setTotalPrice(amount);
@@ -76,9 +102,27 @@ public class RentalService {
 
         scooter.setStatus("AVAILABLE");
 
-        user.subtractBalance(amount);
+        if (!"ADMIN".equals(rentalOwner.getRole()))
+            rentalOwner.subtractBalance(amount - 50000.0);
 
         return mapToDTO(rental);
+    }
+
+    @Transactional(readOnly = true)
+    public List<RentalResponseDTO> getMyRentalHistory() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
+            throw new RuntimeException("Truy cập bị từ chối: Vui lòng đăng nhập lại!");
+        }
+
+        User user = userRepository.findByEmail(auth.getName())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng hệ thống"));
+
+        List<Rental> rentals = rentalRepository.findByUserOrderByStartTimeDesc(user);
+
+        return rentals.stream()
+                .map(this::mapToDTO)
+                .toList();
     }
 
     private RentalResponseDTO mapToDTO(Rental rental) {
