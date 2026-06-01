@@ -7,8 +7,5 @@ import com.semo.backend.entity.Rental;
 
 @Repository
 public interface RentalRepository extends JpaRepository<Rental, Integer> {
-    Rental findByUserIdAndStatus(Integer userId, String status);
-
-    // Delete all rentals belonging to a user (used when removing a user)
     void deleteByUserId(Integer userId);
 }

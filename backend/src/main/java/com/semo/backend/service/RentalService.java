@@ -1,11 +1,5 @@
 package com.semo.backend.service;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.semo.backend.dto.RentalRequestDTO;
 import com.semo.backend.dto.RentalResponseDTO;
 import com.semo.backend.entity.Rental;
@@ -14,6 +8,11 @@ import com.semo.backend.entity.User;
 import com.semo.backend.repository.RentalRepository;
 import com.semo.backend.repository.ScooterRepository;
 import com.semo.backend.repository.UserRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 @Service
 public class RentalService {
@@ -22,8 +21,7 @@ public class RentalService {
     private final ScooterRepository scooterRepository;
     private final UserRepository userRepository;
 
-    public RentalService(RentalRepository rentalRepository, ScooterRepository scooterRepository,
-            UserRepository userRepository) {
+    public RentalService(RentalRepository rentalRepository, ScooterRepository scooterRepository, UserRepository userRepository) {
         this.rentalRepository = rentalRepository;
         this.scooterRepository = scooterRepository;
         this.userRepository = userRepository;
@@ -38,8 +36,7 @@ public class RentalService {
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy Xe"));
 
         if (!"ADMIN".equals(user.getRole()) && user.getBalance() < 50000.0) {
-            throw new RuntimeException(
-                    "Số dư tài khoản không đủ để bắt đầu chuyến đi. Vui lòng đảm bảo trong ví có ít nhất 50.000 VNĐ.");
+            throw new RuntimeException("Số dư tài khoản không đủ để bắt đầu chuyến đi. Vui lòng đảm bảo trong ví có ít nhất 50.000 VNĐ.");
         }
 
         if (!"AVAILABLE".equals(scooter.getStatus())) {
@@ -47,14 +44,10 @@ public class RentalService {
         }
 
         scooter.setStatus("IN_USE");
-        // persist scooter status change
-        scooterRepository.save(scooter);
 
         Rental rental = new Rental(user, scooter);
-        // persist rental so ID and audit fields are generated
-        Rental saved = rentalRepository.save(rental);
 
-        return mapToDTO(saved);
+        return mapToDTO(rental);
     }
 
     @Transactional
@@ -98,13 +91,5 @@ public class RentalService {
         dto.setTotalPrice(rental.getTotalPrice());
         dto.setStatus(rental.getStatus());
         return dto;
-    }
-
-    @Transactional(readOnly = true)
-    public RentalResponseDTO getActiveRentalForUser(Integer userId) {
-        Rental rental = rentalRepository.findByUserIdAndStatus(userId, "ACTIVE");
-        if (rental == null)
-            return null;
-        return mapToDTO(rental);
     }
 }

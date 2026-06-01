@@ -9,10 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.semo.backend.dto.DepositRequestDTO;
-import com.semo.backend.dto.DepositResponseDTO;
-import com.semo.backend.dto.UserRequestDTO;
-import com.semo.backend.dto.UserResponseDTO;
+import com.semo.backend.dto.*;
 import com.semo.backend.entity.User;
 import com.semo.backend.repository.RentalRepository;
 import com.semo.backend.repository.UserRepository;
@@ -24,8 +21,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final RentalRepository rentalRepository;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,
-            RentalRepository rentalRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, RentalRepository rentalRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.rentalRepository = rentalRepository;
