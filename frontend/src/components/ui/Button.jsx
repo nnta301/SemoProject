@@ -1,10 +1,13 @@
-// Reusable button with primary/secondary/destructive visual variants.
+// Nút bấm tái sử dụng — Tech Blue variants: primary / secondary / destructive / ghost.
+// Hỗ trợ thêm prop `leadingIcon` (ReactNode) để hiển thị icon ở đầu nút.
 export default function Button({
   children,
   variant = 'primary',
   type = 'button',
   className = '',
   disabled = false,
+  leadingIcon = null,
+  trailingIcon = null,
   ...props
 }) {
   const variantClass = `ui-button--${variant}`
@@ -16,7 +19,9 @@ export default function Button({
       disabled={disabled}
       {...props}
     >
-      {children}
+      {leadingIcon}
+      <span>{children}</span>
+      {trailingIcon}
     </button>
   )
 }

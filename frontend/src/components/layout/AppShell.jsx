@@ -1,27 +1,42 @@
-// Responsive application shell with sidebar and topbar navigation.
+// Khung ứng dụng cho người dùng đã đăng nhập (sidebar + topbar).
+// Giữ nguyên cấu trúc và hành vi để các trang Admin tiếp tục hoạt động;
+// chỉ thay đổi màu sắc, icon, và nhãn (Vietnamese cho user mode).
 import { Link, NavLink, useNavigate } from 'react-router-dom'
+import {
+  LayoutDashboard,
+  UserCircle,
+  Users,
+  Bike,
+  Receipt,
+  Wrench,
+  BarChart3,
+  LogOut,
+} from 'lucide-react'
 
 import { ROUTES } from '../../constants/routes'
 import { ROLES } from '../../constants/roles'
 import { useAuth } from '../../hooks/useAuth'
 import { Button } from '../ui'
 
+const ICON_PROPS = { size: 18, strokeWidth: 1.7 }
+
 const userNavItems = [
-  { label: 'Dashboard', to: ROUTES.DASHBOARD },
-  { label: 'Profile', to: ROUTES.PROFILE },
+  { label: 'Bảng điều khiển', to: ROUTES.DASHBOARD, icon: <LayoutDashboard {...ICON_PROPS} /> },
+  { label: 'Tài khoản & Ví',  to: ROUTES.PROFILE,   icon: <UserCircle    {...ICON_PROPS} /> },
 ]
 
 const adminNavItems = [
-  { label: 'Users', to: ROUTES.USERS },
-  { label: 'Scooters', to: ROUTES.SCOOTERS },
-  { label: 'Rentals', to: ROUTES.RENTALS },
-  { label: 'Maintenance', to: ROUTES.MAINTENANCE },
-  { label: 'Analytics', to: ROUTES.ANALYTICS },
+  { label: 'Users',       to: ROUTES.USERS,       icon: <Users    {...ICON_PROPS} /> },
+  { label: 'Scooters',    to: ROUTES.SCOOTERS,    icon: <Bike     {...ICON_PROPS} /> },
+  { label: 'Rentals',     to: ROUTES.RENTALS,     icon: <Receipt  {...ICON_PROPS} /> },
+  { label: 'Maintenance', to: ROUTES.MAINTENANCE, icon: <Wrench   {...ICON_PROPS} /> },
+  { label: 'Analytics',   to: ROUTES.ANALYTICS,   icon: <BarChart3 {...ICON_PROPS} /> },
 ]
 
-function NavList({ items, onNavigate }) {
+function NavList({ items, sectionLabel, onNavigate }) {
   return (
     <nav className="app-shell__nav">
+      {sectionLabel && <p className="app-shell__nav-label">{sectionLabel}</p>}
       {items.map((item) => (
         <NavLink
           key={item.to}
@@ -29,11 +44,20 @@ function NavList({ items, onNavigate }) {
           className={({ isActive }) => `app-shell__nav-link ${isActive ? 'is-active' : ''}`}
           onClick={onNavigate}
         >
-          {item.label}
+          {item.icon}
+          <span>{item.label}</span>
         </NavLink>
       ))}
     </nav>
   )
+}
+
+function getInitials(name = '', email = '') {
+  const source = (name || email || '?').trim()
+  if (!source) return '?'
+  const parts = source.split(/\s+/).filter(Boolean)
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase()
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
 }
 
 export default function AppShell({ mode = 'user', children }) {
@@ -42,13 +66,16 @@ export default function AppShell({ mode = 'user', children }) {
 
   const isAdminMode = mode === 'admin'
   const navItems = isAdminMode ? adminNavItems : userNavItems
+  const sectionLabel = isAdminMode ? 'Admin' : 'Khám phá'
 
   function handleLogout() {
     logout()
     navigate(ROUTES.LOGIN, { replace: true })
   }
 
-  const roleLabel = user?.role === ROLES.ADMIN ? 'Administrator' : 'Customer'
+  const roleLabel = user?.role === ROLES.ADMIN ? 'Administrator' : 'Khách hàng'
+  const topbarEyebrow = isAdminMode ? 'Fleet operations' : 'Trải nghiệm xe điện'
+  const topbarTitle = isAdminMode ? 'Admin console' : 'Không gian của bạn'
 
   return (
     <div className="app-shell">
@@ -56,17 +83,31 @@ export default function AppShell({ mode = 'user', children }) {
         <div className="app-shell__brand-row">
           <Link to={ROUTES.DASHBOARD} className="app-shell__brand">
             <span className="app-shell__brand-mark">S</span>
-            <span>SemoProject</span>
+            <span>Semo</span>
           </Link>
           <span className="app-shell__role-pill">{roleLabel}</span>
         </div>
 
-        <NavList items={navItems} />
+        <NavList items={navItems} sectionLabel={sectionLabel} />
 
         <div className="app-shell__sidebar-footer">
-          <p className="app-shell__sidebar-meta">{user?.fullName || user?.email || 'Signed in user'}</p>
-          <Button variant="secondary" onClick={handleLogout}>
-            Sign out
+          <div className="app-shell__user-card">
+            <div className="app-shell__user-avatar">
+              {getInitials(user?.fullName, user?.email)}
+            </div>
+            <div className="app-shell__user-info">
+              <span className="app-shell__user-name">
+                {user?.fullName || (isAdminMode ? 'Người quản trị' : 'Người dùng')}
+              </span>
+              <span className="app-shell__user-email">{user?.email || ''}</span>
+            </div>
+          </div>
+          <Button
+            variant="secondary"
+            onClick={handleLogout}
+            leadingIcon={<LogOut size={16} strokeWidth={1.8} />}
+          >
+            {isAdminMode ? 'Sign out' : 'Đăng xuất'}
           </Button>
         </div>
       </aside>
@@ -74,15 +115,12 @@ export default function AppShell({ mode = 'user', children }) {
       <div className="app-shell__content">
         <header className="app-shell__topbar">
           <div>
-            <p className="app-shell__eyebrow">Fleet operations</p>
-            <h1 className="app-shell__title">{isAdminMode ? 'Admin console' : 'User workspace'}</h1>
+            <p className="app-shell__eyebrow">{topbarEyebrow}</p>
+            <h1 className="app-shell__title">{topbarTitle}</h1>
           </div>
 
           <div className="app-shell__topbar-actions">
             <span className="app-shell__user-chip">{user?.email || 'guest@example.com'}</span>
-            <Button variant="secondary" onClick={handleLogout}>
-              Sign out
-            </Button>
           </div>
         </header>
 

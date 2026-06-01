@@ -1,4 +1,5 @@
-// Real map view for plotting scooter positions around Bach Khoa.
+// Bản đồ xe điện quanh Bách Khoa — Tech Blue theme.
+// CircleMarker dùng tông xanh dương để đồng bộ với theme.
 import { useMemo, useState } from 'react'
 
 import 'leaflet/dist/leaflet.css'
@@ -13,14 +14,24 @@ const NORTHERN_VIETNAM_BOUNDS = [
   [23.75, 108.20],
 ]
 
+// Tech Blue palette:
+//  - AVAILABLE: cyan sáng (sẵn sàng)
+//  - IN_USE:    xanh dương đậm (đang đi)
+//  - MAINTENANCE: hồng cảnh báo
 const statusStyles = {
-  [SCOOTER_STATUSES.AVAILABLE]: { color: '#1f6f78', fillColor: '#1f6f78' },
-  [SCOOTER_STATUSES.IN_USE]: { color: '#d38a15', fillColor: '#d38a15' },
-  [SCOOTER_STATUSES.MAINTENANCE]: { color: '#c53939', fillColor: '#c53939' },
+  [SCOOTER_STATUSES.AVAILABLE]:   { color: '#00D1FF', fillColor: '#00D1FF' },
+  [SCOOTER_STATUSES.IN_USE]:      { color: '#0052FF', fillColor: '#0052FF' },
+  [SCOOTER_STATUSES.MAINTENANCE]: { color: '#FF5C7A', fillColor: '#FF5C7A' },
+}
+
+const statusLabels = {
+  [SCOOTER_STATUSES.AVAILABLE]:   'Sẵn sàng',
+  [SCOOTER_STATUSES.IN_USE]:      'Đang đi',
+  [SCOOTER_STATUSES.MAINTENANCE]: 'Bảo trì',
 }
 
 function resolveMarkerStyle(status) {
-  return statusStyles[status] || { color: '#4f5d6b', fillColor: '#4f5d6b' }
+  return statusStyles[status] || { color: '#8BA0C7', fillColor: '#8BA0C7' }
 }
 
 function MapClickHandler({ onClick }) {
@@ -30,7 +41,6 @@ function MapClickHandler({ onClick }) {
       onClick?.({ lat, lng })
     },
   })
-
   return null
 }
 
@@ -38,7 +48,9 @@ export default function ScooterMap({ scooters = [], stations = [], onMapClick })
   const [preview, setPreview] = useState(null)
   const mappedScooters = useMemo(
     () =>
-      scooters.filter((scooter) => Number.isFinite(Number(scooter.currentLat)) && Number.isFinite(Number(scooter.currentLng))),
+      scooters.filter(
+        (s) => Number.isFinite(Number(s.currentLat)) && Number.isFinite(Number(s.currentLng)),
+      ),
     [scooters],
   )
 
@@ -59,7 +71,6 @@ export default function ScooterMap({ scooters = [], stations = [], onMapClick })
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        {/* Click handler to notify parent and show a preview marker */}
         <MapClickHandler
           onClick={(pos) => {
             setPreview(pos)
@@ -71,11 +82,16 @@ export default function ScooterMap({ scooters = [], stations = [], onMapClick })
           <CircleMarker
             center={[preview.lat, preview.lng]}
             radius={8}
-            pathOptions={{ color: '#1555ff', fillColor: '#1555ff', fillOpacity: 0.6, weight: 2 }}
+            pathOptions={{
+              color: '#6D5DFF',
+              fillColor: '#6D5DFF',
+              fillOpacity: 0.7,
+              weight: 2,
+            }}
           >
             <Popup>
-              <div>
-                <strong>New scooter here</strong>
+              <div className="scooter-map__popup">
+                <strong>Điểm vừa chọn</strong>
                 <div>{formatCoordinates(preview.lat, preview.lng)}</div>
               </div>
             </Popup>
@@ -90,15 +106,20 @@ export default function ScooterMap({ scooters = [], stations = [], onMapClick })
                 key={`station-${idx}`}
                 center={[Number(station.lat), Number(station.lng)]}
                 radius={12}
-                pathOptions={{ color: '#2b9cff', fillColor: '#2b9cff', fillOpacity: 0.6, weight: 2 }}
+                pathOptions={{
+                  color: '#38ddff',
+                  fillColor: '#38ddff',
+                  fillOpacity: 0.6,
+                  weight: 2,
+                }}
               >
                 <Tooltip direction="top" offset={[0, -8]} opacity={1} permanent>
-                  {station.name || `Station ${idx + 1}`}
+                  {station.name || `Trạm ${idx + 1}`}
                 </Tooltip>
                 <Popup>
-                  <div>
-                    <strong>{station.name || `Station ${idx + 1}`}</strong>
-                    <p>Position: {formatCoordinates(station.lat, station.lng)}</p>
+                  <div className="scooter-map__popup">
+                    <strong>{station.name || `Trạm ${idx + 1}`}</strong>
+                    <p>Vị trí: {formatCoordinates(station.lat, station.lng)}</p>
                   </div>
                 </Popup>
               </CircleMarker>
@@ -126,10 +147,10 @@ export default function ScooterMap({ scooters = [], stations = [], onMapClick })
               </Tooltip>
               <Popup>
                 <div className="scooter-map__popup">
-                  <strong>{scooter.name || `Scooter #${scooter.id}`}</strong>
-                  <p>Status: {scooter.status || '-'}</p>
-                  <p>Battery: {formatBatteryLevel(scooter.batteryLevel) || '-'}</p>
-                  <p>Position: {formatCoordinates(scooter.currentLat, scooter.currentLng) || '-'}</p>
+                  <strong>{scooter.name || `Xe #${scooter.id}`}</strong>
+                  <p>Trạng thái: {statusLabels[scooter.status] || scooter.status || '—'}</p>
+                  <p>Pin: {formatBatteryLevel(scooter.batteryLevel) || '—'}</p>
+                  <p>Vị trí: {formatCoordinates(scooter.currentLat, scooter.currentLng) || '—'}</p>
                 </div>
               </Popup>
             </CircleMarker>
@@ -138,14 +159,14 @@ export default function ScooterMap({ scooters = [], stations = [], onMapClick })
       </MapContainer>
 
       <div className="scooter-map__legend">
-        <span><i className="scooter-map__swatch scooter-map__swatch--available" /> Available</span>
-        <span><i className="scooter-map__swatch scooter-map__swatch--in-use" /> In use</span>
-        <span><i className="scooter-map__swatch scooter-map__swatch--maintenance" /> Maintenance</span>
+        <span><i className="scooter-map__swatch scooter-map__swatch--available" /> Sẵn sàng</span>
+        <span><i className="scooter-map__swatch scooter-map__swatch--in-use" /> Đang đi</span>
+        <span><i className="scooter-map__swatch scooter-map__swatch--maintenance" /> Bảo trì</span>
       </div>
 
       {mappedScooters.length === 0 && (
         <div className="scooter-map__empty">
-          No scooters have coordinates yet. Add lat/lng in the scooter form to show them on the map.
+          Chưa có xe nào có toạ độ. Hãy bổ sung lat/lng trong form xe để hiển thị trên bản đồ.
         </div>
       )}
     </div>

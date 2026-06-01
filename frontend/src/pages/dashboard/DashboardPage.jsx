@@ -1,31 +1,47 @@
-// Dashboard landing page backed by live scooter data from the API.
+// Dashboard người dùng — Tech Blue Luxury (phong cách cockpit phi thuyền / EV).
+// Dữ liệu lấy trực tiếp từ API getAllScooters → /api/scooters.
 import { useEffect, useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
+import {
+  Bike,
+  BatteryFull,
+  MapPin,
+  Wrench,
+  Sparkles,
+  Navigation,
+  RefreshCcw,
+  Gauge,
+} from 'lucide-react'
 
 import { SectionHeader } from '../../components/layout'
-import { Card, Table } from '../../components/ui'
+import { Alert, Button, Card, Table } from '../../components/ui'
 import ScooterMap from '../../components/map/ScooterMap'
 import { getAllScooters } from '../../features/scooters'
 import { SCOOTER_STATUSES } from '../../constants/statuses'
+import { useAuth } from '../../hooks/useAuth'
+import { ROUTES } from '../../constants/routes'
 import { formatBatteryLevel, formatDateTime } from '../../utils/formatters'
 
 const statusMeta = {
-  [SCOOTER_STATUSES.AVAILABLE]: { label: 'Available', className: 'is-available' },
-  [SCOOTER_STATUSES.IN_USE]: { label: 'In use', className: 'is-in-use' },
-  [SCOOTER_STATUSES.MAINTENANCE]: { label: 'Maintenance', className: 'is-maintenance' },
+  [SCOOTER_STATUSES.AVAILABLE]:   { label: 'Sẵn sàng',     className: 'is-available' },
+  [SCOOTER_STATUSES.IN_USE]:      { label: 'Đang đi',      className: 'is-in-use' },
+  [SCOOTER_STATUSES.MAINTENANCE]: { label: 'Đang bảo trì', className: 'is-maintenance' },
 }
 
 function getStatusLabel(status) {
-  return statusMeta[status]?.label || status || 'Unknown'
+  return statusMeta[status]?.label || status || 'Không xác định'
 }
-
 function getStatusClassName(status) {
   return statusMeta[status]?.className || 'is-unknown'
 }
 
 export default function DashboardPage() {
+  const { user } = useAuth()
+
   const [scooters, setScooters] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [refreshKey, setRefreshKey] = useState(0)
 
   useEffect(() => {
     let isActive = true
@@ -35,120 +51,205 @@ export default function DashboardPage() {
         setLoading(true)
         setError(null)
         const data = await getAllScooters()
-
-        if (!isActive) {
-          return
-        }
-
+        if (!isActive) return
         setScooters(Array.isArray(data) ? data : [])
       } catch (err) {
-        if (!isActive) {
-          return
-        }
-
-        setError(err?.response?.data?.message || err?.message || 'Unable to load scooters')
+        if (!isActive) return
+        setError(err?.response?.data?.message || err?.message || 'Không thể tải danh sách xe.')
         setScooters([])
       } finally {
-        if (isActive) {
-          setLoading(false)
-        }
+        if (isActive) setLoading(false)
       }
     }
 
     loadScooters()
+    return () => { isActive = false }
+  }, [refreshKey])
 
-    return () => {
-      isActive = false
-    }
-  }, [])
-
-  const summaryCards = useMemo(() => {
+  const summary = useMemo(() => {
     const total = scooters.length
-    const available = scooters.filter((scooter) => scooter.status === SCOOTER_STATUSES.AVAILABLE).length
-    const inUse = scooters.filter((scooter) => scooter.status === SCOOTER_STATUSES.IN_USE).length
-    const maintenance = scooters.filter((scooter) => scooter.status === SCOOTER_STATUSES.MAINTENANCE).length
+    const available = scooters.filter((s) => s.status === SCOOTER_STATUSES.AVAILABLE).length
+    const inUse = scooters.filter((s) => s.status === SCOOTER_STATUSES.IN_USE).length
+    const maintenance = scooters.filter((s) => s.status === SCOOTER_STATUSES.MAINTENANCE).length
 
-    return [
-      { label: 'Total scooters', value: total, note: 'Live from /api/scooters' },
-      { label: 'Available', value: available, note: 'Ready to rent now' },
-      { label: 'In use', value: inUse, note: 'Currently on trips' },
-      { label: 'Maintenance', value: maintenance, note: 'Needs service attention' },
-    ]
+    const batteryLevels = scooters
+      .map((s) => Number(s.batteryLevel))
+      .filter((n) => Number.isFinite(n))
+    const avgBattery = batteryLevels.length
+      ? Math.round(batteryLevels.reduce((a, b) => a + b, 0) / batteryLevels.length)
+      : 0
+
+    return { total, available, inUse, maintenance, avgBattery }
   }, [scooters])
+
+  const summaryCards = useMemo(() => ([
+    {
+      label: 'Tổng số xe',
+      value: summary.total,
+      note: 'Dữ liệu trực tiếp từ /api/scooters',
+      icon: <Bike size={20} strokeWidth={1.7} />,
+    },
+    {
+      label: 'Sẵn sàng thuê',
+      value: summary.available,
+      note: 'Xe sẵn sàng phục vụ bạn ngay',
+      icon: <Sparkles size={20} strokeWidth={1.7} />,
+    },
+    {
+      label: 'Pin trung bình',
+      value: `${summary.avgBattery}%`,
+      note: 'Tính trên toàn đội xe',
+      icon: <BatteryFull size={20} strokeWidth={1.7} />,
+    },
+    {
+      label: 'Đang bảo trì',
+      value: summary.maintenance,
+      note: 'Tạm thời không khả dụng',
+      icon: <Wrench size={20} strokeWidth={1.7} />,
+    },
+  ]), [summary])
 
   const scooterRows = useMemo(() => {
     return [...scooters]
-      .sort((left, right) => {
-        const leftTime = new Date(left.updatedAt || left.createdAt || 0).getTime()
-        const rightTime = new Date(right.updatedAt || right.createdAt || 0).getTime()
-        return rightTime - leftTime
+      .sort((l, r) => {
+        const lt = new Date(l.updatedAt || l.createdAt || 0).getTime()
+        const rt = new Date(r.updatedAt || r.createdAt || 0).getTime()
+        return rt - lt
       })
-      .slice(0, 5)
+      .slice(0, 6)
   }, [scooters])
 
   const scooterColumns = [
     {
       key: 'name',
-      label: 'Scooter',
-      render: (row) => row.name || `#${row.id}`,
+      label: 'Xe điện',
+      render: (row) => (
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600 }}>
+          <Bike size={16} strokeWidth={1.8} style={{ color: 'var(--color-cyan-soft)' }} />
+          {row.name || `#${row.id}`}
+        </span>
+      ),
     },
     {
       key: 'status',
-      label: 'Status',
-      render: (row) => <span className={`status-pill ${getStatusClassName(row.status)}`}>{getStatusLabel(row.status)}</span>,
+      label: 'Trạng thái',
+      render: (row) => (
+        <span className={`status-pill ${getStatusClassName(row.status)}`}>
+          {getStatusLabel(row.status)}
+        </span>
+      ),
     },
     {
       key: 'batteryLevel',
-      label: 'Battery',
-      render: (row) => formatBatteryLevel(row.batteryLevel),
+      label: 'Pin',
+      render: (row) => {
+        const lvl = Number(row.batteryLevel)
+        const tone =
+          Number.isFinite(lvl) && lvl >= 50 ? 'var(--success)' :
+          Number.isFinite(lvl) && lvl >= 25 ? 'var(--warning)' : 'var(--danger)'
+        return (
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem', color: tone, fontWeight: 600 }}>
+            <BatteryFull size={16} strokeWidth={1.8} />
+            {formatBatteryLevel(row.batteryLevel) || '—'}
+          </span>
+        )
+      },
     },
     {
       key: 'updatedAt',
-      label: 'Last updated',
-      render: (row) => formatDateTime(row.updatedAt || row.createdAt) || '-',
+      label: 'Cập nhật gần nhất',
+      render: (row) => formatDateTime(row.updatedAt || row.createdAt) || '—',
     },
   ]
 
+  const greetingName = user?.fullName?.split(' ').slice(-1)[0] || 'bạn'
+
   return (
     <div className="page-stack">
-      <SectionHeader
-        eyebrow="Overview"
-        title="Dashboard"
-        description="A live snapshot of the scooter fleet pulled directly from the API."
-      />
+      {/* Hero — phong cách cockpit EV */}
+      <section className="dashboard-hero">
+        <div className="dashboard-hero__row">
+          <div>
+            <p className="dashboard-hero__eyebrow">Xin chào, {greetingName}</p>
+            <h2 className="dashboard-hero__title">Hệ thống đang sẵn sàng.</h2>
+            <p className="dashboard-hero__sub">
+              Theo dõi tình trạng đội xe điện theo thời gian thực, quản lý hành trình và nạp ví —
+              tất cả trong một bảng điều khiển công nghệ cao.
+            </p>
+          </div>
+          <div className="dashboard-hero__cta">
+            <Button
+              variant="secondary"
+              onClick={() => setRefreshKey((k) => k + 1)}
+              leadingIcon={<RefreshCcw size={16} strokeWidth={1.8} />}
+            >
+              Làm mới dữ liệu
+            </Button>
+            <Link to={ROUTES.PROFILE} style={{ textDecoration: 'none' }}>
+              <Button leadingIcon={<Gauge size={16} strokeWidth={1.8} />}>
+                Quản lý ví
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
 
-      <div className="stats-grid">
+      {error && <Alert>{error}</Alert>}
+
+      {/* Stats grid — cockpit cards */}
+      <div className="stats-grid stats-grid--compact">
         {summaryCards.map((card) => (
-          <Card key={card.label}>
-            <p className="stat-card__label">{card.label}</p>
+          <Card key={card.label} variant="glow">
+            <div className="stat-card__head">
+              <p className="stat-card__label">{card.label}</p>
+              <span className="stat-card__icon">{card.icon}</span>
+            </div>
             <div className="stat-card__value">{loading ? '—' : card.value}</div>
             <p className="stat-card__note">{card.note}</p>
           </Card>
         ))}
       </div>
 
+      {/* Map view */}
       <Card>
         <SectionHeader
-          eyebrow="Map view"
-          title="Scooters around Bach Khoa"
-          description="Live scooter positions rendered on a real OpenStreetMap layer using their current coordinates."
+          eyebrow="Bản đồ trực tiếp"
+          title="Xe điện quanh Bách Khoa"
+          description="Vị trí các xe được vẽ trực tiếp lên bản đồ OpenStreetMap từ toạ độ hiện tại."
+          actions={(
+            <span style={{
+              display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
+              color: 'var(--color-cyan-soft)', fontSize: '0.85rem', fontWeight: 600,
+            }}>
+              <Navigation size={16} strokeWidth={1.8} /> Live
+            </span>
+          )}
         />
-        {error && <div className="ui-alert ui-alert--error dashboard__error">{error}</div>}
+        <div style={{ height: 12 }} />
         <ScooterMap scooters={scooters} />
       </Card>
 
+      {/* Recent list */}
       <Card>
         <SectionHeader
-          eyebrow="Fleet inventory"
-          title="Recent scooters"
-          description="The latest scooters returned by the backend, sorted by their last update time."
+          eyebrow="Danh sách xe"
+          title="Cập nhật gần nhất"
+          description="Các xe được backend cập nhật mới nhất, sắp xếp theo thời gian."
+          actions={(
+            <span style={{
+              display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
+              color: 'var(--text-muted)', fontSize: '0.85rem',
+            }}>
+              <MapPin size={16} strokeWidth={1.8} /> Tổng cộng {summary.total} xe
+            </span>
+          )}
         />
-        {error && <div className="ui-alert ui-alert--error dashboard__error">{error}</div>}
+        <div style={{ height: 12 }} />
         <Table
           columns={scooterColumns}
           rows={scooterRows}
           rowKey={(row) => row.id}
-          emptyMessage={loading ? 'Loading scooters…' : 'No scooters found yet.'}
+          emptyMessage={loading ? 'Đang tải danh sách xe…' : 'Chưa có xe nào.'}
         />
       </Card>
     </div>

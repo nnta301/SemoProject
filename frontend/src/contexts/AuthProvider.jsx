@@ -1,4 +1,5 @@
-// Provider that owns auth state, persistence, and session actions.
+// Provider giữ trạng thái xác thực, lưu trữ session và các action liên quan.
+// Đã giữ nguyên cấu trúc cũ; bổ sung tiện ích `setBalance(newBalance)` cho ví người dùng.
 import { useCallback, useMemo, useState } from 'react'
 
 import { ROLES } from '../constants/roles'
@@ -15,26 +16,20 @@ import { AuthContext } from './authContext'
 
 function readStoredUser() {
   const storedUser = getAuthUser()
-
-  if (storedUser) {
-    return storedUser
-  }
+  if (storedUser) return storedUser
 
   const token = getAuthToken()
-  if (!token) {
-    return null
-  }
+  if (!token) return null
 
   const payload = decodeJwtPayload(token)
-  if (!payload) {
-    return null
-  }
+  if (!payload) return null
 
   return {
     id: payload.userId ?? null,
     email: payload.sub ?? '',
     fullName: '',
     role: payload.role ?? ROLES.CUSTOMER,
+    balance: null,
   }
 }
 
@@ -52,6 +47,7 @@ export function AuthProvider({ children }) {
       email: response.email,
       fullName: response.fullName,
       role: response.role,
+      balance: response.balance ?? null, // sẽ là null nếu backend chưa trả balance trong LoginResponseDTO
     }
 
     setTokenState(response.token)
@@ -62,10 +58,7 @@ export function AuthProvider({ children }) {
     return response
   }, [])
 
-  const register = useCallback(async (request) => {
-    const response = await registerRequest(request)
-    return response
-  }, [])
+  const register = useCallback(async (request) => registerRequest(request), [])
 
   const logout = useCallback(() => {
     setTokenState(null)
@@ -73,13 +66,19 @@ export function AuthProvider({ children }) {
     clearAuthSession()
   }, [])
 
-  const updateUser = useCallback(
-    (nextUser) => {
-      setUserState(nextUser)
-      setAuthUser(nextUser)
-    },
-    [],
-  )
+  const updateUser = useCallback((nextUser) => {
+    setUserState(nextUser)
+    setAuthUser(nextUser)
+  }, [])
+
+  // Cập nhật riêng số dư ví — dùng cho ProfilePage sau khi gọi deposit thành công.
+  const setBalance = useCallback((newBalance) => {
+    setUserState((current) => {
+      const next = { ...(current || {}), balance: Number(newBalance) }
+      setAuthUser(next)
+      return next
+    })
+  }, [])
 
   const value = useMemo(
     () => ({
@@ -91,8 +90,9 @@ export function AuthProvider({ children }) {
       register,
       logout,
       updateUser,
+      setBalance,
     }),
-    [isAdmin, isAuthenticated, login, logout, register, token, updateUser, user],
+    [isAdmin, isAuthenticated, login, logout, register, setBalance, token, updateUser, user],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
