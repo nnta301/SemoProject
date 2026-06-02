@@ -1,13 +1,12 @@
-// API helpers for avatar and scooter image uploads.
 import { axiosClient } from '../../config/axiosClient'
 
-function createMultipartPayload(file) {
+function createMultipartPayload(file: File): FormData {
   const formData = new FormData()
   formData.append('file', file)
   return formData
 }
 
-export async function uploadAvatar(file) {
+export async function uploadAvatar(file: File) {
   const { data } = await axiosClient.post('/api/upload/avatar', createMultipartPayload(file), {
     headers: {
       'Content-Type': 'multipart/form-data',
@@ -16,7 +15,7 @@ export async function uploadAvatar(file) {
   return data
 }
 
-export async function uploadScooterImage(scooterId, file) {
+export async function uploadScooterImage(scooterId: number | string, file: File) {
   const { data } = await axiosClient.post(
     `/api/upload/scooter/${scooterId}`,
     createMultipartPayload(file),

@@ -1,17 +1,20 @@
 // API helpers for maintenance log creation, lookup, and resolution.
 import { axiosClient } from '../../config/axiosClient'
 
-export async function createMaintenanceLog(request) {
+// Bổ sung kiểu any cho request
+export async function createMaintenanceLog(request: any) {
   const { data } = await axiosClient.post('/api/maintenance', request)
   return data
 }
 
-export async function getMaintenanceLogsByScooterId(scooterId) {
+// Bổ sung kiểu number | string cho scooterId
+export async function getMaintenanceLogsByScooterId(scooterId: number | string) {
   const { data } = await axiosClient.get(`/api/maintenance/scooter/${scooterId}`)
   return data
 }
 
-export async function resolveMaintenance(scooterId) {
+// Bổ sung kiểu number | string cho scooterId
+export async function resolveMaintenance(scooterId: number | string) {
   const { data } = await axiosClient.post(`/api/maintenance/${scooterId}/resolve`)
   return data
 }

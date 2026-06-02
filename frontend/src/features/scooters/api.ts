@@ -1,7 +1,7 @@
 // API helpers for scooter CRUD and status-based retrieval.
 import { axiosClient } from '../../config/axiosClient'
 
-export async function createScooter(request) {
+export async function createScooter(request: any) {
   const { data } = await axiosClient.post('/api/scooters', request)
   return data
 }
@@ -25,12 +25,12 @@ export async function getScootersByStatus(status = 'AVAILABLE') {
   return data
 }
 
-export async function getScooterById(id) {
+export async function getScooterById(id: number | string) {
   const { data } = await axiosClient.get(`/api/scooters/${id}`)
   return data
 }
 
-export async function updateScooter(id, request) {
+export async function updateScooter(id: number | string, request: any) {
   const { data } = await axiosClient.put(`/api/scooters/${id}`, request)
   return data
 }
