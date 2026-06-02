@@ -1,11 +1,14 @@
 // Session-scoped auth storage helpers with localStorage migration support.
 import { STORAGE_KEYS } from '../constants/storageKeys'
+// FIX 1: Import type-only đối tượng User của dự án phục vụ hàm ép kiểu cho Session
+import type { User } from '../types/models'
 
-function hasWindowStorage() {
+function hasWindowStorage(): boolean {
   return typeof window !== 'undefined'
 }
 
-function readRawValue(key) {
+// FIX 2: Khai báo 'key' dạng string
+function readRawValue(key: string): string | null {
   if (!hasWindowStorage()) {
     return null
   }
@@ -25,7 +28,8 @@ function readRawValue(key) {
   return null
 }
 
-function writeRawValue(key, value) {
+// FIX 3: Khai báo 'key' và 'value' dạng string
+function writeRawValue(key: string, value: string): void {
   if (!hasWindowStorage()) {
     return
   }
@@ -34,7 +38,8 @@ function writeRawValue(key, value) {
   window.localStorage.removeItem(key)
 }
 
-function removeRawValue(key) {
+// FIX 4: Khai báo 'key' dạng string
+function removeRawValue(key: string): void {
   if (!hasWindowStorage()) {
     return
   }
@@ -43,7 +48,8 @@ function removeRawValue(key) {
   window.localStorage.removeItem(key)
 }
 
-function parseStoredValue(rawValue) {
+// FIX 5: Khai báo 'rawValue' dạng string | null và kiểu trả về là any (do cấu trúc JSON.parse linh hoạt)
+function parseStoredValue(rawValue: string | null): any {
   if (rawValue === null) {
     return null
   }
@@ -55,12 +61,13 @@ function parseStoredValue(rawValue) {
   }
 }
 
-export function getAuthToken() {
+export function getAuthToken(): string | null {
   const storedToken = parseStoredValue(readRawValue(STORAGE_KEYS.AUTH_TOKEN))
   return typeof storedToken === 'string' && storedToken.trim() ? storedToken : null
 }
 
-export function setAuthToken(token) {
+// FIX 6: Khai báo tham số 'token' dạng string
+export function setAuthToken(token: string): void {
   if (typeof token !== 'string' || !token.trim()) {
     removeAuthToken()
     return
@@ -69,16 +76,18 @@ export function setAuthToken(token) {
   writeRawValue(STORAGE_KEYS.AUTH_TOKEN, JSON.stringify(token))
 }
 
-export function removeAuthToken() {
+export function removeAuthToken(): void {
   removeRawValue(STORAGE_KEYS.AUTH_TOKEN)
 }
 
-export function getAuthUser() {
+// FIX 7: Trả về kiểu User | null thay vì để tự suy luận lỏng lẻo
+export function getAuthUser(): User | null {
   const storedUser = parseStoredValue(readRawValue(STORAGE_KEYS.AUTH_USER))
-  return storedUser && typeof storedUser === 'object' ? storedUser : null
+  return storedUser && typeof storedUser === 'object' ? (storedUser as User) : null
 }
 
-export function setAuthUser(user) {
+// FIX 8: Khai báo tham số 'user' nhận kiểu User chính xác của hệ thống
+export function setAuthUser(user: User | null): void {
   if (!user || typeof user !== 'object') {
     removeAuthUser()
     return
@@ -87,11 +96,11 @@ export function setAuthUser(user) {
   writeRawValue(STORAGE_KEYS.AUTH_USER, JSON.stringify(user))
 }
 
-export function removeAuthUser() {
+export function removeAuthUser(): void {
   removeRawValue(STORAGE_KEYS.AUTH_USER)
 }
 
-export function clearAuthSession() {
+export function clearAuthSession(): void {
   removeAuthToken()
   removeAuthUser()
 }

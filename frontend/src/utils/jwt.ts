@@ -1,5 +1,7 @@
 // Lightweight helpers for decoding JWT payload data on the client.
-export function decodeJwtPayload(token) {
+
+// FIX: Khai báo tường minh 'token' là string và kiểu trả về linh hoạt là any hoặc null
+export function decodeJwtPayload(token: string): any | null {
   if (typeof token !== 'string' || !token.includes('.')) {
     return null
   }

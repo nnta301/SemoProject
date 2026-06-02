@@ -1,5 +1,7 @@
 // Normalizes backend validation and runtime errors into a displayable string.
-export function getApiErrorMessage(error, fallback = 'An unexpected error occurred') {
+
+// FIX: Khai báo tường minh kiểu dữ liệu cho 'error' là any và 'fallback' là string
+export function getApiErrorMessage(error: any, fallback: string = 'An unexpected error occurred'): string {
   const responseData = error?.response?.data
 
   if (!responseData) {
@@ -15,7 +17,10 @@ export function getApiErrorMessage(error, fallback = 'An unexpected error occurr
       return responseData.message
     }
 
-    const fieldMessages = Object.values(responseData).filter((value) => typeof value === 'string' && value.trim())
+    // Ép kiểu 'value' thành string trong hàm filter để loại bỏ hoàn toàn cảnh báo implicit any bên trong callback
+    const fieldMessages = Object.values(responseData).filter(
+      (value): value is string => typeof value === 'string' && value.trim().length > 0
+    )
     if (fieldMessages.length > 0) {
       return fieldMessages.join('; ')
     }
