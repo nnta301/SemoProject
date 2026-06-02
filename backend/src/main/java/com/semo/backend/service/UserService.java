@@ -11,8 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.semo.backend.dto.*;
 import com.semo.backend.entity.User;
+import com.semo.backend.entity.Transaction;
 import com.semo.backend.repository.RentalRepository;
 import com.semo.backend.repository.UserRepository;
+import com.semo.backend.repository.TransactionRepository;
 
 @Service
 public class UserService {
@@ -20,11 +22,14 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RentalRepository rentalRepository;
+    private final TransactionRepository transactionRepository;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, RentalRepository rentalRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,
+                       RentalRepository rentalRepository, TransactionRepository transactionRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.rentalRepository = rentalRepository;
+        this.transactionRepository = transactionRepository;
     }
 
     /**
@@ -267,6 +272,14 @@ public class UserService {
         user.addBalance(requestDTO.getAmount());
 
         userRepository.save(user);
+
+        Transaction transaction = new Transaction();
+        transaction.setUser(user);
+        transaction.setAmount(requestDTO.getAmount());
+        transaction.setType("DEPOSIT");
+        transaction.setDescription("Nạp tiền vào ví điện tử SEMO");
+
+        transactionRepository.save(transaction);
 
         return new DepositResponseDTO("Nạp tiền thành công!", user.getBalance());
     }

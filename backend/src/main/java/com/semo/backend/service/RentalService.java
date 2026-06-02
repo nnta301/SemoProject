@@ -4,20 +4,20 @@ import com.semo.backend.dto.RentalRequestDTO;
 import com.semo.backend.dto.RentalResponseDTO;
 import com.semo.backend.entity.Rental;
 import com.semo.backend.entity.Scooter;
+import com.semo.backend.entity.Transaction;
 import com.semo.backend.entity.User;
 import com.semo.backend.repository.RentalRepository;
 import com.semo.backend.repository.ScooterRepository;
 import com.semo.backend.repository.UserRepository;
+import com.semo.backend.repository.TransactionRepository;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Array;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -26,12 +26,15 @@ public class RentalService {
     private final RentalRepository rentalRepository;
     private final ScooterRepository scooterRepository;
     private final UserRepository userRepository;
+    private final TransactionRepository transactionRepository;
     private static final List<String> VALID_STATUSES = List.of("ALL", "ACTIVE", "COMPLETED");
 
-    public RentalService(RentalRepository rentalRepository, ScooterRepository scooterRepository, UserRepository userRepository) {
+    public RentalService(RentalRepository rentalRepository, ScooterRepository scooterRepository,
+                         UserRepository userRepository, TransactionRepository transactionRepository) {
         this.rentalRepository = rentalRepository;
         this.scooterRepository = scooterRepository;
         this.userRepository = userRepository;
+        this.transactionRepository = transactionRepository;
     }
 
     @Transactional
@@ -57,11 +60,19 @@ public class RentalService {
 
         scooter.setStatus("IN_USE");
 
-        if (!"ADMIN".equals(user.getRole()))
-            user.subtractBalance(50000.0);
-
         Rental rental = new Rental(user, scooter);
         rental = rentalRepository.save(rental);
+
+        if (!"ADMIN".equals(user.getRole())) {
+            user.subtractBalance(50000.0);
+
+            Transaction tx = new Transaction();
+            tx.setUser(user);
+            tx.setAmount(-50000.0);
+            tx.setType("RENTAL_DEPOSIT");
+            tx.setDescription("Trừ tiền cọc bắt đầu chuyến đi #" + rental.getId());
+            transactionRepository.save(tx);
+        }
 
         return mapToDTO(rental);
     }
@@ -105,8 +116,23 @@ public class RentalService {
 
         scooter.setStatus("AVAILABLE");
 
-        if (!"ADMIN".equals(rentalOwner.getRole()))
+        if (!"ADMIN".equals(rentalOwner.getRole())) {
             rentalOwner.subtractBalance(amount - 50000.0);
+
+            Transaction refundTx = new Transaction();
+            refundTx.setUser(rentalOwner);
+            refundTx.setAmount(50000.0);
+            refundTx.setType("RENTAL_REFUND");
+            refundTx.setDescription("Hoàn tiền cọc chuyến đi #" + rental.getId());
+            transactionRepository.save(refundTx);
+
+            Transaction paymentTx = new Transaction();
+            paymentTx.setUser(rentalOwner);
+            paymentTx.setAmount(-amount);
+            paymentTx.setType("RENTAL_PAYMENT");
+            paymentTx.setDescription("Thanh toán phí thuê xe cho chuyến đi #" + rental.getId());
+            transactionRepository.save(paymentTx);
+        }
 
         return mapToDTO(rental);
     }
