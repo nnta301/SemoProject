@@ -14,8 +14,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Array;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -24,6 +26,7 @@ public class RentalService {
     private final RentalRepository rentalRepository;
     private final ScooterRepository scooterRepository;
     private final UserRepository userRepository;
+    private static final List<String> VALID_STATUSES = List.of("ALL", "ACTIVE", "COMPLETED");
 
     public RentalService(RentalRepository rentalRepository, ScooterRepository scooterRepository, UserRepository userRepository) {
         this.rentalRepository = rentalRepository;
@@ -109,7 +112,11 @@ public class RentalService {
     }
 
     @Transactional(readOnly = true)
-    public List<RentalResponseDTO> getMyRentalHistory() {
+    public List<RentalResponseDTO> getMyRentalHistory(String status) {
+        status = (status == null || status.isBlank()) ? "ALL" : status.trim().toUpperCase();
+        if (!VALID_STATUSES.contains(status)) {
+            throw new RuntimeException("Trạng thái không hợp lệ!");
+        }
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
             throw new RuntimeException("Truy cập bị từ chối: Vui lòng đăng nhập lại!");
@@ -118,7 +125,19 @@ public class RentalService {
         User user = userRepository.findByEmail(auth.getName())
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng hệ thống"));
 
-        List<Rental> rentals = rentalRepository.findByUserOrderByStartTimeDesc(user);
+        boolean isAdmin = "ADMIN".equals(user.getRole()),
+                isAllStatus = "ALL".equals(status);
+
+        List<Rental> rentals;
+
+        if (isAdmin) {
+            rentals = isAllStatus ? rentalRepository.findAllByOrderByStartTimeDesc()
+                                  : rentalRepository.findByStatusOrderByStartTimeDesc(status);
+        }
+        else {
+            rentals = isAllStatus ? rentalRepository.findByUserOrderByStartTimeDesc(user)
+                                  : rentalRepository.findByUserAndStatusOrderByStartTimeDesc(user, status);
+        }
 
         return rentals.stream()
                 .map(this::mapToDTO)
