@@ -4,7 +4,11 @@ import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { ROUTES } from '../constants/routes'
 import { useAuth } from '../hooks/useAuth'
 
-export default function ProtectedRoute({ requiredRoles = [] }) {
+interface ProtectedRouteProps {
+  requiredRoles?: string[]
+}
+
+export default function ProtectedRoute({ requiredRoles = [] }: ProtectedRouteProps) {
   const location = useLocation()
   const { isAuthenticated, user } = useAuth()
 
@@ -12,7 +16,7 @@ export default function ProtectedRoute({ requiredRoles = [] }) {
     return <Navigate to={ROUTES.LOGIN} replace state={{ from: location }} />
   }
 
-  if (requiredRoles.length > 0 && !requiredRoles.includes(user?.role)) {
+  if (requiredRoles.length > 0 && user?.role && !requiredRoles.includes(user.role)) {
     return <Navigate to={ROUTES.DASHBOARD} replace />
   }
 
