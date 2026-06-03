@@ -1,58 +1,75 @@
-# 🛵 SEMO (Scooter Rental System) - Backend Project Status
+# 🛵 SEMO (Smart E-Scooter Fleet Management & Battery Optimization) - Backend Project Status
 
-**Tech Stack:** Java, Spring Boot, Spring Data JPA, Spring Security (JWT), MySQL.
-
-## ✅ Các Module Đã Hoàn Thành
-
-### 1. 🔐 Auth & Security
-- Xác thực và phân quyền bằng JWT Token.
-- Phân chia 2 Role: `ADMIN` và `CUSTOMER`.
-- Chặn truy cập (403 Forbidden, 401 Unauthorized) đối với các API yêu cầu đăng nhập.
-
-### 2. 👤 User Module
-- Quản lý thông tin cá nhân của người dùng.
-- Tích hợp ví điện tử (`balance`).
-- API Nạp tiền vào ví (Deposit) để có số dư thuê xe.
-
-### 3. 🛴 Scooter Module (Quản lý Xe)
-- **Admin:** CRUD xe mới, cập nhật tọa độ và tình trạng pin.
-- **Validation:** Chuẩn hóa và kiểm tra trạng thái xe hợp lệ (`AVAILABLE`, `IN_USE`, `MAINTENANCE`).
-- API lấy danh sách xe (có hỗ trợ phân trang).
-
-### 4. 🗺️ Rental Module (Luồng Thuê Xe Cốt Lõi)
-- **Bắt đầu (Start):** Yêu cầu xe phải `AVAILABLE` và ví khách hàng phải có tối thiểu 50.000 VNĐ. Tự động đổi trạng thái xe sang `IN_USE` và trừ tiền cọc.
-- **Kết thúc (End):** Tính tiền dựa trên thời gian chạy thực tế (1000 VNĐ/phút). Tự động hoàn cọc/trừ phí, đổi trạng thái xe về `AVAILABLE`. Chặn IDOR (không cho phép kết thúc chuyến của người khác).
-- **Lịch sử:** Khách hàng xem lịch sử của mình, Admin xem toàn bộ lịch sử (hỗ trợ lọc theo `status`).
-
-### 5. ⭐ Feedback & Rating Module (Đánh giá)
-- Cho phép khách hàng đánh giá (1-5 sao) và để lại bình luận.
-- **Business Logic:** Chỉ áp dụng cho chuyến đi đã `COMPLETED`. Mỗi chuyến đi chỉ được đánh giá 1 lần duy nhất (Database `UNIQUE` constraint).
-- **Chống IDOR:** Chỉ chủ nhân của chuyến xe mới được phép đánh giá.
-
-### 6. 📊 Admin Dashboard (Thống kê)
-- API dành riêng cho Admin để xem tổng quan hệ thống.
-- Tính toán: Tổng doanh thu, Tổng số chuyến đi hoàn thành, Số chuyến đang chạy, Thống kê số lượng xe theo trạng thái.
-
-### 7. 💳 Lịch sử giao dịch (Transaction History)
-- Tự động ghi vết dòng tiền cực kỳ minh bạch.
-- Hỗ trợ các loại giao dịch: `DEPOSIT` (Nạp tiền), `RENTAL_DEPOSIT` (Trừ cọc), `RENTAL_REFUND` (Hoàn cọc), `RENTAL_PAYMENT` (Trừ cước).
-
-### 8. 🛡️ Admin User Management (Quản lý người dùng)
-- Cung cấp API cho phép Admin khóa (Ban) hoặc mở khóa (Unban) tài khoản người dùng khi có dấu hiệu vi phạm.
-
-### 9. ⚙️ Advanced User Profile (Tài khoản nâng cao)
-- Tách biệt DTO (`UserUpdateRequestDTO`) để hỗ trợ Partial Update (Cập nhật một phần thông tin).
-- API Tự đổi mật khẩu (`/change-password`) thiết kế theo chuẩn `/me`, sử dụng JWT để chống IDOR tuyệt đối.
-- API Admin Cấp lại mật khẩu (`/reset-password`) giúp hỗ trợ khách hàng an toàn.
+**Tech Stack:** Java, Spring Boot, Spring Data JPA, Spring Security (JWT), MySQL, WebSocket.
 
 ---
 
-## 🚀 Nhiệm Vụ Tiếp Theo (Đang chờ xử lý)
+## I. Nhóm Hạ Tầng & Bảo Mật (Infrastructure & Security)
+**✅ Đã hoàn thành:**
+* Xác thực và phân quyền bằng JWT Token.
+* Phân chia 2 Role: `ADMIN` và `CUSTOMER`.
+* Xử lý lỗi truy cập (403 Forbidden, 401 Unauthorized).
+* Chống IDOR tuyệt đối cho các API tài khoản và nghiệp vụ thuê xe (chuẩn `/me`).
 
-- [ ] **1. Xử lý Nợ / Âm tiền (Debt Management):** - Ghi nhận số dư âm (`balance` < 0) khi kết thúc chuyến đi mà ví không đủ trả cước.
-    - Cập nhật logic `Start Rental`: Chặn không cho user thuê chuyến mới nếu đang có nợ.
-- [ ] **2. Luồng khôi phục xe & Cấu hình (Maintenance & Config):**
-    - Bổ sung API cập nhật trạng thái xe từ `MAINTENANCE` về `AVAILABLE`.
-    - Tạo bảng `SystemConfig` lưu cấu hình giá thuê, tiền cọc (thay vì fix cứng trong code).
-- [ ] **3. Giả lập IoT & Giám sát sức khỏe pin (IoT Simulation):** - Xây dựng Scheduled Tasks (CRON jobs) tự động cập nhật tọa độ và làm giảm phần trăm pin của các xe đang `IN_USE`.
-    - Tự động chuyển trạng thái xe sang `MAINTENANCE` nếu pin < 15%.
+**🚀 Chưa làm:**
+* (Hiện tại hạ tầng bảo mật đã hoàn chỉnh).
+
+---
+
+## II. Nhóm Quản Lý Cơ Bản (CRUD)
+**✅ Đã hoàn thành:**
+* **User CRUD:** Đăng ký, xem thông tin cá nhân, xem danh sách (Admin).
+* **User Profile:** Cập nhật thông tin (Partial Update - `UserUpdateRequestDTO`).
+* **Scooter CRUD:** Admin thêm xe mới, cập nhật trạng thái/pin/tọa độ, xem danh sách (có phân trang).
+* **Feedback CRUD:** Khách hàng đánh giá (1-5 sao) và bình luận chuyến đi đã hoàn thành (Unique constraint).
+
+**🚀 Chưa làm:**
+* (Các chức năng CRUD cốt lõi đã đầy đủ).
+
+---
+
+## III. Nhóm Nghiệp Vụ & Tài Chính (Core Business & Finance)
+**✅ Đã hoàn thành:**
+* **Ví điện tử:** Nạp tiền (Deposit), quản lý số dư (`balance`).
+* **Luồng Thuê Xe (Rental Core):** Bắt đầu chuyến (`IN_USE`), kết thúc chuyến (`AVAILABLE`).
+* **Tính toán cước:** Tự động trừ cọc (50.000 VNĐ), hoàn cọc, tính cước thời gian thực (1.000 VNĐ/phút).
+* **Lịch sử giao dịch:** Ghi vết tự động minh bạch (`DEPOSIT`, `RENTAL_DEPOSIT`, `RENTAL_REFUND`, `RENTAL_PAYMENT`).
+* **Tài khoản nâng cao:** Khách hàng tự đổi mật khẩu, Admin cấp lại mật khẩu.
+* **Quản lý Nợ (Debt Management):** Ghi nhận số dư âm, chặn khách hàng đang nợ thuê chuyến mới.
+
+**🚀 Chưa làm:**
+* [ ] **Cấu hình hệ thống (System Config):** Tạo bảng cấu hình để lưu các tham số động như Giá cọc, Giá thuê thay vì fix cứng trong code.
+
+---
+
+## IV. Nhóm Quản Trị & Thống Kê & Phân Tích Dữ Liệu (Admin & Analytics)
+**✅ Đã hoàn thành:**
+* **Admin Dashboard:** Thống kê tổng doanh thu, tổng số chuyến đi, số xe đang chạy, tỷ lệ xe theo trạng thái.
+* **Quản lý lịch sử:** Admin xem toàn bộ lịch sử thuê xe (hỗ trợ bộ lọc filter).
+* **Kiểm duyệt User:** Khóa (Ban) và Mở khóa (Unban) tài khoản vi phạm.
+
+**🚀 Chưa làm:**
+* [ ] **Phân tích dữ liệu lớn (K-Means Clustering):** 🚨 *Tính năng đột phá:* Thu thập dữ liệu lịch sử các chuyến đi (tọa độ trả xe), chạy thuật toán K-Means phân cụm để tự động "chấm" không gian và đề xuất các vị trí tối ưu xây dựng trạm sạc mới.
+* [ ] **Khôi phục xe (Maintenance):** API chuyển trạng thái xe từ `MAINTENANCE` về `AVAILABLE` sau khi bảo trì xong.
+
+---
+
+## V. Nhóm Giám Sát Sức Khỏe Pin & Giả Lập IoT (Smart Battery & IoT Simulation)
+**✅ Đã hoàn thành:**
+* (Chưa bắt đầu)
+
+**🚀 Chưa làm:**
+* [ ] **Nâng cấp Entity Scooter (Smart Battery):** Bổ sung các chỉ số chuyên sâu: Chu kỳ sạc (`cycleCount`), Mức độ chai pin (`soh` - State of Health), và Nhiệt độ pin (`temperature`).
+* [ ] **Giả lập IoT (Digital Twin):** Xây dựng Scheduled Tasks (CRON jobs) giả lập dữ liệu tĩnh thành luồng dữ liệu động: Xe tự động di chuyển tọa độ GPS, tiêu hao năng lượng và thay đổi nhiệt độ theo thời gian thực.
+* [ ] **Auto-Maintenance Thông Minh:** 🚨 *Tính năng đột phá:* Tự động loại biên (chuyển sang `MAINTENANCE`) đối với các xe có nhiệt độ Pin vượt ngưỡng an toàn, sụt pin nhanh bất thường, hoặc dung lượng pin < 15%.
+* [ ] **Xếp lịch sạc tự động:** Tự động hóa xếp lịch sạc pin dựa trên mức năng lượng còn lại của từng xe.
+
+---
+
+## VI. Nhóm Tương Tác Thời Gian Thực & Bản Đồ (Real-time GIS)
+**✅ Đã hoàn thành:**
+* (Chưa bắt đầu)
+
+**🚀 Chưa làm:**
+* [ ] **WebSocket Tracking:** Tích hợp giao thức WebSocket để bắn tọa độ xe liên tục lên Admin Dashboard, giúp xe hiển thị di chuyển mượt mà trên bản đồ mà không cần tải lại trang.
+* [ ] **Geofencing (Hàng rào địa lý):** Thuật toán cảnh báo thời gian thực nếu hệ thống phát hiện tọa độ xe di chuyển vượt quá ranh giới khu vực quy định (ví dụ: ra khỏi khuôn viên trường Đại học Bách Khoa Hà Nội).

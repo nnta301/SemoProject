@@ -44,8 +44,14 @@ public class RentalService {
         Scooter scooter = scooterRepository.findById(requestDTO.getScooterId())
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy Xe"));
 
-        if (!"ADMIN".equals(user.getRole()) && user.getBalance() < 50000.0) {
-            throw new RuntimeException("Số dư tài khoản không đủ để bắt đầu chuyến đi. Vui lòng đảm bảo trong ví có ít nhất 50.000 VNĐ.");
+        if (!"ADMIN".equals(user.getRole())) {
+            if (user.getBalance() < 0) {
+                throw new RuntimeException("Tài khoản của bạn đang có dư nợ (" + user.getBalance() + " VNĐ). Vui lòng nạp tiền để thanh toán nợ trước khi thuê chuyến mới!");
+            }
+
+            if (user.getBalance() < 50000.0) {
+                throw new RuntimeException("Số dư tài khoản không đủ. Vui lòng đảm bảo trong ví có ít nhất 50.000 VNĐ để đặt cọc.");
+            }
         }
 
         if (!"AVAILABLE".equals(scooter.getStatus())) {
