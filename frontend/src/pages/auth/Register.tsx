@@ -2,7 +2,7 @@
 // Gọi POST /api/auth/register qua features/auth.
 import { useState } from 'react'
 // FIX 1: Import type-only chống lỗi verbatimModuleSyntax
-import type { FormEvent } from 'react'
+import type { SyntheticEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom'
 import { Mail, Lock, User, Phone, Eye, EyeOff, UserPlus } from 'lucide-react'
 
@@ -28,16 +28,16 @@ export default function Register() {
   const [loading, setLoading] = useState(false)
 
   // FIX 3: Định nghĩa FormEvent cho e
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: SyntheticEvent<HTMLFormElement>) {
     e.preventDefault()
     setError(null)
 
     if (password !== confirmPassword) {
-      setError('Mật khẩu xác nhận chưa khớp.')
+      setError('Passwords do not match.')
       return
     }
     if (password.length < 8) {
-      setError('Mật khẩu phải có ít nhất 8 ký tự.')
+      setError('Password must be at least 8 characters long.')
       return
     }
 
@@ -46,7 +46,7 @@ export default function Register() {
       await register({ fullName, email, password, phoneNumber })
       navigate(ROUTES.LOGIN, { replace: true })
     } catch (err) {
-      setError(getApiErrorMessage(err, 'Đăng ký thất bại. Vui lòng kiểm tra lại thông tin.'))
+      setError(getApiErrorMessage(err, 'Registration failed. Please check your information.'))
     } finally {
       setLoading(false)
     }
@@ -81,24 +81,24 @@ export default function Register() {
   )
 
   return (
-    <AuthShell
-      eyebrow="Tạo tài khoản"
-      title="Bắt đầu hành trình."
-      description="Đăng ký để truy cập mạng lưới xe điện thông minh, quản lý ví và lịch sử thuê — tất cả trong một nơi."
-    >
+      <AuthShell
+        eyebrow="Create Account"
+        title="Start Your Journey."
+        description="Sign up to access the smart e-scooter network, manage your wallet, and rent history — all in one place."
+      >
       <Card variant="glow">
         <form className="auth-form" onSubmit={handleSubmit}>
           <div className="auth-form__header">
-            <h2 className="auth-form__title">Tạo tài khoản</h2>
+            <h2 className="auth-form__title">Create Account</h2>
             <p className="auth-form__subtitle">
-              Điền thông tin của bạn để mở tài khoản khách hàng.
+              Fill in your information to create a new customer account.
             </p>
           </div>
 
           {error && <Alert>{error}</Alert>}
 
           <TextField
-            label="Họ và tên"
+            label="Full Name"
             name="fullName"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
@@ -121,7 +121,7 @@ export default function Register() {
           />
 
           <TextField
-            label="Số điện thoại"
+            label="Phone Number"
             name="phoneNumber"
             value={phoneNumber}
             onChange={(e) => setPhoneNumber(e.target.value)}
@@ -132,30 +132,30 @@ export default function Register() {
           />
 
           <TextField
-            label="Mật khẩu"
+            label="Password"
             type={showPwd ? 'text' : 'password'}
             name="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Tối thiểu 8 ký tự"
+            placeholder="At least 8 characters, with uppercase, lowercase, and numbers"
             autoComplete="new-password"
-            helpText="Nên dùng ít nhất 8 ký tự, có chữ hoa, chữ thường và số."
+            helpText="At least 8 characters, with uppercase, lowercase, and numbers."
             required
             leadingIcon={<Lock size={18} strokeWidth={1.7} />}
-            trailingAction={eyeButton(showPwd, setShowPwd, 'Hiện/ẩn mật khẩu')}
+            trailingAction={eyeButton(showPwd, setShowPwd, 'Show/Hide password')}
           />
 
           <TextField
-            label="Xác nhận mật khẩu"
+            label="Confirm Password"
             type={showConfirmPwd ? 'text' : 'password'}
             name="confirmPassword"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            placeholder="Nhập lại mật khẩu"
+            placeholder="Enter password again for confirmation"
             autoComplete="new-password"
             required
             leadingIcon={<Lock size={18} strokeWidth={1.7} />}
-            trailingAction={eyeButton(showConfirmPwd, setShowConfirmPwd, 'Hiện/ẩn mật khẩu xác nhận')}
+            trailingAction={eyeButton(showConfirmPwd, setShowConfirmPwd, 'Show/Hide confirm password')}
           />
 
           <div className="auth-form__actions">
@@ -164,12 +164,12 @@ export default function Register() {
               disabled={loading}
               leadingIcon={<UserPlus size={18} strokeWidth={1.8} />}
             >
-              {loading ? 'Đang tạo tài khoản…' : 'Tạo tài khoản'}
+              {loading ? 'Creating account...' : 'Create Account'}
             </Button>
             <p className="auth-form__hint">
-              Đã có tài khoản?{' '}
+              Already have an account?{' '}
               <Link className="auth-form__link" to={ROUTES.LOGIN}>
-                Đăng nhập
+                Sign in
               </Link>
             </p>
           </div>

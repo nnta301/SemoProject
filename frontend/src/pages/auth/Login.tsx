@@ -1,8 +1,8 @@
 // Trang Đăng nhập — Tech Blue Luxury (tiếng Việt).
 // Sử dụng `useAuth().login()` → gọi POST /api/auth/login qua features/auth.
 import { useState } from 'react'
-// FIX 1: Thêm type-only import cho FormEvent chống lỗi verbatimModuleSyntax
-import type { FormEvent } from 'react'
+// FIX 1: Thêm type-only import cho SyntheticEvent chống lỗi verbatimModuleSyntax
+import type { SyntheticEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Mail, Lock, Eye, EyeOff, ArrowRight, LogIn } from 'lucide-react'
 
@@ -23,8 +23,8 @@ export default function Login() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
-  // FIX 3: Thêm kiểu dữ liệu FormEvent cho tham số e
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  // FIX 3: Thêm kiểu dữ liệu SyntheticEvent cho tham số e
+  async function handleSubmit(e: SyntheticEvent<HTMLFormElement>) {
     e.preventDefault()
     setError(null)
     setLoading(true)
@@ -32,7 +32,7 @@ export default function Login() {
       await login({ email, password })
       navigate(ROUTES.HOME, { replace: true })
     } catch (err) {
-      setError(getApiErrorMessage(err, 'Đăng nhập thất bại. Vui lòng kiểm tra lại email và mật khẩu.'))
+setError(getApiErrorMessage(err, 'Login failed. Please check your email and password.'))
     } finally {
       setLoading(false)
     }
@@ -41,15 +41,15 @@ export default function Login() {
   return (
     <AuthShell
       eyebrow="Semo • Tech Mobility"
-      title="Chào mừng trở lại."
-      description="Đăng nhập để quản lý xe điện, chuyến đi và ví của bạn trên một giao diện thông minh, an toàn và sang trọng."
+      title="Welcome back."
+      description="Log in to manage your electric scooter, trips, and wallet on a smart, safe, and luxurious interface."
     >
       <Card variant="glow">
         <form className="auth-form" onSubmit={handleSubmit}>
           <div className="auth-form__header">
-            <h2 className="auth-form__title">Đăng nhập</h2>
+            <h2 className="auth-form__title">Log in</h2>
             <p className="auth-form__subtitle">
-              Sử dụng email và mật khẩu đã đăng ký để tiếp tục.
+              Use your registered email and password to continue.
             </p>
           </div>
 
@@ -60,21 +60,20 @@ export default function Login() {
             type="email"
             name="email"
             value={email}
-            // TypeScript có khả năng tự suy luận inline event (e) ở đây nên không cần gán type thủ công
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="ban@vidu.com"
+            placeholder="you@example.com"
             autoComplete="email"
             required
             leadingIcon={<Mail size={18} strokeWidth={1.7} />}
           />
 
           <TextField
-            label="Mật khẩu"
+            label="Password"
             type={showPassword ? 'text' : 'password'}
             name="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Nhập mật khẩu của bạn"
+            placeholder="Enter your password"
             autoComplete="current-password"
             required
             leadingIcon={<Lock size={18} strokeWidth={1.7} />}
@@ -82,7 +81,7 @@ export default function Login() {
               <button
                 type="button"
                 onClick={() => setShowPassword((v) => !v)}
-                aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
                 style={{
                   background: 'transparent',
                   border: 0,
@@ -105,12 +104,12 @@ export default function Login() {
               leadingIcon={<LogIn size={18} strokeWidth={1.8} />}
               trailingIcon={!loading ? <ArrowRight size={18} strokeWidth={1.8} /> : null}
             >
-              {loading ? 'Đang đăng nhập…' : 'Đăng nhập'}
+              {loading ? 'Logging in...' : 'Log in'}
             </Button>
             <p className="auth-form__hint">
-              Chưa có tài khoản?{' '}
+              Don't have an account?{' '}
               <Link className="auth-form__link" to={ROUTES.REGISTER}>
-                Tạo tài khoản mới
+                Create a new account
               </Link>
             </p>
           </div>

@@ -1,7 +1,7 @@
 // Admin analytics page using the optimal-stations API.
 import { useState } from 'react'
 // FIX 1: Dùng type-only import cho FormEvent và ChangeEvent
-import type { FormEvent, ChangeEvent } from 'react'
+import type { SyntheticEvent, ChangeEvent } from 'react'
 
 import { SectionHeader } from '../../components/layout'
 import { Alert, Button, Card, Table, TextField } from '../../components/ui'
@@ -22,7 +22,7 @@ export default function AnalyticsPage() {
   // Hiện tại state này đã mang đúng cấu trúc mà <ScooterMap /> yêu cầu
   const [scooters, setScooters] = useState<Scooter[]>([])
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault()
     setLoading(true)
     setError('')

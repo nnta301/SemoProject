@@ -35,7 +35,7 @@ export default function ProfilePage() {
   const [success, setSuccess] = useState('')
 
   const balance = typeof user?.balance === 'number' ? user.balance : null
-  const balanceDisplay = balance === null ? 'Chưa có dữ liệu' : formatCurrency(balance)
+  const balanceDisplay = balance === null ? 'No data available' : formatCurrency(balance)
 
   // FIX 2: Khai báo FormEvent cho tham số event
   async function handleDeposit(event: FormEvent<HTMLFormElement>) {
@@ -47,7 +47,7 @@ export default function ProfilePage() {
     try {
       const amount = Number(depositAmount)
       if (!Number.isFinite(amount) || amount < 10000) {
-        setError('Số tiền nạp tối thiểu là 10.000 VNĐ.')
+        setError('The minimum top-up amount is 10,000 VND.')
         return
       }
 
@@ -62,11 +62,11 @@ export default function ProfilePage() {
       setSuccess(
         response?.message
           ? `${response.message} (+${niceAmount})`
-          : `Nạp ${niceAmount} thành công.`,
+          : `Successfully topped up ${niceAmount}.`,
       )
       setDepositAmount('')
     } catch (err) {
-      setError(getApiErrorMessage(err, 'Không thể nạp tiền vào ví.'))
+      setError(getApiErrorMessage(err, 'Failed to deposit money into wallet.'))
     } finally {
       setLoadingDeposit(false)
     }
@@ -81,19 +81,19 @@ export default function ProfilePage() {
 
     try {
       if (!user?.id) {
-        setError('Không xác định được tài khoản hiện tại.')
+        setError('Current user account could not be determined.')
         return
       }
       if (newPassword.length < 8) {
-        setError('Mật khẩu mới phải có ít nhất 8 ký tự.')
+        setError('New password must be at least 8 characters long.')
         return
       }
       await changePassword(user.id, { currentPassword, newPassword })
-      setSuccess('Đổi mật khẩu thành công.')
+      setSuccess('Password changed successfully.')
       setCurrentPassword('')
       setNewPassword('')
     } catch (err) {
-      setError(getApiErrorMessage(err, 'Không thể đổi mật khẩu.'))
+      setError(getApiErrorMessage(err, 'Failed to change password.'))
     } finally {
       setLoadingPwd(false)
     }
@@ -123,26 +123,24 @@ export default function ProfilePage() {
     </button>
   )
 
-  const roleLabel = user?.role === ROLES.ADMIN ? 'Quản trị viên' : 'Khách hàng'
+  const roleLabel = user?.role === ROLES.ADMIN ? 'Administrator' : 'Customer'
 
   return (
     <div className="page-stack">
       <SectionHeader
-        eyebrow="Tài khoản"
-        title="Hồ sơ & Ví của bạn"
-        description="Quản lý số dư, lịch sử và bảo mật tài khoản tại một nơi duy nhất."
-      />
-
+        eyebrow="Account Profile"
+        title="Your Account & Wallet"
+        description="Manage your balance, history, and account security all in one place."/>
       {error && <Alert>{error}</Alert>}
       {success && <Alert tone="success">{success}</Alert>}
 
       {/* Wallet hero */}
       <section className="wallet-card">
-        <p className="wallet-card__label">Số dư ví Semo</p>
+        <p className="wallet-card__label">Balance</p>
         <p className="wallet-card__balance">{balanceDisplay}</p>
         <p className="wallet-card__meta">
-          Đơn vị tiền tệ: <strong style={{ color: '#fff' }}>VNĐ</strong> &nbsp;•&nbsp;
-          Chủ tài khoản:{' '}
+          Currency: <strong style={{ color: '#fff' }}>VND</strong> &nbsp;•&nbsp;
+          Account holder:{' '}
           <strong style={{ color: '#fff' }}>{user?.fullName || user?.email || '—'}</strong>
         </p>
         <span className="wallet-card__chip">
@@ -154,9 +152,9 @@ export default function ProfilePage() {
         {/* Deposit card */}
         <Card>
           <SectionHeader
-            eyebrow="Ví"
-            title="Nạp tiền vào ví"
-            description="Nạp tối thiểu 10.000 VNĐ. Số dư cập nhật tức thì sau khi giao dịch thành công."
+            eyebrow="Wallet"
+            title="Top Up Wallet"
+            description="Minimum top-up amount is 10,000 VND. Balance updates immediately after successful transaction."
             actions={<Wallet size={20} strokeWidth={1.7} style={{ color: 'var(--color-cyan-soft)' }} />}
           />
 
@@ -175,20 +173,20 @@ export default function ProfilePage() {
             </div>
 
             <TextField
-              label="Số tiền nạp (VNĐ)"
+              label="Deposit Amount (VND)"
               type="number"
               min="10000"
               step="1000"
               name="depositAmount"
               value={depositAmount}
               onChange={(event: ChangeEvent<HTMLInputElement>) => setDepositAmount(event.target.value)}
-              placeholder="Ví dụ: 100000"
+              placeholder="e.g., 100000"
               required
               leadingIcon={<Wallet size={18} strokeWidth={1.7} />}
               helpText={
                 depositAmount && Number(depositAmount) >= 10000
-                  ? `Sẽ nạp ${formatCurrency(Number(depositAmount))} vào ví.`
-                  : 'Tối thiểu 10.000 VNĐ.'
+                  ? `Will deposit ${formatCurrency(Number(depositAmount))} into your wallet.`
+                  : 'Minimum 10,000 VND.'
               }
             />
 
@@ -197,7 +195,7 @@ export default function ProfilePage() {
               disabled={loadingDeposit}
               leadingIcon={<Plus size={18} strokeWidth={1.8} />}
             >
-              {loadingDeposit ? 'Đang nạp…' : 'Nạp ngay'}
+              {loadingDeposit ? 'Loading...' : 'Top Up Now'}
             </Button>
           </form>
         </Card>
@@ -205,33 +203,33 @@ export default function ProfilePage() {
         {/* Password card */}
         <Card>
           <SectionHeader
-            eyebrow="Bảo mật"
-            title="Đổi mật khẩu"
-            description="Đổi mật khẩu thường xuyên để bảo vệ tài khoản của bạn."
+            eyebrow="Security"
+            title="Change Password"
+            description="Change your password regularly to protect your account."
             actions={<ShieldCheck size={20} strokeWidth={1.7} style={{ color: 'var(--color-cyan-soft)' }} />}
           />
 
           <form className="form-grid" onSubmit={handlePasswordChange}>
             <TextField
-              label="Mật khẩu hiện tại"
+              label="Current Password"
               type={showCurrent ? 'text' : 'password'}
               name="currentPassword"
               value={currentPassword}
               onChange={(event: ChangeEvent<HTMLInputElement>) => setCurrentPassword(event.target.value)}
               required
               leadingIcon={<Lock size={18} strokeWidth={1.7} />}
-              trailingAction={eyeBtn(showCurrent, setShowCurrent, 'Hiện/ẩn mật khẩu hiện tại')}
+              trailingAction={eyeBtn(showCurrent, setShowCurrent, 'Show/Hide Current Password')}
             />
             <TextField
-              label="Mật khẩu mới"
+              label="New Password"
               type={showNew ? 'text' : 'password'}
               name="newPassword"
               value={newPassword}
               onChange={(event: ChangeEvent<HTMLInputElement>) => setNewPassword(event.target.value)}
               required
               leadingIcon={<KeyRound size={18} strokeWidth={1.7} />}
-              trailingAction={eyeBtn(showNew, setShowNew, 'Hiện/ẩn mật khẩu mới')}
-              helpText="Tối thiểu 8 ký tự, nên dùng chữ hoa, chữ thường và số."
+              trailingAction={eyeBtn(showNew, setShowNew, 'Show/Hide New Password')}
+              helpText="Minimum 8 characters, use uppercase, lowercase and numbers."
             />
             <Button
               type="submit"
@@ -239,7 +237,7 @@ export default function ProfilePage() {
               variant="secondary"
               leadingIcon={<ShieldCheck size={18} strokeWidth={1.8} />}
             >
-              {loadingPwd ? 'Đang lưu…' : 'Cập nhật mật khẩu'}
+              {loadingPwd ? 'Loading...' : 'Update Password'}
             </Button>
           </form>
         </Card>
@@ -247,11 +245,11 @@ export default function ProfilePage() {
 
       {/* Account details */}
       <Card>
-        <SectionHeader eyebrow="Thông tin" title="Tài khoản đã đăng nhập" />
+        <SectionHeader eyebrow="Information" title="Logged-in Account" />
         <div className="profile-details" style={{ marginTop: '0.6rem' }}>
           <div style={detailsRow}>
             <User size={18} strokeWidth={1.7} style={iconStyle} />
-            <span><strong>Họ tên:</strong> {user?.fullName || '—'}</span>
+            <span><strong>Name:</strong> {user?.fullName || '—'}</span>
           </div>
           <div style={detailsRow}>
             <Mail size={18} strokeWidth={1.7} style={iconStyle} />
@@ -259,7 +257,7 @@ export default function ProfilePage() {
           </div>
           <div style={detailsRow}>
             <BadgeCheck size={18} strokeWidth={1.7} style={iconStyle} />
-            <span><strong>Vai trò:</strong> {roleLabel}</span>
+            <span><strong>Role:</strong> {roleLabel}</span>
           </div>
         </div>
       </Card>

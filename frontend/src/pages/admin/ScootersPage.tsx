@@ -1,7 +1,7 @@
 // Admin scooters management page with create/update support.
 import { useEffect, useMemo, useState } from 'react'
 // FIX 1: Thêm type-only import cho các Event React
-import type { FormEvent, ChangeEvent } from 'react'
+import type { SyntheticEvent, ChangeEvent } from 'react'
 
 import { SectionHeader } from '../../components/layout'
 import ScooterMap from '../../components/map/ScooterMap'
@@ -169,8 +169,8 @@ export default function ScootersPage() {
     setIsModalOpen(true)
   }
 
-  // FIX 9: Khai báo FormEvent cho hàm submit
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  // FIX 9: Khai báo SyntheticEvent cho hàm submit
+  async function handleSubmit(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault()
     setSaving(true)
     setError('')

@@ -1,7 +1,7 @@
 // Admin maintenance page for creating logs, searching scooter history, and resolving service.
 import { useState } from 'react'
 // FIX 1: Import type-only cho các sự kiện React chống lỗi verbatimModuleSyntax
-import type { FormEvent, ChangeEvent } from 'react'
+import type { SyntheticEvent, ChangeEvent } from 'react'
 
 import { SectionHeader } from '../../components/layout'
 import { Alert, Button, Card, Modal, Table, TextField } from '../../components/ui'
@@ -39,7 +39,7 @@ export default function MaintenancePage() {
   const [resolveScooterId, setResolveScooterId] = useState<string>('')
 
   // FIX 4: Thêm kiểu dữ liệu FormEvent cho tham số event
-  async function handleCreate(event: FormEvent<HTMLFormElement>) {
+  async function handleCreate(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault()
     setLoading(true)
     setError('')
@@ -61,7 +61,7 @@ export default function MaintenancePage() {
   }
 
   // FIX 4: Thêm kiểu dữ liệu FormEvent cho tham số event
-  async function handleSearch(event: FormEvent<HTMLFormElement>) {
+  async function handleSearch(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault()
     setLoading(true)
     setError('')
@@ -79,7 +79,7 @@ export default function MaintenancePage() {
   }
 
   // FIX 4: Thêm kiểu dữ liệu FormEvent cho tham số event
-  async function handleResolve(event: FormEvent<HTMLFormElement>) {
+  async function handleResolve(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault()
     setLoading(true)
     setError('')
