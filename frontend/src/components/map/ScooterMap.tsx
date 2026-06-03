@@ -169,9 +169,9 @@ export default function ScooterMap({ scooters = [], stations = [], onMapClick }:
       </MapContainer>
 
       <div className="scooter-map__legend">
-        <span><i className="scooter-map__swatch scooter-map__swatch--available" /> Sẵn sàng</span>
-        <span><i className="scooter-map__swatch scooter-map__swatch--in-use" /> Đang đi</span>
-        <span><i className="scooter-map__swatch scooter-map__swatch--maintenance" /> Bảo trì</span>
+        <span><i className="scooter-map__swatch scooter-map__swatch--available" /> Available</span>
+        <span><i className="scooter-map__swatch scooter-map__swatch--in-use" /> In Use</span>
+        <span><i className="scooter-map__swatch scooter-map__swatch--maintenance" /> Under Maintenance</span>
       </div>
 
       {mappedScooters.length === 0 && (

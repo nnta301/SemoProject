@@ -27,9 +27,9 @@ interface NavItem {
 const ICON_PROPS = { size: 18, strokeWidth: 1.7 }
 
 const userNavItems: NavItem[] = [
-  { label: 'Bảng điều khiển', to: ROUTES.DASHBOARD, icon: <LayoutDashboard {...ICON_PROPS} /> },
-  { label: 'Đặt xe',          to: ROUTES.BOOKING,   icon: <MapPinned      {...ICON_PROPS} /> },
-  { label: 'Tài khoản & Ví',  to: ROUTES.PROFILE,   icon: <UserCircle     {...ICON_PROPS} /> },
+  { label: 'Dashboard', to: ROUTES.DASHBOARD, icon: <LayoutDashboard {...ICON_PROPS} /> },
+  { label: 'Ride booking',          to: ROUTES.BOOKING,   icon: <MapPinned      {...ICON_PROPS} /> },
+  { label: 'Account & Wallet',  to: ROUTES.PROFILE,   icon: <UserCircle     {...ICON_PROPS} /> },
 ]
 
 const adminNavItems: NavItem[] = [
@@ -86,16 +86,16 @@ export default function AppShell({ mode = 'user', children }: AppShellProps) {
 
   const isAdminMode = mode === 'admin'
   const navItems = isAdminMode ? adminNavItems : userNavItems
-  const sectionLabel = isAdminMode ? 'Admin' : 'Khám phá'
+  const sectionLabel = isAdminMode ? 'Admin' : 'Explore'
 
   function handleLogout() {
     logout()
     navigate(ROUTES.LOGIN, { replace: true })
   }
 
-  const roleLabel = user?.role === ROLES.ADMIN ? 'Administrator' : 'Khách hàng'
-  const topbarEyebrow = isAdminMode ? 'Fleet operations' : 'Trải nghiệm xe điện'
-  const topbarTitle = isAdminMode ? 'Admin console' : 'Không gian của bạn'
+  const roleLabel = user?.role === ROLES.ADMIN ? 'Administrator' : 'User Platform'
+  const topbarEyebrow = isAdminMode ? 'Fleet operations' : 'E-mobility experience'
+  const topbarTitle = isAdminMode ? 'Admin console' : 'Personal Console'
 
   return (
     <div className="app-shell">
@@ -117,7 +117,7 @@ export default function AppShell({ mode = 'user', children }: AppShellProps) {
             </div>
             <div className="app-shell__user-info">
               <span className="app-shell__user-name">
-                {user?.fullName || (isAdminMode ? 'Người quản trị' : 'Người dùng')}
+                {user?.fullName || (isAdminMode ? 'Administrator' : 'User')}
               </span>
               <span className="app-shell__user-email">{user?.email || ''}</span>
             </div>
@@ -127,7 +127,7 @@ export default function AppShell({ mode = 'user', children }: AppShellProps) {
             onClick={handleLogout}
             leadingIcon={<LogOut size={16} strokeWidth={1.8} />}
           >
-            {isAdminMode ? 'Sign out' : 'Đăng xuất'}
+            Sign out
           </Button>
         </div>
       </aside>

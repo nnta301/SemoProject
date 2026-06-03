@@ -90,9 +90,9 @@ const statusStyles: Record<string, { color: string; fillColor: string }> = {
 }
 
 const statusLabel: Record<string, string> = {
-  [SCOOTER_STATUSES.AVAILABLE]:   'Sẵn sàng',
-  [SCOOTER_STATUSES.IN_USE]:      'Đang đi',
-  [SCOOTER_STATUSES.MAINTENANCE]: 'Bảo trì',
+  [SCOOTER_STATUSES.AVAILABLE]:   'Available',
+  [SCOOTER_STATUSES.IN_USE]:      'In Use',
+  [SCOOTER_STATUSES.MAINTENANCE]: 'Maintenance',
 }
 
 // ----- Helpers -----
@@ -188,7 +188,7 @@ export default function BookingPage() {
     setScootersError(null)
     getAllScooters()
       .then((data) => { if (alive) setScooters(Array.isArray(data) ? data : []) })
-      .catch((err) => { if (alive) setScootersError(getApiErrorMessage(err, 'Không thể tải danh sách xe.')) })
+      .catch((err) => { if (alive) setScootersError(getApiErrorMessage(err, 'Failed to load scooter list. Please try again later.')) })
       .finally(() => { if (alive) setScootersLoading(false) })
     return () => { alive = false }
   }, [refreshKey])
@@ -198,7 +198,7 @@ export default function BookingPage() {
 
   function requestLocation() {
     if (!navigator.geolocation) {
-      setGeoError('Trình duyệt không hỗ trợ định vị.')
+      setGeoError('Browser does not support geolocation.')
       return
     }
     setGeoLoading(true)
@@ -209,7 +209,7 @@ export default function BookingPage() {
         setGeoLoading(false)
       },
       (err) => {
-        setGeoError(err.message || 'Không thể lấy vị trí.')
+        setGeoError(err.message || 'Failed to get location.')
         setGeoLoading(false)
       },
       { enableHighAccuracy: true, timeout: 8000, maximumAge: 30000 },
@@ -262,7 +262,7 @@ export default function BookingPage() {
 
   function handleSelect(s: EnrichedScooter) {
     if (ride && ride.state !== 'idle' && ride.scooterId !== s.id) {
-      setActionError('Bạn đang trong chuyến đi — kết thúc trước khi chọn xe khác.')
+      setActionError('You have an active ride. Please end it before selecting another scooter.')
       return
     }
     if (s._status !== SCOOTER_STATUSES.AVAILABLE && !ride) return
@@ -311,7 +311,7 @@ export default function BookingPage() {
       })
       setRefreshKey((k) => k + 1)
     } catch (err) {
-      setActionError(getApiErrorMessage(err, 'Không thể bắt đầu chuyến đi.'))
+      setActionError(getApiErrorMessage(err, 'Failed to start the trip.'))
     } finally { setActionLoading(false) }
   }
 
@@ -330,7 +330,7 @@ export default function BookingPage() {
       setRide(null); saveRide(null); setSelectedId(null)
       setRefreshKey((k) => k + 1)
     } catch (err) {
-      setActionError(getApiErrorMessage(err, 'Không thể kết thúc chuyến đi.'))
+      setActionError(getApiErrorMessage(err, 'Failed to end the trip.'))
     } finally { setActionLoading(false) }
   }
 
@@ -369,18 +369,18 @@ export default function BookingPage() {
     <div className="page-stack">
       <div className="booking-header">
         <SectionHeader
-          eyebrow="Đặt xe"
-          title="Cổng đặt xe thông minh"
-          description="Tìm xe gần nhất, đặt - mở khóa - bắt đầu chuyến đi và theo dõi pin theo thời gian thực."
+          eyebrow="Booking"
+          title="Smart Mobility, Smart Living"
+          description="Find the nearest scooter, book - unlock - ride, and track battery life in real-time."
         />
         <div className="booking-header__chips">
           <span className={`booking-chip ${userPos ? 'is-on' : 'is-warn'}`}>
             <Crosshair size={14} strokeWidth={1.9} />
-            {userPos ? 'Đã có định vị' : geoError ? 'Lỗi định vị' : 'Chưa có định vị'}
+            {userPos ? 'Location available' : geoError ? 'Location error' : 'Location unavailable'}
           </span>
           <span className="booking-chip is-on">
             <Zap size={14} strokeWidth={1.9} />
-            {visibleScooters.length} xe phù hợp
+            {visibleScooters.length} suitable scooters
           </span>
         </div>
       </div>
@@ -391,35 +391,35 @@ export default function BookingPage() {
         <div className="total-banner">
           <span>
             <Sparkles size={18} strokeWidth={1.8} />{' '}
-            Đã kết thúc chuyến trên <strong>{completedInfo.scooterName}</strong> · Tổng cước{' '}
+            Trip ended on <strong>{completedInfo.scooterName}</strong> · Total fare{' '}
             <strong>{formatCurrency(completedInfo.totalPrice)}</strong>
           </span>
-          <button className="ui-button ui-button--secondary" onClick={dismissCompleted}>Đóng</button>
+          <button className="ui-button ui-button--secondary" onClick={dismissCompleted}>Close</button>
         </div>
       )}
 
       <div className="booking-layout">
         {/* ============== CỘT TRÁI: BỘ LỌC + DANH SÁCH ============== */}
         <Card>
-          <SectionHeader eyebrow="Bộ lọc xe" title="Tìm xe phù hợp" description="Tìm xe gần bạn hoặc lọc theo trạng thái." />
+        <SectionHeader eyebrow="Scooter Filter" title="Find the Right Ride" description="Find scooters near you or filter by status." />
           <form className="filter-form" onSubmit={(e) => e.preventDefault()}>
             <TextField
-              label="Tìm theo tên / mã xe"
+              label="Search by name / scooter ID"
               name="q"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Ví dụ: VinFast"
+              placeholder="Example: VinFast"
               leadingIcon={<Search size={18} strokeWidth={1.7} />}
             />
 
             <div>
-              <span className="ui-field__label" style={{ display: 'block', marginBottom: 6 }}>Trạng thái</span>
+              <span className="ui-field__label" style={{ display: 'block', marginBottom: 6 }}>Status</span>
               <select
                 className="select-input"
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
               >
-                <option value="ALL">Tất cả</option>
+                <option value="ALL">All</option>
                 {SCOOTER_STATUS_OPTIONS.map((s) => (
                   <option key={s} value={s}>{statusLabel[s]}</option>
                 ))}
@@ -432,7 +432,7 @@ export default function BookingPage() {
                 checked={useRadius}
                 onChange={(e) => setUseRadius(e.target.checked)}
               />
-              Chỉ hiện xe trong bán kính <strong>{radiusKm.toFixed(1)} km</strong>
+              Show scooters within <strong>{radiusKm.toFixed(1)} km</strong> radius only
             </label>
             <input
               type="range"
@@ -450,14 +450,14 @@ export default function BookingPage() {
                 disabled={geoLoading}
                 leadingIcon={<Crosshair size={16} strokeWidth={1.8} />}
               >
-                {geoLoading ? 'Đang định vị…' : 'Cập nhật vị trí'}
+                {geoLoading ? 'Locating...' : 'Update location'}
               </Button>
               <Button
                 variant="ghost"
                 onClick={() => setRefreshKey((k) => k + 1)}
                 leadingIcon={<RefreshCcw size={16} strokeWidth={1.8} />}
               >
-                Tải lại
+                Refresh scooters
               </Button>
             </div>
 
@@ -465,9 +465,9 @@ export default function BookingPage() {
           </form>
 
           <div className="scooter-list">
-            {scootersLoading && <p className="empty-state__text">Đang tải xe…</p>}
+            {scootersLoading && <p className="empty-state__text">Loading scooters...</p>}
             {!scootersLoading && visibleScooters.length === 0 && (
-              <p className="empty-state__text">Không có xe nào phù hợp bộ lọc.</p>
+              <p className="empty-state__text">No scooters match your filters.</p>
             )}
             {visibleScooters.map((s) => {
               const isSelected = s.id === selectedId
@@ -480,7 +480,7 @@ export default function BookingPage() {
                 >
                   <div className="scooter-item__top">
                     <div>
-                      <p className="scooter-item__name">{s.name || s.codeName || `Xe #${s.id}`}</p>
+                      <p className="scooter-item__name">{s.name || s.codeName || `Scooter #${s.id}`}</p>
                       <p className="scooter-item__sub">{formatCoordinates(Number(s._lat), Number(s._lng))}</p>
                     </div>
                     <span className={`status-pill ${
@@ -502,8 +502,8 @@ export default function BookingPage() {
                   <div className="scooter-item__foot">
                     <span className="scooter-item__sub">
                       {isSelected
-                        ? (ride?.state && ride.state !== 'idle' ? 'Đang chọn' : 'Sẵn sàng để đặt')
-                        : (isLocked ? 'Không thể đặt ngay lúc này' : 'Bấm để chọn')}
+                        ? (ride?.state && ride.state !== 'idle' ? 'Currently selected' : 'Ready to book')
+                        : (isLocked ? 'Cannot book at the moment' : 'Click to select')}
                     </span>
                     {!isLocked && (
                       <button
@@ -511,7 +511,7 @@ export default function BookingPage() {
                         className={`scooter-item__action ${isSelected ? 'is-selected' : ''}`}
                         onClick={(e) => { e.stopPropagation(); handleSelect(s) }}
                       >
-                        {isSelected ? 'Đang chọn' : 'Chọn xe'}
+                        {isSelected ? 'Currently selected' : 'Select scooter'}
                       </button>
                     )}
                   </div>
@@ -524,12 +524,12 @@ export default function BookingPage() {
         {/* ============== CỘT GIỮA: MAP ============== */}
         <Card className="map-card">
           <SectionHeader
-            eyebrow="Bản đồ xe gần bạn"
-            title="Chọn xe trực tiếp trên bản đồ"
-            description="Chấm xanh nhạt = sẵn sàng · xanh đậm = đang đi · hồng = bảo trì."
+            eyebrow="Scooters Near You"
+            title="Select a Scooter on the Map"
+            description="Light blue dot = available · Dark blue = in use · Pink = maintenance."
             actions={(
               <span className="booking-chip is-on">
-                <Filter size={14} strokeWidth={1.9} /> Bán kính {radiusKm.toFixed(1)} km
+                <Filter size={14} strokeWidth={1.9} /> Radius: {radiusKm.toFixed(1)} km
               </span>
             )}
           />
@@ -555,7 +555,7 @@ export default function BookingPage() {
                     radius={8}
                     pathOptions={{ color: '#00E0A4', fillColor: '#00E0A4', fillOpacity: 0.9, weight: 2 }}
                   >
-                    <Tooltip direction="top" offset={[0, -8]} permanent>Bạn ở đây</Tooltip>
+                    <Tooltip direction="top" offset={[0, -8]} permanent>You are here</Tooltip>
                   </CircleMarker>
                   {useRadius && (
                     <Circle
@@ -588,10 +588,10 @@ export default function BookingPage() {
                     </Tooltip>
                     <Popup>
                       <div className="scooter-map__popup">
-                        <strong>{s.name || `Xe #${s.id}`}</strong>
-                        <p>Trạng thái: {statusLabel[s._status]}</p>
-                        <p>Pin: {formatBatteryLevel(s.batteryLevel) || '—'}</p>
-                        {s._distance != null && <p>Cách bạn: {fmtKm(s._distance)}</p>}
+                        <strong>{s.name || `Scooter #${s.id}`}</strong>
+                        <p>Status: {statusLabel[s._status]}</p>
+                        <p>Battery: {formatBatteryLevel(s.batteryLevel) || '—'}</p>
+                        {s._distance != null && <p>Distance: {fmtKm(s._distance)}</p>}
                       </div>
                     </Popup>
                   </CircleMarker>
@@ -605,23 +605,23 @@ export default function BookingPage() {
         <div style={{ display: 'grid', gap: '1.2rem' }}>
           <Card variant="glow">
             <div className="ride-status__head">
-              <SectionHeader eyebrow="Trạng thái chuyến đi" title="Ride status" />
+              <SectionHeader eyebrow="Ride Status" title="Ride status" />
               {ride?.state === 'riding' && (
                 <span className="booking-chip is-on"><Clock size={14} strokeWidth={1.9} /> {fmtDuration(ridingMs)}</span>
               )}
             </div>
 
             {!selectedScooter ? (
-              <p className="empty-state__text">Chọn một xe khả dụng để bắt đầu.</p>
+              <p className="empty-state__text">Select an available scooter to start.</p>
             ) : (
               <>
                 <p style={{ margin: '0 0 0.3rem', color: 'var(--text-strong)', fontWeight: 700 }}>
-                  {selectedScooter.name || `Xe #${selectedScooter.id}`}
+                  {selectedScooter.name || `Scooter #${selectedScooter.id}`}
                 </p>
                 <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.88rem' }}>
                   {formatCoordinates(selectedScooter._lat, selectedScooter._lng)}{' '}
-                  · Pin {formatBatteryLevel(selectedScooter.batteryLevel) || '—'}
-                  {selectedScooter._distance != null && <> · Cách bạn {fmtKm(selectedScooter._distance)}</>}
+                  · Battery {formatBatteryLevel(selectedScooter.batteryLevel) || '—'}
+                  {selectedScooter._distance != null && <> · Distance: {fmtKm(selectedScooter._distance)}</>}
                 </p>
 
                 {ride?.state === 'riding' && (
@@ -631,25 +631,25 @@ export default function BookingPage() {
                 <div className="timeline">
                   <TimelineRow
                     icon={<Zap size={16} strokeWidth={1.9} />}
-                    label="Đặt xe"
+                    label="Book Scooter"
                     value={ride?.reservedAt ? formatDateTime(ride.reservedAt) : '—'}
                     done={Boolean(ride?.reservedAt)}
                   />
                   <TimelineRow
                     icon={<Unlock size={16} strokeWidth={1.9} />}
-                    label="Mở khóa"
+                    label="Unlock Scooter"
                     value={ride?.unlockedAt ? formatDateTime(ride.unlockedAt) : '—'}
                     done={Boolean(ride?.unlockedAt)}
                   />
                   <TimelineRow
                     icon={<Play size={16} strokeWidth={1.9} />}
-                    label="Bắt đầu"
+                    label="Start Ride"
                     value={ride?.startedAt ? formatDateTime(ride.startedAt) : '—'}
                     done={Boolean(ride?.startedAt)}
                   />
                   <TimelineRow
                     icon={<Square size={16} strokeWidth={1.9} />}
-                    label="Kết thúc"
+                    label="End Ride"
                     value={completedInfo?.endTime ? formatDateTime(completedInfo.endTime) : '—'}
                     done={Boolean(completedInfo)}
                   />
@@ -661,7 +661,7 @@ export default function BookingPage() {
                     disabled={!selectedScooter || ride?.state !== 'selected'}
                     leadingIcon={<Zap size={16} strokeWidth={1.8} />}
                   >
-                    Đặt xe
+                    Book Scooter
                   </Button>
                   <Button
                     variant="secondary"
@@ -669,7 +669,7 @@ export default function BookingPage() {
                     disabled={ride?.state !== 'reserved'}
                     leadingIcon={<Unlock size={16} strokeWidth={1.8} />}
                   >
-                    Mở khóa
+                    Unlock Scooter
                   </Button>
                   <Button
                     variant="secondary"
@@ -677,7 +677,7 @@ export default function BookingPage() {
                     disabled={ride?.state !== 'unlocked' || actionLoading}
                     leadingIcon={<Play size={16} strokeWidth={1.8} />}
                   >
-                    {actionLoading && ride?.state === 'unlocked' ? 'Đang bắt đầu…' : 'Bắt đầu đi'}
+                    {actionLoading && ride?.state === 'unlocked' ? 'Starting...' : 'Start Ride'}
                   </Button>
                   <Button
                     variant="destructive"
@@ -685,7 +685,7 @@ export default function BookingPage() {
                     disabled={ride?.state !== 'riding' || actionLoading}
                     leadingIcon={<Square size={16} strokeWidth={1.8} />}
                   >
-                    {actionLoading && ride?.state === 'riding' ? 'Đang kết thúc…' : 'Kết thúc chuyến'}
+                    {actionLoading && ride?.state === 'riding' ? 'Ending...' : 'End Ride'}
                   </Button>
                 </div>
 
@@ -696,7 +696,7 @@ export default function BookingPage() {
                     style={{ marginTop: 8, width: '100%' }}
                     onClick={resetRide}
                   >
-                    Hủy chọn xe
+                    Cancel Scooter Selection
                   </button>
                 )}
               </>
@@ -705,9 +705,9 @@ export default function BookingPage() {
 
           <Card>
             <SectionHeader
-              eyebrow="Giả lập cảnh báo hệ thống"
-              title="Báo cáo sự cố xe"
-              description="Dùng khi xe gặp vấn đề. Hệ thống sẽ ghi nhận và tự kết thúc chuyến hiện tại."
+              eyebrow="System Alert Simulation"
+              title="Report Scooter Issues"
+              description="Use this when the scooter encounters issues. The system will log and automatically end your current ride."
               actions={<AlertTriangle size={18} strokeWidth={1.7} style={{ color: 'var(--warning)' }} />}
             />
             <div className="alert-buttons" style={{ marginTop: 10 }}>
@@ -717,7 +717,7 @@ export default function BookingPage() {
                 className="ui-button--warn"
                 leadingIcon={<Thermometer size={16} strokeWidth={1.8} />}
               >
-                Pin quá nóng
+                Battery overheating
               </Button>
               <Button
                 onClick={() => reportIssue('battery-drop')}
@@ -725,19 +725,19 @@ export default function BookingPage() {
                 className="ui-button--danger"
                 leadingIcon={<Gauge size={16} strokeWidth={1.8} />}
               >
-                Pin sụt nhanh
+                Rapid battery drain
               </Button>
               <Button
                 variant="ghost"
                 onClick={() => { setReports({}); saveReports({}) }}
                 leadingIcon={<ShieldAlert size={16} strokeWidth={1.8} />}
               >
-                Xóa các báo cáo cục bộ
+                Delete local Reports
               </Button>
             </div>
             <p className="empty-state__text" style={{ marginTop: 10, fontSize: '0.82rem' }}>
-              * Cập nhật trạng thái xe trên server cần quyền admin. Báo cáo này được lưu cục bộ và
-              tự kết thúc chuyến đi của bạn (rental). Đội vận hành sẽ tiếp nhận và xử lý.
+              Updating scooter status on the server requires admin privileges. This report is saved locally and
+              will automatically end your current ride (rental). The operations team will receive and process it.
             </p>
           </Card>
         </div>

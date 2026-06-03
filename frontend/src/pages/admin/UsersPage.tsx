@@ -1,7 +1,7 @@
 // Admin users management page with create, update, delete, and reset-password actions.
 import { useEffect, useMemo, useState } from 'react'
 // FIX 1: Import type-only chống lỗi verbatimModuleSyntax
-import type { FormEvent, ChangeEvent } from 'react'
+import type { SyntheticEvent, ChangeEvent } from 'react'
 
 import { SectionHeader } from '../../components/layout'
 import { Alert, Button, Card, Modal, Table, TextField } from '../../components/ui'
@@ -157,8 +157,8 @@ export default function UsersPage() {
     setUsers(Array.isArray(data) ? data : [])
   }
 
-  // FIX 6: Thêm FormEvent cho các hàm xử lý submit form
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  // FIX 6: Thêm SyntheticEvent cho các hàm xử lý submit form
+  async function handleSubmit(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault()
     setSaving(true)
     setError('')
@@ -202,8 +202,8 @@ export default function UsersPage() {
     }
   }
 
-  // FIX 6: Thêm FormEvent cho các hàm xử lý submit form
-  async function handleResetPassword(event: FormEvent<HTMLFormElement>) {
+  // FIX 6: Thêm SyntheticEvent cho các hàm xử lý submit form
+  async function handleResetPassword(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault()
     if (!selectedUser || selectedUser.id === null) return
 

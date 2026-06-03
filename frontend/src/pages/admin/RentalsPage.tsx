@@ -1,7 +1,7 @@
 // Admin rentals page for starting and ending rental sessions.
 import { useState } from 'react'
 // FIX 1: Import type-only chống lỗi verbatimModuleSyntax
-import type { FormEvent, ChangeEvent } from 'react'
+import type { SyntheticEvent, ChangeEvent } from 'react'
 
 import { SectionHeader } from '../../components/layout'
 import { Alert, Button, Card, Modal, TextField } from '../../components/ui'
@@ -35,8 +35,8 @@ export default function RentalsPage() {
   const [result, setResult] = useState<RentalResult | null>(null)
   const [isResultOpen, setIsResultOpen] = useState<boolean>(false)
 
-  // FIX 4: Khai báo kiểu dữ liệu FormEvent cho tham số event
-  async function handleStart(event: FormEvent<HTMLFormElement>) {
+  // FIX 4: Khai báo kiểu dữ liệu SyntheticEvent cho tham số event
+  async function handleStart(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault()
     setLoading(true)
     setError('')
@@ -59,8 +59,8 @@ export default function RentalsPage() {
     }
   }
 
-  // FIX 4: Khai báo kiểu dữ liệu FormEvent cho tham số event
-  async function handleEnd(event: FormEvent<HTMLFormElement>) {
+  // FIX 4: Khai báo kiểu dữ liệu SyntheticEvent cho tham số event
+  async function handleEnd(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault()
     setLoading(true)
     setError('')

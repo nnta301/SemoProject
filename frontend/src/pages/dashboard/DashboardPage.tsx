@@ -22,18 +22,16 @@ import { useAuth } from '../../hooks/useAuth'
 import { ROUTES } from '../../constants/routes'
 import { formatBatteryLevel, formatDateTime } from '../../utils/formatters'
 import { getApiErrorMessage } from '../../utils/apiError'
-// FIX 1: Tái sử dụng Type Scooter chính xác của hệ thống
 import type { Scooter } from '../../types/models'
 
 const statusMeta: Record<string, { label: string; className: string }> = {
-  [SCOOTER_STATUSES.AVAILABLE]:   { label: 'Sẵn sàng',     className: 'is-available' },
-  [SCOOTER_STATUSES.IN_USE]:      { label: 'Đang đi',      className: 'is-in-use' },
-  [SCOOTER_STATUSES.MAINTENANCE]: { label: 'Đang bảo trì', className: 'is-maintenance' },
+  [SCOOTER_STATUSES.AVAILABLE]:   { label: 'Available',     className: 'is-available' },
+  [SCOOTER_STATUSES.IN_USE]:      { label: 'In Use',      className: 'is-in-use' },
+  [SCOOTER_STATUSES.MAINTENANCE]: { label: 'Under Maintenance', className: 'is-maintenance' },
 }
 
-// FIX 2: Thêm kiểu dữ liệu string cho tham số status
 function getStatusLabel(status: string): string {
-  return statusMeta[status]?.label || status || 'Không xác định'
+  return statusMeta[status]?.label || status || 'Unknown'
 }
 function getStatusClassName(status: string): string {
   return statusMeta[status]?.className || 'is-unknown'
@@ -42,7 +40,6 @@ function getStatusClassName(status: string): string {
 export default function DashboardPage() {
   const { user } = useAuth()
 
-  // FIX 3: Ép kiểu dữ liệu mảng Scooter[] thay vì để mặc định thành never[]
   const [scooters, setScooters] = useState<Scooter[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
@@ -60,8 +57,7 @@ export default function DashboardPage() {
         setScooters(Array.isArray(data) ? data : [])
       } catch (err) {
         if (!isActive) return
-        // FIX 4: Thay thế cách chấm chuỗi không an toàn bằng utils getApiErrorMessage có sẵn trong dự án của bạn
-        setError(getApiErrorMessage(err, 'Không thể tải danh sách xe.'))
+        setError(getApiErrorMessage(err, 'Failed to load scooter list. Please try again later.'))
         setScooters([])
       } finally {
         if (isActive) setLoading(false)
@@ -90,27 +86,27 @@ export default function DashboardPage() {
 
   const summaryCards = useMemo(() => ([
     {
-      label: 'Tổng số xe',
+      label: 'Total scooters',
       value: summary.total,
-      note: 'Dữ liệu trực tiếp từ /api/scooters',
+      note: 'All scooters in the system',
       icon: <Bike size={20} strokeWidth={1.7} />,
     },
     {
-      label: 'Sẵn sàng thuê',
+      label: 'Available for Rent',
       value: summary.available,
-      note: 'Xe sẵn sàng phục vụ bạn ngay',
+      note: 'Scooters ready for rental',
       icon: <Sparkles size={20} strokeWidth={1.7} />,
     },
     {
-      label: 'Pin trung bình',
+      label: 'Average Battery',
       value: `${summary.avgBattery}%`,
-      note: 'Tính trên toàn đội xe',
+      note: 'Calculated across all scooters',
       icon: <BatteryFull size={20} strokeWidth={1.7} />,
     },
     {
-      label: 'Đang bảo trì',
+      label: 'Under Maintenance',
       value: summary.maintenance,
-      note: 'Tạm thời không khả dụng',
+      note: 'Temporarily unavailable',
       icon: <Wrench size={20} strokeWidth={1.7} />,
     },
   ]), [summary])
@@ -125,11 +121,10 @@ export default function DashboardPage() {
       .slice(0, 6)
   }, [scooters])
 
-  // FIX 5: Chỉ định rõ kiểu dữ liệu row: Scooter cho các hàm render cột của bảng
   const scooterColumns = [
     {
       key: 'name',
-      label: 'Xe điện',
+      label: 'Scooter',
       render: (row: Scooter) => (
         <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600 }}>
           <Bike size={16} strokeWidth={1.8} style={{ color: 'var(--color-cyan-soft)' }} />
@@ -139,7 +134,7 @@ export default function DashboardPage() {
     },
     {
       key: 'status',
-      label: 'Trạng thái',
+      label: 'Status',
       render: (row: Scooter) => (
         <span className={`status-pill ${getStatusClassName(row.status)}`}>
           {getStatusLabel(row.status)}
@@ -148,7 +143,7 @@ export default function DashboardPage() {
     },
     {
       key: 'batteryLevel',
-      label: 'Pin',
+      label: 'Battery',
       render: (row: Scooter) => {
         const lvl = Number(row.batteryLevel)
         const tone =
@@ -164,24 +159,25 @@ export default function DashboardPage() {
     },
     {
       key: 'updatedAt',
-      label: 'Cập nhật gần nhất',
+      label: 'Lastest update',
       render: (row: Scooter) => formatDateTime(row.updatedAt || row.createdAt) || '—',
     },
   ]
 
-  const greetingName = user?.fullName?.split(' ').slice(-1)[0] || 'bạn'
+  const greetingName = user?.fullName || 'User'
+  console.log(user)
+  console.log(greetingName)
 
   return (
     <div className="page-stack">
-      {/* Hero — phong cách cockpit EV */}
       <section className="dashboard-hero">
         <div className="dashboard-hero__row">
           <div>
-            <p className="dashboard-hero__eyebrow">Xin chào, {greetingName}</p>
-            <h2 className="dashboard-hero__title">Hệ thống đang sẵn sàng.</h2>
+            <p className="dashboard-hero__eyebrow">Hello, {greetingName}</p>
+            <h2 className="dashboard-hero__title">System is fully operational.</h2>
             <p className="dashboard-hero__sub">
-              Theo dõi tình trạng đội xe điện theo thời gian thực, quản lý hành trình và nạp ví —
-              tất cả trong một bảng điều khiển công nghệ cao.
+              Track e-scooter fleet status in real-time, manage trips, and top
+              up your wallet — all in one high-tech dashboard.
             </p>
           </div>
           <div className="dashboard-hero__cta">
@@ -190,11 +186,11 @@ export default function DashboardPage() {
               onClick={() => setRefreshKey((k) => k + 1)}
               leadingIcon={<RefreshCcw size={16} strokeWidth={1.8} />}
             >
-              Làm mới dữ liệu
+              Refresh Data
             </Button>
             <Link to={ROUTES.PROFILE} style={{ textDecoration: 'none' }}>
               <Button leadingIcon={<Gauge size={16} strokeWidth={1.8} />}>
-                Quản lý ví
+                Manage Wallet
               </Button>
             </Link>
           </div>
@@ -203,7 +199,6 @@ export default function DashboardPage() {
 
       {error && <Alert>{error}</Alert>}
 
-      {/* Stats grid — cockpit cards */}
       <div className="stats-grid stats-grid--compact">
         {summaryCards.map((card) => (
           <Card key={card.label} variant="glow">
@@ -220,9 +215,9 @@ export default function DashboardPage() {
       {/* Map view */}
       <Card>
         <SectionHeader
-          eyebrow="Bản đồ trực tiếp"
-          title="Xe điện quanh Bách Khoa"
-          description="Vị trí các xe được vẽ trực tiếp lên bản đồ OpenStreetMap từ toạ độ hiện tại."
+          eyebrow="Live map"
+          title="Scooters around HUST campus"
+          description="Scooter locations are plotted in real-time on OpenStreetMap based on current coordinates."
           actions={(
             <span style={{
               display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
@@ -239,15 +234,15 @@ export default function DashboardPage() {
       {/* Recent list */}
       <Card>
         <SectionHeader
-          eyebrow="Danh sách xe"
-          title="Cập nhật gần nhất"
-          description="Các xe được backend cập nhật mới nhất, sắp xếp theo thời gian."
+          eyebrow="Scooter List"
+          title="Latest Updates"
+          description="Scooters updated most recently, sorted by time."
           actions={(
             <span style={{
               display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
               color: 'var(--text-muted)', fontSize: '0.85rem',
             }}>
-              <MapPin size={16} strokeWidth={1.8} /> Tổng cộng {summary.total} xe
+              <MapPin size={16} strokeWidth={1.8} /> Total {summary.total} scooters
             </span>
           )}
         />
@@ -255,9 +250,8 @@ export default function DashboardPage() {
         <Table
           columns={scooterColumns}
           rows={scooterRows}
-          // FIX 6: Xử lý an toàn null-check cho row.id bằng optional chaining + fallback index
           rowKey={(row: Scooter, idx: number) => row.id?.toString() ?? `dash-scooter-idx-${idx}`}
-          emptyMessage={loading ? 'Đang tải danh sách xe…' : 'Chưa có xe nào.'}
+          emptyMessage={loading ? 'Loading scooter list...' : 'No scooters available.'}
         />
       </Card>
     </div>
