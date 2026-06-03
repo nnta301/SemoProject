@@ -1,0 +1,13 @@
+// API helpers for auth login and registration requests.
+import { axiosClient } from '../../config/axiosClient'
+
+// Bổ sung kiểu 'any' cho tham số request
+export async function login(request: any) {
+  const { data } = await axiosClient.post('/api/auth/login', request)
+  return data
+}
+
+export async function register(request: any) {
+  const { data } = await axiosClient.post('/api/auth/register', request)
+  return data
+}
