@@ -195,11 +195,8 @@ public class UserService {
      * Change password for a user. Verifies current password before updating.
      */
     @Transactional
-    public void changePassword(Integer id, String currentPassword, String newPassword) {
-        requireActiveAuthenticatedUser();
-
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy User với ID: " + id));
+    public void changePassword(String currentPassword, String newPassword) {
+        User user = requireActiveAuthenticatedUser();
 
         if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
             throw new RuntimeException("Mật khẩu hiện tại không đúng.");
