@@ -38,7 +38,7 @@ export default function MaintenancePage() {
   const [isResolveOpen, setIsResolveOpen] = useState<boolean>(false)
   const [resolveScooterId, setResolveScooterId] = useState<string>('')
 
-  // FIX 4: Thêm kiểu dữ liệu FormEvent cho tham số event
+  // FIX 4: Thêm kiểu dữ liệu SyntheticEvent cho tham số event
   async function handleCreate(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault()
     setLoading(true)
@@ -60,7 +60,7 @@ export default function MaintenancePage() {
     }
   }
 
-  // FIX 4: Thêm kiểu dữ liệu FormEvent cho tham số event
+  // FIX 4: Thêm kiểu dữ liệu SyntheticEvent cho tham số event
   async function handleSearch(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault()
     setLoading(true)
@@ -78,7 +78,7 @@ export default function MaintenancePage() {
     }
   }
 
-  // FIX 4: Thêm kiểu dữ liệu FormEvent cho tham số event
+  // FIX 4: Thêm kiểu dữ liệu SyntheticEvent cho tham số event
   async function handleResolve(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault()
     setLoading(true)

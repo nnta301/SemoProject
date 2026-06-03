@@ -27,7 +27,7 @@ export default function Register() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
-  // FIX 3: Định nghĩa FormEvent cho e
+  // FIX 3: Định nghĩa SyntheticEvent cho e
   async function handleSubmit(e: SyntheticEvent<HTMLFormElement>) {
     e.preventDefault()
     setError(null)
@@ -114,7 +114,7 @@ export default function Register() {
             name="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="ban@vidu.com"
+            placeholder="you@example.com"
             autoComplete="email"
             required
             leadingIcon={<Mail size={18} strokeWidth={1.7} />}

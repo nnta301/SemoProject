@@ -5,7 +5,7 @@
 // Số dư hiển thị bằng định dạng VNĐ (vi-VN) qua utils/formatters.formatCurrency.
 import { useState } from 'react'
 // FIX 1: Import type-only chống lỗi verbatimModuleSyntax
-import type { FormEvent, ChangeEvent } from 'react'
+import type { SyntheticEvent, ChangeEvent } from 'react'
 import {
   Wallet, ShieldCheck, User, Mail, BadgeCheck, Sparkles, Plus, KeyRound, Lock, Eye, EyeOff,
 } from 'lucide-react'
@@ -37,8 +37,8 @@ export default function ProfilePage() {
   const balance = typeof user?.balance === 'number' ? user.balance : null
   const balanceDisplay = balance === null ? 'No data available' : formatCurrency(balance)
 
-  // FIX 2: Khai báo FormEvent cho tham số event
-  async function handleDeposit(event: FormEvent<HTMLFormElement>) {
+  // FIX 2: Khai báo SyntheticEvent cho tham số event
+  async function handleDeposit(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault()
     setLoadingDeposit(true)
     setError('')
@@ -72,8 +72,8 @@ export default function ProfilePage() {
     }
   }
 
-  // FIX 2: Khai báo FormEvent cho tham số event
-  async function handlePasswordChange(event: FormEvent<HTMLFormElement>) {
+  // FIX 2: Khai báo SyntheticEvent cho tham số event
+  async function handlePasswordChange(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault()
     setLoadingPwd(true)
     setError('')

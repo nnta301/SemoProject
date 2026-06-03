@@ -1,6 +1,6 @@
 // Admin analytics page using the optimal-stations API.
 import { useState } from 'react'
-// FIX 1: Dùng type-only import cho FormEvent và ChangeEvent
+// FIX 1: Dùng type-only import cho SyntheticEvent và ChangeEvent
 import type { SyntheticEvent, ChangeEvent } from 'react'
 
 import { SectionHeader } from '../../components/layout'

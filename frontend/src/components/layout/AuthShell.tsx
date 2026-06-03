@@ -23,28 +23,28 @@ export default function AuthShell({ eyebrow, title, description, children }: Aut
         </div>
 
         <div className="auth-shell__content">
-          <p className="auth-shell__kicker">Vận hành xe điện thông minh</p>
+          <p className="auth-shell__kicker">Smart E-Mobility Operations</p>
           <h2 className="auth-shell__title">{title}</h2>
           <p className="auth-shell__description">{description}</p>
 
           <ul className="auth-shell__list">
             <li>
               <ShieldCheck size={18} strokeWidth={1.6} style={{ color: 'var(--color-cyan-soft)' }} />
-              <span>Bảo mật JWT, phân quyền chuẩn doanh nghiệp</span>
+              <span>JWT secured, enterprise-grade RBAC</span>
             </li>
             <li>
               <Activity size={18} strokeWidth={1.6} style={{ color: 'var(--color-cyan-soft)' }} />
-              <span>Giám sát đội xe theo thời gian thực trên bản đồ</span>
+              <span>Real-time fleet monitoring on map</span>
             </li>
             <li>
               <Zap size={18} strokeWidth={1.6} style={{ color: 'var(--color-cyan-soft)' }} />
-              <span>Nạp ví nhanh, thuê xe chỉ với một chạm</span>
+              <span>Instant wallet top-up, 1-tap ride booking</span>
             </li>
           </ul>
         </div>
 
         <p className="auth-shell__hint" style={{ position: 'relative', zIndex: 1, color: 'rgba(230,238,255,0.55)', fontSize: '0.82rem', margin: 0 }}>
-          © {new Date().getFullYear()} SemoProject — Smart e-mobility platform.
+          © {new Date().getFullYear()} SEMO — Smart e-mobility platform.
         </p>
       </aside>
 

@@ -20,9 +20,9 @@ const statusStyles: Record<string, { color: string; fillColor: string }> = {
 }
 
 const statusLabels: Record<string, string> = {
-  [SCOOTER_STATUSES.AVAILABLE]:   'Sẵn sàng',
-  [SCOOTER_STATUSES.IN_USE]:      'Đang đi',
-  [SCOOTER_STATUSES.MAINTENANCE]: 'Bảo trì',
+  [SCOOTER_STATUSES.AVAILABLE]:   'Available',
+  [SCOOTER_STATUSES.IN_USE]:      'In Use',
+  [SCOOTER_STATUSES.MAINTENANCE]: 'Maintenance',
 }
 
 function resolveMarkerStyle(status: string) {
@@ -101,7 +101,7 @@ export default function ScooterMap({ scooters = [], stations = [], onMapClick }:
           >
             <Popup>
               <div className="scooter-map__popup">
-                <strong>Điểm vừa chọn</strong>
+                <strong>Selected Point</strong>
                 <div>{formatCoordinates(preview.lat, preview.lng)}</div>
               </div>
             </Popup>
@@ -124,12 +124,12 @@ export default function ScooterMap({ scooters = [], stations = [], onMapClick }:
                 }}
               >
                 <Tooltip direction="top" offset={[0, -8]} opacity={1} permanent>
-                  {station.name || `Trạm ${idx + 1}`}
+                  {station.name || `Station #${idx + 1}`}
                 </Tooltip>
                 <Popup>
                   <div className="scooter-map__popup">
-                    <strong>{station.name || `Trạm ${idx + 1}`}</strong>
-                    <p>Vị trí: {formatCoordinates(station.lat, station.lng)}</p>
+                    <strong>{station.name || `Station #${idx + 1}`}</strong>
+                    <p>Location: {formatCoordinates(station.lat, station.lng)}</p>
                   </div>
                 </Popup>
               </CircleMarker>
@@ -157,10 +157,10 @@ export default function ScooterMap({ scooters = [], stations = [], onMapClick }:
               </Tooltip>
               <Popup>
                 <div className="scooter-map__popup">
-                  <strong>{scooter.name || `Xe #${scooter.id}`}</strong>
-                  <p>Trạng thái: {statusLabels[scooter.status] || scooter.status || '—'}</p>
-                  <p>Pin: {formatBatteryLevel(scooter.batteryLevel) || '—'}</p>
-                  <p>Vị trí: {formatCoordinates(scooter.currentLat, scooter.currentLng) || '—'}</p>
+                  <strong>{scooter.name || `Scooter #${scooter.id}`}</strong>
+                  <p>Status: {statusLabels[scooter.status] || scooter.status || '—'}</p>
+                  <p>Battery: {formatBatteryLevel(scooter.batteryLevel) || '—'}</p>
+                  <p>Location: {formatCoordinates(scooter.currentLat, scooter.currentLng) || '—'}</p>
                 </div>
               </Popup>
             </CircleMarker>
@@ -171,12 +171,12 @@ export default function ScooterMap({ scooters = [], stations = [], onMapClick }:
       <div className="scooter-map__legend">
         <span><i className="scooter-map__swatch scooter-map__swatch--available" /> Available</span>
         <span><i className="scooter-map__swatch scooter-map__swatch--in-use" /> In Use</span>
-        <span><i className="scooter-map__swatch scooter-map__swatch--maintenance" /> Under Maintenance</span>
+        <span><i className="scooter-map__swatch scooter-map__swatch--maintenance" /> Maintenance</span>
       </div>
 
       {mappedScooters.length === 0 && (
         <div className="scooter-map__empty">
-          Chưa có xe nào có toạ độ. Hãy bổ sung lat/lng trong form xe để hiển thị trên bản đồ.
+          No scooters with coordinates available. Please add lat/lng in the scooter form to display them on the map.
         </div>
       )}
     </div>

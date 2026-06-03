@@ -102,7 +102,7 @@ export default function UsersPage() {
     { key: 'fullName', label: 'Name' },
     { key: 'email', label: 'Email' },
     { key: 'phoneNumber', label: 'Phone' },
-    { key: 'balance', label: 'Balance', render: (row: User) => (row.balance == null ? '-' : `${row.balance.toFixed(0)} VND`) },
+    { key: 'balance', label: 'Balance', render: (row: User) => (row.balance == null ? '-' : `VND ${row.balance.toFixed(0)}`) },
     { key: 'role', label: 'Role' },
     { key: 'createdAt', label: 'Created', render: (row: User) => formatDateTime(row.createdAt) || '-' },
     { key: 'updatedAt', label: 'Updated', render: (row: User) => formatDateTime(row.updatedAt || row.createdAt) || '-' },
