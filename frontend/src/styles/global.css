@@ -10,7 +10,6 @@
 :root {
   color-scheme: dark;
 
-  /* ===== Báº£ng mĂ u Tech Blue chá»§ Ä‘áº¡o ===== */
   --color-midnight: #0B1120;
   --color-midnight-2: #0F172A;
   --color-midnight-3: #111c34;
@@ -20,7 +19,6 @@
   --color-cyan-soft: #38ddff;
   --color-violet: #6D5DFF;
 
-  /* ===== Bá» máº·t & ná»n ===== */
   --bg: var(--color-midnight);
   --bg-accent: #060a16;
   --surface: rgba(17, 28, 52, 0.55);
@@ -34,7 +32,6 @@
   --text-muted: #8BA0C7;
   --text-faded: #5B7099;
 
-  /* ===== ThÆ°Æ¡ng hiá»‡u & tráº¡ng thĂ¡i ===== */
   --brand: var(--color-electric);
   --brand-dark: #0040c8;
   --brand-soft: rgba(0, 82, 255, 0.16);
@@ -43,7 +40,6 @@
   --warning: #FFB347;
   --danger: #FF5C7A;
 
-  /* ===== Viá»n & shadow ===== */
   --border: rgba(120, 160, 230, 0.16);
   --border-strong: rgba(120, 160, 230, 0.28);
   --border-glow: rgba(0, 209, 255, 0.45);

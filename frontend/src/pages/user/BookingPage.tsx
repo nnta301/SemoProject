@@ -20,19 +20,18 @@ import {
   Battery, Gauge, Thermometer, AlertTriangle, ShieldAlert, Sparkles, Clock,
 } from 'lucide-react'
 
-import { SectionHeader } from '../../components/layout'
-import { Alert, Button, Card, TextField } from '../../components/ui'
-import { getAllScooters } from '../../features/scooters'
-import { startRental, endRental } from '../../features/rentals'
-import { useAuth } from '../../hooks/useAuth'
-import { SCOOTER_STATUSES, SCOOTER_STATUS_OPTIONS } from '../../constants/statuses'
-import { formatBatteryLevel, formatCoordinates, formatCurrency, formatDateTime } from '../../utils/formatters'
-import { getApiErrorMessage } from '../../utils/apiError'
+import { SectionHeader } from '@/components/layout'
+import { Alert, Button, Card, TextField } from '@/components/ui'
+import { getAllScooters } from '@/features/scooters'
+import { startRental, endRental } from '@/features/rentals'
+import { useAuth } from '@/hooks/useAuth'
+import { SCOOTER_STATUSES, SCOOTER_STATUS_OPTIONS } from '@/constants/statuses'
+import { formatBatteryLevel, formatCoordinates, formatCurrency, formatDateTime } from '@/utils/formatters'
+import { getApiErrorMessage } from '@/utils/apiError'
 
-import '../../styles/booking.css'
 
 // ----- Interfaces & Types -----
-import type { Scooter } from '../../types/models'
+import type { Scooter } from '@/types/models'
 
 // Đối với EnrichedScooter, kế thừa trực tiếp từ core Scooter:
 interface EnrichedScooter extends Scooter {
@@ -367,18 +366,25 @@ export default function BookingPage() {
 
   return (
     <div className="page-stack">
-      <div className="booking-header">
+      <div className="flex items-center justify-between gap-4 flex-wrap">
         <SectionHeader
           eyebrow="Booking"
           title="Smart Mobility, Smart Living"
           description="Find the nearest scooter, book - unlock - ride, and track battery life in real-time."
         />
-        <div className="booking-header__chips">
-          <span className={`booking-chip ${userPos ? 'is-on' : 'is-warn'}`}>
+        <div className="flex gap-2 flex-wrap">
+          <span
+            className={`inline-flex items-center gap-2 p-2 rounded-full border font-semibold transition-colors
+              ${userPos 
+                ? 'text-(--color-cyan-soft) border-(--border-glow) bg-[rgba(0,209,255,0.08)]' 
+                : 'text-(--warning) border-[rgba(218,12,12,0.4)] bg-[rgba(255,179,71,0.08)]'
+              }`}
+          >
             <Crosshair size={14} strokeWidth={1.9} />
             {userPos ? 'Location available' : geoError ? 'Location error' : 'Location unavailable'}
           </span>
-          <span className="booking-chip is-on">
+
+          <span className="inline-flex items-center gap-1.5 p-2 rounded-full font-semibold text-(--color-cyan-soft) border border-(--border-glow) bg-[rgba(0,209,255,0.08)]">
             <Zap size={14} strokeWidth={1.9} />
             {visibleScooters.length} suitable scooters
           </span>
@@ -388,7 +394,7 @@ export default function BookingPage() {
       {scootersError && <Alert>{scootersError}</Alert>}
       {actionError && <Alert>{actionError}</Alert>}
       {completedInfo && (
-        <div className="total-banner">
+        <div className="flex items-center justify-between gap-2.5 p-[0.8rem_1rem] rounded-[14px] bg-linear-to-br from-[rgba(0,224,164,0.18)] to-[rgba(0,82,255,0.18)] border border-[rgba(0,224,164,0.4)] mb-[0.7rem] text-(--text-strong) [&_strong]:text-white">
           <span>
             <Sparkles size={18} strokeWidth={1.8} />{' '}
             Trip ended on <strong>{completedInfo.scooterName}</strong> · Total fare{' '}
@@ -398,11 +404,11 @@ export default function BookingPage() {
         </div>
       )}
 
-      <div className="booking-layout">
+      <div className="grid gap-[1.2rem] items-start grid-cols-1 xl:grid-cols-[360px_minmax(0,1fr)_360px]">
         {/* ============== CỘT TRÁI: BỘ LỌC + DANH SÁCH ============== */}
         <Card>
         <SectionHeader eyebrow="Scooter Filter" title="Find the Right Ride" description="Find scooters near you or filter by status." />
-          <form className="filter-form" onSubmit={(e) => e.preventDefault()}>
+          <form className="grid gap-[0.8rem] mb-4" onSubmit={(e) => e.preventDefault()}>
             <TextField
               label="Search by name / scooter ID"
               name="q"
@@ -413,9 +419,9 @@ export default function BookingPage() {
             />
 
             <div>
-              <span className="ui-field__label" style={{ display: 'block', marginBottom: 6 }}>Status</span>
+              <span className="block mb-1.5 font-bold">Status</span>
               <select
-                className="select-input"
+                className="w-full min-h-11 p-[0.7rem_1rem] border border-(--border) rounded-xl bg-[rgba(11,17,32,0.65)] text-(--text-strong) appearance-none bg-no-repeat bg-position-[right_1rem_center] bg-size-[10px] bg-[url('data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%228%22 viewBox=%220 0 12 8%22%3E%3Cpath fill=%22%2300D1FF%22 d=%22M6 8L0 0h12z%22/%3E%3C/svg%3E')] focus:outline-none focus:border-(--border-glow) focus:shadow-[0_0_0_4px_rgba(0,209,255,0.12)]"
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
               >
@@ -426,36 +432,40 @@ export default function BookingPage() {
               </select>
             </div>
 
-            <label className="checkbox-row">
+            <label className="flex items-center gap-[0.6rem] text-[0.92rem] text-(--text) cursor-pointer select-none">
               <input
                 type="checkbox"
                 checked={useRadius}
                 onChange={(e) => setUseRadius(e.target.checked)}
+                className="w-4 h-4 accent-(--color-electric) cursor-pointer"
               />
-              Show scooters within <strong>{radiusKm.toFixed(1)} km</strong> radius only
+              <span>
+                Show scooters within <strong className="font-bold">{radiusKm.toFixed(1)} km</strong> radius only
+              </span>
             </label>
+
             <input
               type="range"
-              className="range-input"
+              className="w-full accent-(--color-electric)"
               min="0.3" max="5" step="0.1"
               value={radiusKm}
               onChange={(e) => setRadiusKm(Number(e.target.value))}
               disabled={!useRadius}
             />
 
-            <div className="filter-form__row">
+            <div className="flex items-center gap-2">
               <Button
                 variant="secondary"
                 onClick={requestLocation}
                 disabled={geoLoading}
-                leadingIcon={<Crosshair size={16} strokeWidth={1.8} />}
+                leadingIcon={<Crosshair size={24} strokeWidth={1.8} />}
               >
                 {geoLoading ? 'Locating...' : 'Update location'}
               </Button>
               <Button
                 variant="ghost"
                 onClick={() => setRefreshKey((k) => k + 1)}
-                leadingIcon={<RefreshCcw size={16} strokeWidth={1.8} />}
+                leadingIcon={<RefreshCcw size={24} strokeWidth={1.8} />}
               >
                 Refresh scooters
               </Button>
@@ -464,7 +474,7 @@ export default function BookingPage() {
             {geoError && <Alert>{geoError}</Alert>}
           </form>
 
-          <div className="scooter-list">
+          <div className="grid gap-1 max-h-[56vh] overflow-y-auto pr-0.5 max-xl:max-h-none [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-[rgba(0,209,255,0.25)] [&::-webkit-scrollbar-thumb]:rounded-full">
             {scootersLoading && <p className="empty-state__text">Loading scooters...</p>}
             {!scootersLoading && visibleScooters.length === 0 && (
               <p className="empty-state__text">No scooters match your filters.</p>
@@ -475,13 +485,23 @@ export default function BookingPage() {
               return (
                 <div
                   key={s.id}
-                  className={`scooter-item ${isSelected ? 'is-selected' : ''} ${isLocked && !isSelected ? 'is-disabled' : ''}`}
+                  className={`
+                    relative grid gap-2 p-[0.95rem_1rem] rounded-[14px] border border-(--border) bg-(--surface-elevated) cursor-pointer
+                    transition-[border-color,transform,box-shadow,background] duration-200 ease-out
+                    hover:border-(--border-strong) hover:-translate-y-px hover:bg-[rgba(0,82,255,0.06)]
+                    ${isSelected ? 'border-(--border-glow) bg-linear-to-br from-[rgba(0,82,255,0.18)] to-[rgba(0,209,255,0.06)] shadow-[0_0_0_1px_var(--border-glow),0_12px_28px_rgba(0,82,255,0.2)]' : ''}
+                    ${isLocked && !isSelected ? 'opacity-55' : ''}
+                  `}
                   onClick={() => handleSelect(s)}
                 >
-                  <div className="scooter-item__top">
+                  <div className="flex items-start justify-between gap-2.5">
                     <div>
-                      <p className="scooter-item__name">{s.name || s.codeName || `Scooter #${s.id}`}</p>
-                      <p className="scooter-item__sub">{formatCoordinates(Number(s._lat), Number(s._lng))}</p>
+                      <p className="font-bold text-(--text-strong) leading-tight">
+                        {s.name || s.codeName || `Scooter #${s.id}`}
+                      </p>
+                      <p className="text-(--text-muted) text-[0.82rem]">
+                        {formatCoordinates(Number(s._lat), Number(s._lng))}
+                      </p>
                     </div>
                     <span className={`status-pill ${
                       s._status === SCOOTER_STATUSES.AVAILABLE ? 'is-available' :
@@ -490,28 +510,45 @@ export default function BookingPage() {
                       {statusLabel[s._status] || s._status}
                     </span>
                   </div>
-                  <div className="scooter-item__meta">
-                    <span><Battery size={12} strokeWidth={2} /> {formatBatteryLevel(s.batteryLevel) || '—'}</span>
+                  <div className="flex gap-1.5 flex-wrap text-[0.78rem] text-(--text-muted)">
+                    <span className="inline-flex items-center gap-1 p-[0.22rem_0.55rem] rounded-full bg-[rgba(255,255,255,0.04)] border border-(--border)">
+                      <Battery size={12} strokeWidth={2} /> {formatBatteryLevel(s.batteryLevel) || '—'}
+                    </span>
+                    
                     {Number.isFinite(Number(s.temperature)) && (
-                      <span><Thermometer size={12} strokeWidth={2} /> {Math.round(Number(s.temperature))}°C</span>
+                      <span className="inline-flex items-center gap-1 p-[0.22rem_0.55rem] rounded-full bg-[rgba(255,255,255,0.04)] border border-(--border)">
+                        <Thermometer size={12} strokeWidth={2} /> {Math.round(Number(s.temperature))}°C
+                      </span>
                     )}
+                    
                     {s._distance != null && (
-                      <span><MapPin size={12} strokeWidth={2} /> {fmtKm(s._distance)}</span>
+                      <span className="inline-flex items-center gap-1 p-[0.22rem_0.55rem] rounded-full bg-[rgba(255,255,255,0.04)] border border-(--border)">
+                        <MapPin size={12} strokeWidth={2} /> {fmtKm(s._distance)}
+                      </span>
                     )}
                   </div>
-                  <div className="scooter-item__foot">
-                    <span className="scooter-item__sub">
+                  <div className="flex items-center justify-between mt-1">
+                    <span className="text-(--text-muted) text-sm">
                       {isSelected
-                        ? (ride?.state && ride.state !== 'idle' ? 'Currently selected' : 'Ready to book')
+                        ? (ride?.state && ride.state !== 'idle' ? 'Selected' : 'Ready to book')
                         : (isLocked ? 'Cannot book at the moment' : 'Click to select')}
                     </span>
+                    
                     {!isLocked && (
                       <button
                         type="button"
-                        className={`scooter-item__action ${isSelected ? 'is-selected' : ''}`}
+                        className={`
+                          p-1 rounded-full border border-(--border-glow) text-(--color-cyan-soft) cursor-pointer
+                          transition-all duration-200 ease-out
+                          bg-[rgba(0,82,255,0.16)]
+                          hover:text-white hover:bg-[rgba(0,82,255,0.32)]
+                          ${isSelected ? 'bg-[linear-gradient(135deg,#0052FF_0%,#00D1FF_100%)] text-white' : ''}
+                        `}
                         onClick={(e) => { e.stopPropagation(); handleSelect(s) }}
                       >
-                        {isSelected ? 'Currently selected' : 'Select scooter'}
+                        <span className="font-bold text-sm">
+                          {isSelected ? 'Currently selected' : 'Select scooter'}
+                        </span>
                       </button>
                     )}
                   </div>
@@ -522,17 +559,25 @@ export default function BookingPage() {
         </Card>
 
         {/* ============== CỘT GIỮA: MAP ============== */}
-        <Card className="map-card">
+        <Card className="min-h-135">
           <SectionHeader
             eyebrow="Scooters Near You"
             title="Select a Scooter on the Map"
-            description="Light blue dot = available · Dark blue = in use · Pink = maintenance."
-            actions={(
-              <span className="booking-chip is-on">
-                <Filter size={14} strokeWidth={1.9} /> Radius: {radiusKm.toFixed(1)} km
-              </span>
-            )}
+            description=""
           />
+
+          <div className="flex items-center justify-between gap-2.5 mb-4">
+            <div className="flex flex-col items-start gap-2 mt-5 mb-5">
+              <span className="inline-flex items-center gap-2"><i className="scooter-map__swatch scooter-map__swatch--available" /> Available</span>
+              <span className="inline-flex items-center gap-2"><i className="scooter-map__swatch scooter-map__swatch--in-use" /> In Use</span>
+              <span className="inline-flex items-center gap-2"><i className="scooter-map__swatch scooter-map__swatch--maintenance" /> Maintenance</span>
+            </div>
+            <span className="inline-flex items-center gap-1.5 p-2 rounded-full text-3 font-semibold text-(--color-cyan-soft) border border-(--border-glow) bg-[rgba(0,209,255,0.08)]">
+              <Filter size={24} strokeWidth={1.9} />
+              Radius: {radiusKm.toFixed(1)} km
+            </span>
+          </div>
+
           <div className="scooter-map" style={{ marginTop: 12 }}>
             <MapContainer
               center={mapCenter}
@@ -604,10 +649,12 @@ export default function BookingPage() {
         {/* ============== CỘT PHẢI: RIDE STATUS + ALERTS ============== */}
         <div style={{ display: 'grid', gap: '1.2rem' }}>
           <Card variant="glow">
-            <div className="ride-status__head">
-              <SectionHeader eyebrow="Ride Status" title="Ride status" />
+            <div className="flex items-center justify-between gap-[0.6rem] mb-[0.6rem]">
+              <SectionHeader eyebrow="Ride Status" title="" />
               {ride?.state === 'riding' && (
-                <span className="booking-chip is-on"><Clock size={14} strokeWidth={1.9} /> {fmtDuration(ridingMs)}</span>
+                <span className="inline-flex items-center p-2 rounded-full font-semibold tracking-[0.02em] text-(--color-cyan-soft) border-(--border-glow) bg-[rgba(0,209,255,0.08)]">
+                  <Clock size={14} strokeWidth={1.9} /> {fmtDuration(ridingMs)}
+                </span>
               )}
             </div>
 
@@ -615,7 +662,7 @@ export default function BookingPage() {
               <p className="empty-state__text">Select an available scooter to start.</p>
             ) : (
               <>
-                <p style={{ margin: '0 0 0.3rem', color: 'var(--text-strong)', fontWeight: 700 }}>
+                <p className="text-(--text-strong) font-bold text-3xl">
                   {selectedScooter.name || `Scooter #${selectedScooter.id}`}
                 </p>
                 <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.88rem' }}>
@@ -625,10 +672,12 @@ export default function BookingPage() {
                 </p>
 
                 {ride?.state === 'riding' && (
-                  <div className="ride-timer" style={{ margin: '0.7rem 0' }}>{fmtDuration(ridingMs)}</div>
+                  <div className="[font-variant-numeric:tabular-nums] font-extrabold tracking-[-0.02em] text-[2rem] bg-linear-to-br from-white to-(--color-cyan-soft) bg-clip-text text-transparent bg-size-[auto_120%]">
+                    {fmtDuration(ridingMs)}
+                  </div>
                 )}
 
-                <div className="timeline">
+                <div className="grid gap-2 my-3 mb-4 p-3 rounded-xl bg-[rgba(11,17,32,0.5)] border border-(--border)">
                   <TimelineRow
                     icon={<Zap size={16} strokeWidth={1.9} />}
                     label="Book Scooter"
@@ -655,7 +704,7 @@ export default function BookingPage() {
                   />
                 </div>
 
-                <div className="action-grid">
+                <div className="grid grid-cols-2 gap-2">
                   <Button
                     onClick={handleReserve}
                     disabled={!selectedScooter || ride?.state !== 'selected'}
@@ -710,23 +759,25 @@ export default function BookingPage() {
               description="Use this when the scooter encounters issues. The system will log and automatically end your current ride."
               actions={<AlertTriangle size={18} strokeWidth={1.7} style={{ color: 'var(--warning)' }} />}
             />
-            <div className="alert-buttons" style={{ marginTop: 10 }}>
+            <div className="mt-2.5 grid gap-3">
               <Button
                 onClick={() => reportIssue('overheat')}
                 disabled={!selectedScooter}
-                className="ui-button--warn"
+                className="text-white bg-linear-to-br from-[#ffb347] to-[#443a2d] shadow-[0_0_24px_rgba(255,179,71,0.35)]"
                 leadingIcon={<Thermometer size={16} strokeWidth={1.8} />}
               >
                 Battery overheating
               </Button>
+              
               <Button
                 onClick={() => reportIssue('battery-drop')}
                 disabled={!selectedScooter}
-                className="ui-button--danger"
+                className="text-white bg-linear-to-br from-[#ff5c7a] to-[#c11d3f] shadow-[0_0_24px_rgba(255,92,122,0.35)]"
                 leadingIcon={<Gauge size={16} strokeWidth={1.8} />}
               >
                 Rapid battery drain
               </Button>
+              
               <Button
                 variant="ghost"
                 onClick={() => { setReports({}); saveReports({}) }}
@@ -748,9 +799,14 @@ export default function BookingPage() {
 
 function TimelineRow({ icon, label, value, done }: TimelineRowProps) {
   return (
-    <div className={`timeline__row ${done ? 'is-done' : ''}`}>
-      <span className="timeline__label">{icon} {label}</span>
-      <span className="timeline__value">{value}</span>
+    <div className={`flex items-center justify-between gap-2.5 text-3 group ${done ? 'is-done' : ''}`}>
+      <span className="inline-flex items-center gap-2 text-(--text-muted) group-[.is-done]:text-(--text) [&>svg]:text-(--text-faded) group-[.is-done]:[&>svg]:text-(--color-cyan-soft)">
+        {icon} 
+        {label}
+      </span>
+      <span className="text-(--text-muted) tabular-nums group-[.is-done]:text-(--text-strong) group-[.is-done]:font-semibold">
+        {value}
+      </span>
     </div>
   )
 }
