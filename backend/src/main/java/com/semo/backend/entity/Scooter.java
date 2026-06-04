@@ -33,10 +33,10 @@ public class Scooter {
 
     private Double temperature = 25.0;
 
-    @Column(name = "current_lat")
+    @Column(name = "current_lat", nullable = false)
     private Double currentLat;
 
-    @Column(name = "current_lng")
+    @Column(name = "current_lng", nullable = false)
     private Double currentLng;
 
     @CreatedDate

@@ -48,9 +48,10 @@
 * **Quản lý lịch sử:** Admin xem toàn bộ lịch sử thuê xe (hỗ trợ bộ lọc filter).
 * **Kiểm duyệt User:** Khóa (Ban) và Mở khóa (Unban) tài khoản vi phạm.
 * **Khôi phục xe (Maintenance):** API chuyển trạng thái xe từ `MAINTENANCE` về `AVAILABLE` sau khi bảo trì/sửa chữa xong, tự động đưa các chỉ số pin và nhiệt độ về mức an toàn tối ưu.
+* **Phân tích dữ liệu không gian (K-Means Clustering):** 🚨 *Tính năng đột phá:* Hoàn tất tích hợp thuật toán K-Means thuần (hiệu năng cao) để gom cụm tọa độ kết thúc của hàng ngàn chuyến đi lịch sử, tự động đề xuất K vị trí tối ưu để xây dựng trạm sạc mới trên Dashboard.
 
 **🚀 Chưa làm:**
-* [ ] **Phân tích dữ liệu lớn (K-Means Clustering):** 🚨 *Tính năng đột phá:* Thu thập dữ liệu lịch sử các chuyến đi (tọa độ trả xe), chạy thuật toán K-Means phân cụm để tự động "chấm" không gian và đề xuất các vị trí tối ưu xây dựng trạm sạc mới.
+* (Giai đoạn 1 đã hoàn thành trọn vẹn nhóm chức năng này).
 
 ---
 
@@ -68,6 +69,7 @@
 ## VI. Nhóm Tương Tác Thời Gian Thực & Bản Đồ (Real-time GIS)
 **✅ Đã hoàn thành:**
 * **WebSocket Tracking:** Tích hợp thành công cấu hình mạng STOMP/WebSocket công khai (`/ws`), tự động truyền tải và cập nhật luồng dữ liệu di chuyển động của dàn xe lên Admin Dashboard theo thời gian thực mà không cần reload trang.
+* **Lưu vết Tọa độ Lịch sử (GIS Tracking):** Tự động chụp và lưu trữ tọa độ `startLat`, `startLng`, `endLat`, `endLng` của từng chuyến đi để phục vụ bài toán Big Data.
 
 **🚀 Chưa làm:**
 * [ ] **Geofencing (Hàng rào địa lý):** Thuật toán cảnh báo thời gian thực nếu hệ thống phát hiện tọa độ xe di chuyển vượt quá ranh giới khu vực quy định (ví dụ: ra khỏi khuôn viên trường Đại học Bách Khoa Hà Nội).

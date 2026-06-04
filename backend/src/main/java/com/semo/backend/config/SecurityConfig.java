@@ -50,6 +50,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/scooters/**").hasRole("ADMIN")
                         .requestMatchers("/api/maintenance/**").hasRole("ADMIN")
                         .requestMatchers("/api/rentals/**").hasAnyRole("CUSTOMER", "ADMIN")
+                        .requestMatchers("/api/analytics/**").hasRole("ADMIN")
 
                         .anyRequest().authenticated())
                 .addFilterBefore(

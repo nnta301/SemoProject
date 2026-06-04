@@ -61,6 +61,9 @@ public class RentalService {
         scooter.setStatus("IN_USE");
 
         Rental rental = new Rental(user, scooter);
+        rental.setStartLat(scooter.getCurrentLat());
+        rental.setStartLng(scooter.getCurrentLng());
+
         rental = rentalRepository.save(rental);
 
         if (!"ADMIN".equals(user.getRole())) {
@@ -93,9 +96,11 @@ public class RentalService {
         if ("COMPLETED".equals(rental.getStatus()))
             throw new RuntimeException("Chuyến đi này đã được thanh toán rồi!");
 
-        rental.setEndTime(LocalDateTime.now());
-
         Scooter scooter = rental.getScooter();
+
+        rental.setEndTime(LocalDateTime.now());
+        rental.setEndLat(scooter.getCurrentLat());
+        rental.setEndLng(scooter.getCurrentLng());
 
         long minutes = Duration.between(rental.getStartTime(), rental.getEndTime()).toMinutes();
         if (minutes < 1)
@@ -167,6 +172,10 @@ public class RentalService {
         dto.setEndTime(rental.getEndTime());
         dto.setTotalPrice(rental.getTotalPrice());
         dto.setStatus(rental.getStatus());
+        dto.setStartLat(rental.getStartLat());
+        dto.setStartLng(rental.getStartLng());
+        dto.setEndLat(rental.getEndLat());
+        dto.setEndLng(rental.getEndLng());
         return dto;
     }
 
