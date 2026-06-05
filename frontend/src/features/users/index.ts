@@ -10,5 +10,6 @@ export {
   getUserByEmail,
   getUserById,
   getUsersByRole,
+  toggleUserStatus,
   updateUser,
 } from './api'

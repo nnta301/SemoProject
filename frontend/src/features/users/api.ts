@@ -52,12 +52,17 @@ export async function adminResetPassword(id: number | string, request: any = {})
   return data
 }
 
-export async function changePassword(id: number | string, request: any) {
-  const { data } = await axiosClient.put(`/api/users/${id}/change-password`, request)
+export async function changePassword(request: any) {
+  const { data } = await axiosClient.put('/api/users/change-password', request)
   return data
 }
 
 export async function depositToWallet(request: any) {
   const { data } = await axiosClient.post('/api/users/wallet/deposit', request)
+  return data
+}
+
+export async function toggleUserStatus(id: number | string) {
+  const { data } = await axiosClient.put(`/api/users/${id}/toggle-status`)
   return data
 }

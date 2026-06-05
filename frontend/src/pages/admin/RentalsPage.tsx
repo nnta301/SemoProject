@@ -44,7 +44,6 @@ export default function RentalsPage() {
 
     try {
       const response = await startRental({
-        userId: Number(startForm.userId),
         scooterId: Number(startForm.scooterId),
       })
 

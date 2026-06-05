@@ -1,7 +1,7 @@
 // Trang Hồ sơ & Ví — Tech Blue Luxury (tiếng Việt).
 // Liên kết với API:
 //   - depositToWallet → POST /api/users/wallet/deposit (qua features/users)
-//   - changePassword  → PUT  /api/users/{id}/change-password
+//   - changePassword  → PUT  /api/users/change-password
 // Số dư hiển thị bằng định dạng VNĐ (vi-VN) qua utils/formatters.formatCurrency.
 import { useState } from 'react'
 // FIX 1: Import type-only chống lỗi verbatimModuleSyntax
@@ -88,7 +88,7 @@ export default function ProfilePage() {
         setError('New password must be at least 8 characters long.')
         return
       }
-      await changePassword(user.id, { currentPassword, newPassword })
+      await changePassword({ currentPassword, newPassword })
       setSuccess('Password changed successfully.')
       setCurrentPassword('')
       setNewPassword('')

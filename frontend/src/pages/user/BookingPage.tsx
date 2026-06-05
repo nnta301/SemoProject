@@ -242,7 +242,7 @@ export default function BookingPage() {
         if (statusFilter !== 'ALL' && s._status !== statusFilter) return false
         if (query) {
           const q = query.toLowerCase()
-          const name = (s.name || s.codeName || `#${s.id}`).toLowerCase()
+          const name = (s.name || `#${s.id}`).toLowerCase()
           if (!name.includes(q)) return false
         }
         if (useRadius && userPos && s._distance != null && s._distance > radiusKm) return false
@@ -304,7 +304,7 @@ export default function BookingPage() {
     if (!ride || !user?.id || !selectedScooter) return
     setActionLoading(true); setActionError(null)
     try {
-      const rental = await startRental({ userId: user.id, scooterId: selectedScooter.id })
+      const rental = await startRental({ scooterId: selectedScooter.id })
       setRideState({
         state: 'riding',
         rentalId: rental.id,
@@ -511,7 +511,7 @@ export default function BookingPage() {
                   <div className="flex items-start justify-between gap-2.5">
                     <div>
                       <p className="font-bold text-text-strong leading-tight">
-                        {s.name || s.codeName || `Scooter #${s.id}`}
+                        {s.name || `Scooter #${s.id}`}
                       </p>
                       <p className="text-text-muted text-sm">
                         {formatCoordinates(Number(s._lat), Number(s._lng))}

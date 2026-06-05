@@ -105,7 +105,7 @@ export default function ScootersPage() {
       key: 'stateOfHealth',
       label: 'SOH',
       render: (row: Scooter) => {
-        const soh = (row as Scooter & { stateOfHealth?: number }).stateOfHealth
+        const soh = row.stateOfHealth
         return soh != null ? `${soh.toFixed(2)}` : '-'
       },
     },
