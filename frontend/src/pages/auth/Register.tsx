@@ -65,15 +65,7 @@ export default function Register() {
       type="button"
       aria-label={label}
       onClick={() => setter((v) => !v)}
-      style={{
-        background: 'transparent',
-        border: 0,
-        color: 'var(--text-muted)',
-        cursor: 'pointer',
-        display: 'grid',
-        placeItems: 'center',
-        padding: 0,
-      }}
+      className="bg-transparent border-0 text-text-muted cursor-pointer grid place-items-center p-0"
     >
       {togglePwdIcon(visible)}
     </button>

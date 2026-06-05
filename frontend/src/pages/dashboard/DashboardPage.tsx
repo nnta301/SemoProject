@@ -31,9 +31,21 @@ const statusMeta: Record<string, { label: string; className: string }> = {
 function getStatusLabel(status: string): string {
   return statusMeta[status]?.label || status || 'Unknown'
 }
-function getStatusClassName(status: string): string {
-  return statusMeta[status]?.className || 'is-unknown'
-}
+const getStatusClassName = (status: string): string => {
+  switch (status) {
+    case 'AVAILABLE':
+      return 'text-accent bg-accent/12 border-accent/32 shadow-[0_0_12px_rgba(0,209,255,0.18)]';
+    
+    case 'IN_USE':
+      return 'text-electric-soft bg-brand/14 border-brand/32 shadow-[0_0_12px_rgba(0,82,255,0.2)]';
+    
+    case 'MAINTENANCE':
+      return 'text-warning bg-warning/14 border-warning/32';
+    
+    default:
+      return 'text-text-muted bg-[rgba(120,140,175,0.14)] border-[rgba(120,140,175,0.28)]';
+  }
+};
 
 export default function DashboardPage() {
   const { user } = useAuth()
@@ -134,7 +146,14 @@ export default function DashboardPage() {
       key: 'status',
       label: 'Status',
       render: (row: Scooter) => (
-        <span className={cn("status-pill", getStatusClassName(row.status))}>
+        <span 
+          className={cn(
+            "inline-flex items-center justify-center gap-[0.35rem] min-h-8",
+            "px-[0.85rem] rounded-full text-[0.78rem] font-bold",
+            "tracking-[0.04em] border border-transparent",
+            getStatusClassName(row.status)
+          )}
+        >
           {getStatusLabel(row.status)}
         </span>
       ),
@@ -165,18 +184,27 @@ export default function DashboardPage() {
   const greetingName = user?.fullName || 'User'
 
   return (
-    <div className="page-stack">
-      <section className="dashboard-hero">
-        <div className="dashboard-hero__row">
+    <div className="grid gap-6">
+      <section className="relative p-8 px-[2.2rem] rounded-lg
+        bg-[radial-gradient(circle_at_90%_-20%,rgba(0,209,255,0.4),transparent_55%),radial-gradient(circle_at_-10%_120%,rgba(109,93,255,0.4),transparent_60%),linear-gradient(135deg,rgba(0,82,255,0.85),rgba(11,17,32,0.92))]
+        border border-border-glow shadow-glow-blue overflow-hidden
+        text-white after:content-[''] after:absolute after:inset-0
+        after:pointer-events-none after:opacity-60"
+      >
+        <div className="relative flex items-center justify-between gap-6 flex-wrap">
           <div>
-            <p className="dashboard-hero__eyebrow">Hello, {greetingName}</p>
-            <h2 className="dashboard-hero__title">System is fully operational.</h2>
-            <p className="dashboard-hero__sub">
+            <p className="m-0 text-cyan-soft uppercase tracking-[0.2em] text-[0.72rem] font-bold">
+              Hello, {greetingName}
+            </p>
+            <h2 className="mt-[0.3rem] mr-0 mb-[0.6rem] ml-0 text-[clamp(1.8rem,3vw,2.5rem)] tracking-[-0.03em]">
+              System is fully operational.
+            </h2>
+            <p className="m-0 text-[#e6eeff]/78 max-w-[50ch]">
               Track e-scooter fleet status in real-time, manage trips, and top
               up your wallet — all in one high-tech dashboard.
             </p>
           </div>
-          <div className="dashboard-hero__cta">
+          <div className="flex gap-3 flex-wrap">
             <Button
               variant="secondary"
               onClick={() => setRefreshKey((k) => k + 1)}
@@ -195,16 +223,34 @@ export default function DashboardPage() {
 
       {error && <Alert tone="error">{error}</Alert>}
 
-      <div className="stats-grid stats-grid--compact">
+      <div className="grid gap-[1.1rem] grid-cols-4 max-[980px]:grid-cols-2 max-sm:grid-cols-1">
         {summaryCards.map((card) => (
           <Card key={card.label} variant="glow">
-            <div className="stat-card__head">
-              <p className="stat-card__label">{card.label}</p>
-              <span className="stat-card__icon">{card.icon}</span>
-            </div>
-            <div className="stat-card__value">{loading ? '—' : card.value}</div>
-            <p className="stat-card__note">{card.note}</p>
-          </Card>
+              <div className="flex items-center justify-between gap-[0.6rem]">
+                <p className="text-text-faded font-semibold text-sm
+                  uppercase tracking-[0.12em]"
+                >
+                  {card.label}
+                </p>
+                <span className="w-10 h-10 rounded-[12px] grid
+                  place-items-center bg-gradient-brand-soft border
+                  border-border-strong text-cyan-soft
+                  shadow-[inset_0_0_12px_rgba(0,209,255,0.18)]"
+                >
+                  {card.icon}
+                </span>
+              </div>
+              <div className="mt-[0.6rem] mr-0 mb-[0.4rem] ml-0 text-[2.2rem]
+                font-extrabold tracking-[-0.04em]
+                bg-[linear-gradient(135deg,#fff,var(--color-cyan-soft)_120%)]
+                bg-clip-text text-transparent leading-[1.1]"
+              >
+                {loading ? '—' : card.value}
+              </div>
+              <p className="m-0 text-sm text-text-muted">
+                {card.note}
+              </p>
+            </Card>
         ))}
       </div>
 
@@ -212,9 +258,10 @@ export default function DashboardPage() {
         <SectionHeader
           eyebrow="Live map"
           title="Scooters around HUST campus"
-          description="Scooter locations are plotted in real-time on OpenStreetMap based on current coordinates."
+          description="Scooter locations are plotted in real-time
+            on OpenStreetMap based on current coordinates."
           actions={(
-            <span className="inline-flex items-center gap-1.5 text-cyan-soft text-sm font-semibold">
+            <span className="inline-flex items-center gap-1.5 text-cyan-soft font-semibold">
               <Navigation size={20} strokeWidth={1.8} /> Live
             </span>
           )}
@@ -231,7 +278,7 @@ export default function DashboardPage() {
           title="Latest Updates"
           description="Scooters updated most recently, sorted by time."
           actions={(
-            <span className="inline-flex items-center gap-1.5 text-text-muted text-xs">
+            <span className="inline-flex items-center gap-1.5 text-text-muted">
               <MapPin size={16} strokeWidth={1.8} /> Total {summary.total} scooters
             </span>
           )}

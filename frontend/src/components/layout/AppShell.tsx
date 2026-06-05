@@ -127,7 +127,7 @@ export default function AppShell({ mode = 'user', children }: AppShellProps) {
   const topbarTitle = isAdminMode ? 'Admin console' : 'Personal Console'
 
   return (
-    <div className="app-shell">
+    <div className="grid min-h-screen grid-cols-[280px_minmax(0,1fr)] max-sm:grid-cols-1">
       <aside className="flex flex-col gap-[1.6rem] p-[1.5rem_1.2rem] text-white
         bg-[linear-gradient(180deg,rgba(6,10,22,0.92),rgba(11,17,32,0.92)),var(--color-midnight)]
         border-r border-(--border) backdrop-blur-[18px] relative after:content-['']
@@ -183,25 +183,34 @@ export default function AppShell({ mode = 'user', children }: AppShellProps) {
         </div>
       </aside>
 
-      <div className="app-shell__content">
-        <header className="app-shell__topbar">
+      <div className="grid grid-rows-[auto_1fr] min-w-0">
+        <header className="flex items-center justify-between gap-4 px-8 py-6
+          border-b border-border bg-[#0b1120]/55 backdrop-blur-[18px]
+          max-sm:flex-col max-sm:items-start"
+        >
           <div>
-            <p className="app-shell__eyebrow">{topbarEyebrow}</p>
-            <h1 className="app-shell__title">{topbarTitle}</h1>
+            <p className="mb-2 text-cyan-soft text-xs uppercase tracking-[0.18em] font-bold">
+              {topbarEyebrow}
+            </p>
+            <h1 className="text-3xl text-text-strong">
+              {topbarTitle}
+            </h1>
           </div>
 
-          <div className="app-shell__topbar-actions">
-            <span className="inline-flex items-center justify-center gap-1.5
-            min-h-8 px-3 rounded-full text-sm font-semibold
-            tracking-[0.04em] bg-[rgba(0,209,255,0.12)] border
-            border-[rgba(0,209,255,0.3)] text-cyan-soft"
+          <div className="flex items-center flex-wrap">
+            <span className="inline-flex items-center justify-center min-h-8 px-4
+              rounded-full text-sm font-semibold tracking-wider
+              bg-[rgba(0,209,255,0.12)] border border-[rgba(0,209,255,0.3)]
+              text-cyan-soft"
             >
               {user?.email || 'guest@example.com'}
             </span>
           </div>
         </header>
 
-        <main className="app-shell__main">{children}</main>
+        <main className="p-8 max-sm:p-5">
+          {children}
+        </main>
       </div>
     </div>
   )

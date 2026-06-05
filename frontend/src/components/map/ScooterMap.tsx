@@ -167,7 +167,7 @@ export default function ScooterMap({ scooters = [], stations = [], onMapClick }:
         })}
       </MapContainer>
 
-      <div className="flex flex-wrap gap-10 text-xs text-(--text-muted)">
+      <div className="flex flex-wrap gap-10 text-lg ml-4 text-text-muted">
         <span className="inline-flex items-center gap-2">
           <i className="w-3 h-3 rounded-full inline-block shadow-[0_0_8px_currentColor] bg-[#00D1FF] text-[rgba(0,209,255,0.5)]" /> Available
         </span>
@@ -180,7 +180,7 @@ export default function ScooterMap({ scooters = [], stations = [], onMapClick }:
       </div>
 
       {mappedScooters.length === 0 && (
-        <div className="p-1 rounded-[14px] bg-[rgba(0,82,255,0.08)] border border-[rgba(0,82,255,0.22)] text-(--text-muted)">
+        <div className="p-6 rounded-lg bg-[rgba(0,82,255,0.08)] border border-[rgba(0,82,255,0.22)] text-text-muted">
           No scooters with coordinates available. Please add lat/lng in the scooter form to display them on the map.
         </div>
       )}

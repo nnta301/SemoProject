@@ -7,8 +7,15 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary: 
-          'text-white bg-gradient-brand shadow-glow-blue hover:disabled:no-underline hover:not-disabled:-translate-y-[1px] hover:not-disabled:brightness-[1.08] active:not-disabled:translate-y-0 disabled:opacity-55 disabled:cursor-not-allowed hover:not-disabled:shadow-[0_0_28px_rgba(0,82,255,0.6),0_0_72px_rgba(0,209,255,0.3)]',
+        primary: [
+          'text-white bg-gradient-brand shadow-glow-blue',
+          'disabled:opacity-55 disabled:cursor-not-allowed',
+          'bg-[length:200%_200%] bg-[position:0%_0%]',
+          'hover:not-disabled:bg-[position:100%_100%]',
+          'hover:disabled:no-underline hover:not-disabled:-translate-y-[1px] hover:not-disabled:brightness-[1.08]',
+          'active:not-disabled:translate-y-0',
+          'hover:not-disabled:shadow-[0_0_28px_rgba(0,82,255,0.6),0_0_72px_rgba(0,209,255,0.3)]'
+        ].join(' '),
         secondary: 
           'text-text-strong bg-surface-elevated border border-border-strong backdrop-blur-[12px] hover:not-disabled:-translate-y-[1px] hover:not-disabled:brightness-[1.08] active:not-disabled:translate-y-0 disabled:opacity-55 disabled:cursor-not-allowed hover:not-disabled:bg-electric/12 hover:not-disabled:border-border-glow',
         destructive: 

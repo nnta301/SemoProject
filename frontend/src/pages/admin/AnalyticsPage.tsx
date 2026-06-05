@@ -51,7 +51,7 @@ export default function AnalyticsPage() {
   ]
 
   return (
-    <div className="page-stack">
+    <div className="grid gap-6">
       <SectionHeader
         eyebrow="Admin"
         title="Analytics"
@@ -61,7 +61,7 @@ export default function AnalyticsPage() {
       {error && <Alert tone="error">{error}</Alert>}
 
       <Card>
-        <form className="analytics-form" onSubmit={handleSubmit}>
+        <form className="grid gap-4 grid-cols-[minmax(0,1fr)_auto] items-end max-sm:grid-cols-1" onSubmit={handleSubmit}>
           <TextField
             label="Number of stations (k)"
             type="number"
@@ -73,20 +73,20 @@ export default function AnalyticsPage() {
             required
           />
           <Button type="submit" disabled={loading}>
-            {loading ? 'Calculating…' : 'Calculate'}
+            {loading ? 'Calculating...' : 'Calculate'}
           </Button>
         </form>
       </Card>
 
       <Card>
-        <div style={{ height: 420 }}>
+        <div>
           <ScooterMap
             scooters={scooters}
             // 5. TypeScript now safely reads .lat and .lng from points array
             stations={points.map((p, i) => ({ lat: p.lat, lng: p.lng, name: `Station ${i + 1}` }))}
           />
         </div>
-        <p className="muted small" style={{ marginTop: 8 }}>
+        <p className="mt-2">
           KMeans cluster centers shown on the map as stations.
         </p>
       </Card>

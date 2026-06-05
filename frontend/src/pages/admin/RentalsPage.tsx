@@ -80,7 +80,7 @@ export default function RentalsPage() {
   }
 
   return (
-    <div className="page-stack">
+    <div className="grid gap-6">
       <SectionHeader
         eyebrow="Admin"
         title="Rentals"
@@ -90,14 +90,14 @@ export default function RentalsPage() {
       {error && <Alert tone="error">{error}</Alert>}
       {success && <Alert tone="success">{success}</Alert>}
 
-      <div className="two-column-grid">
+      <div className="grid gap-[1.2rem] grid-cols-2 max-sm:grid-cols-1">
         <Card>
           <SectionHeader
             eyebrow="Start"
             title="New rental"
             description="Select the user and scooter that should be connected for a new rental session."
           />
-          <form className="form-grid" onSubmit={handleStart}>
+          <form className="grid gap-5" onSubmit={handleStart}>
             <TextField
               label="User ID"
               type="number"
@@ -115,7 +115,7 @@ export default function RentalsPage() {
               required
             />
             <Button type="submit" disabled={loading}>
-              {loading ? 'Starting…' : 'Start rental'}
+              {loading ? 'Starting...' : 'Start rental'}
             </Button>
           </form>
         </Card>
@@ -126,7 +126,7 @@ export default function RentalsPage() {
             title="Close rental"
             description="Enter the rental ID to complete the trip and receive the final total price."
           />
-          <form className="form-grid" onSubmit={handleEnd}>
+          <form className="grid gap-5" onSubmit={handleEnd}>
             <TextField
               label="Rental ID"
               type="number"
@@ -136,7 +136,7 @@ export default function RentalsPage() {
               required
             />
             <Button type="submit" disabled={loading}>
-              {loading ? 'Ending…' : 'End rental'}
+              {loading ? 'Ending...' : 'End rental'}
             </Button>
           </form>
         </Card>
@@ -147,13 +147,13 @@ export default function RentalsPage() {
         title="Rental result"
         onClose={() => setIsResultOpen(false)}
         footer={
-          <div className="modal-actions">
+          <div className="flex items-center gap-3">
             <Button onClick={() => setIsResultOpen(false)}>Close</Button>
           </div>
         }
       >
         {result && (
-          <div className="result-list">
+          <div className="grid gap-3 text-text [&_strong]:text-text-strong">
             <div>
               <strong>Rental ID:</strong> {result.id}
             </div>

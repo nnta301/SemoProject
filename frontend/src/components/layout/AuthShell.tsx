@@ -79,7 +79,7 @@ export default function AuthShell({ eyebrow, title, description, children }: Aut
           </ul>
         </div>
 
-        <p className="auth-shell__hint" style={{ position: 'relative', zIndex: 1, color: 'rgba(230,238,255,0.55)', fontSize: '0.82rem', margin: 0 }}>
+        <p className="relative z-1 text-[#e6eeff]/55 text-[0.82rem] m-0" >
           © {new Date().getFullYear()} SEMO — Smart e-mobility platform.
         </p>
       </aside>

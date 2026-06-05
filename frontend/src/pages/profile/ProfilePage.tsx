@@ -114,10 +114,7 @@ export default function ProfilePage() {
       type="button"
       aria-label={label}
       onClick={() => setter((v) => !v)}
-      style={{
-        background: 'transparent', border: 0, color: 'var(--text-muted)',
-        cursor: 'pointer', display: 'grid', placeItems: 'center', padding: 0,
-      }}
+      className="bg-transparent border-0 text-text-muted cursor-pointer grid place-items-center p-0"
     >
       {visible ? <EyeOff size={18} strokeWidth={1.7} /> : <Eye size={18} strokeWidth={1.7} />}
     </button>
@@ -126,7 +123,7 @@ export default function ProfilePage() {
   const roleLabel = user?.role === ROLES.ADMIN ? 'Administrator' : 'Customer'
 
   return (
-    <div className="page-stack">
+    <div className="grid gap-6">
       <SectionHeader
         eyebrow="Account Profile"
         title="Your Account & Wallet"
@@ -135,36 +132,54 @@ export default function ProfilePage() {
       {success && <Alert tone="success">{success}</Alert>}
 
       {/* Wallet hero */}
-      <section className="wallet-card">
-        <p className="wallet-card__label">Balance</p>
-        <p className="wallet-card__balance">{balanceDisplay}</p>
-        <p className="wallet-card__meta">
-          Currency: <strong style={{ color: '#fff' }}>VND</strong> &nbsp;•&nbsp;
-          Account holder:{' '}
-          <strong style={{ color: '#fff' }}>{user?.fullName || user?.email || '—'}</strong>
+      <section className="relative p-8 rounded-lg
+        bg-[radial-gradient(circle_at_90%_0%,rgba(0,209,255,0.35),transparent_50%),linear-gradient(135deg,rgba(0,82,255,0.8)_0%,rgba(17,28,52,0.95)_100%)]
+        border border-border-glow text-white overflow-hidden shadow-glow-cyan
+        before:content-[''] before:absolute before:-top-1/2 before:right-[-20%]
+        before:w-95 before:h-95 before:rounded-full
+        before:bg-[radial-gradient(circle,rgba(0,209,255,0.3),transparent_70%)] before:blur-[20px] before:pointer-events-none"
+      >
+        <p className="relative m-0 text-[0.78rem] uppercase tracking-[0.2em] font-bold text-cyan-soft">
+          Balance
         </p>
-        <span className="wallet-card__chip">
+        <p className="relative mt-[0.45rem] mr-0 mb-[0.6rem] ml-0
+          text-[clamp(2.2rem,4vw,3rem)] font-extrabold tracking-[-0.04em] leading-[1.05]"
+        >
+          {balanceDisplay}
+        </p>
+        <p className="relative m-0 text-[#e6eeff]/78 text-[0.92rem]">
+          Currency: <strong className="text-white">VND</strong> &nbsp;•&nbsp;
+          Account holder:{' '}
+          <strong className="text-white">{user?.fullName || user?.email || '—'}</strong>
+        </p>
+        <span className="relative inline-flex items-center gap-[0.4rem] mt-4 padding
+          px-[0.8rem] py-[0.35rem] rounded-full bg-black/28 border border-white/20
+          text-[0.78rem] tracking-[0.08em] font-semibold"
+        >
           <Sparkles size={14} strokeWidth={1.9} /> SEMO • {roleLabel.toUpperCase()}
         </span>
       </section>
 
-      <div className="two-column-grid">
+      <div className="grid gap-[1.2rem] grid-cols-2 max-sm:grid-cols-1">
         {/* Deposit card */}
         <Card>
           <SectionHeader
             eyebrow="Wallet"
             title="Top Up Wallet"
             description="Minimum top-up amount is 10,000 VND. Balance updates immediately after successful transaction."
-            actions={<Wallet size={20} strokeWidth={1.7} style={{ color: 'var(--color-cyan-soft)' }} />}
+            actions={<Wallet size={20} strokeWidth={1.7} className="text-cyan-soft" />}
           />
 
-          <form className="form-grid" onSubmit={handleDeposit}>
-            <div className="quick-amounts">
+          <form className="grid gap-5" onSubmit={handleDeposit}>
+            <div className="flex gap-2 flex-wrap">
               {QUICK_AMOUNTS.map((v) => (
                 <button
                   key={v}
                   type="button"
-                  className="quick-amount"
+                  className="p-[0.45rem_0.85rem] rounded-full border border-border-strong
+                  bg-surface-muted text-text cursor-pointer text-[0.85rem] font-semibold
+                    transition-all duration-180 ease-out hover:border-border-glow
+                  hover:text-white hover:bg-brand-soft"
                   onClick={() => pickQuickAmount(v)}
                 >
                   + {formatCurrency(v)}
@@ -206,10 +221,10 @@ export default function ProfilePage() {
             eyebrow="Security"
             title="Change Password"
             description="Change your password regularly to protect your account."
-            actions={<ShieldCheck size={20} strokeWidth={1.7} style={{ color: 'var(--color-cyan-soft)' }} />}
+            actions={<ShieldCheck size={20} strokeWidth={1.7} className="text-cyan-soft" />}
           />
 
-          <form className="form-grid" onSubmit={handlePasswordChange}>
+          <form className="grid gap-5" onSubmit={handlePasswordChange}>
             <TextField
               label="Current Password"
               type={showCurrent ? 'text' : 'password'}
@@ -246,7 +261,7 @@ export default function ProfilePage() {
       {/* Account details */}
       <Card>
         <SectionHeader eyebrow="Information" title="Logged-in Account" />
-        <div className="profile-details" style={{ marginTop: '0.6rem' }}>
+        <div className="grid gap-3 mt-2 text-text [&_strong]:text-text-strong">
           <div style={detailsRow}>
             <User size={18} strokeWidth={1.7} style={iconStyle} />
             <span><strong>Name:</strong> {user?.fullName || '—'}</span>

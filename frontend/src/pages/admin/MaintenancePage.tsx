@@ -106,7 +106,7 @@ export default function MaintenancePage() {
   ]
 
   return (
-    <div className="page-stack">
+    <div className="grid gap-6">
       <SectionHeader
         eyebrow="Admin"
         title="Maintenance"
@@ -117,14 +117,14 @@ export default function MaintenancePage() {
       {error && <Alert tone="error">{error}</Alert>}
       {success && <Alert tone="success">{success}</Alert>}
 
-      <div className="two-column-grid">
+      <div className="grid gap-[1.2rem] grid-cols-2 max-sm:grid-cols-1">
         <Card>
           <SectionHeader
             eyebrow="Create"
             title="New maintenance log"
             description="Record an issue, cost, and scooter ID when service is needed."
           />
-          <form className="form-grid" onSubmit={handleCreate}>
+          <form className="grid gap-5" onSubmit={handleCreate}>
             <TextField
               label="Scooter ID"
               type="number"
@@ -151,7 +151,7 @@ export default function MaintenancePage() {
               required
             />
             <Button type="submit" disabled={loading}>
-              {loading ? 'Saving…' : 'Create log'}
+              {loading ? 'Saving...' : 'Create log'}
             </Button>
           </form>
         </Card>
@@ -162,7 +162,7 @@ export default function MaintenancePage() {
             title="Scooter history"
             description="Load the maintenance logs for one scooter using its ID."
           />
-          <form className="form-grid" onSubmit={handleSearch}>
+          <form className="grid gap-5" onSubmit={handleSearch}>
             <TextField
               label="Scooter ID"
               type="number"
@@ -172,7 +172,7 @@ export default function MaintenancePage() {
               required
             />
             <Button type="submit" disabled={loading}>
-              {loading ? 'Loading…' : 'Load logs'}
+              {loading ? 'Loading...' : 'Load logs'}
             </Button>
           </form>
         </Card>
@@ -192,17 +192,17 @@ export default function MaintenancePage() {
         title="Resolve scooter"
         onClose={() => setIsResolveOpen(false)}
         footer={
-          <div className="modal-actions">
+          <div className="flex items-center gap-3">
             <Button variant="secondary" onClick={() => setIsResolveOpen(false)}>
               Cancel
             </Button>
             <Button type="submit" form="resolve-form" disabled={loading}>
-              {loading ? 'Resolving…' : 'Resolve'}
+              {loading ? 'Resolving...' : 'Resolve'}
             </Button>
           </div>
         }
       >
-        <form id="resolve-form" className="form-grid" onSubmit={handleResolve}>
+        <form id="resolve-form" className="grid gap-5" onSubmit={handleResolve}>
           <TextField
             label="Scooter ID"
             type="number"

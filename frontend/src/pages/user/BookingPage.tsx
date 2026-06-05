@@ -367,7 +367,7 @@ export default function BookingPage() {
   const ridingMs = ride?.state === 'riding' && ride.startedAt ? now - ride.startedAt : 0
 
   return (
-    <div className="page-stack">
+    <div className="grid gap-6">
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <SectionHeader
           eyebrow="Booking"
@@ -518,7 +518,9 @@ export default function BookingPage() {
                       </p>
                     </div>
                     <span className={cn(
-                      "status-pill",
+                      "inline-flex items-center justify-center gap-[0.35rem] min-h-8",
+                      "px-[0.85rem] rounded-full text-[0.78rem] font-bold",
+                      "tracking-[0.04em] border border-transparent", 
                       s._status === SCOOTER_STATUSES.AVAILABLE && "is-available",
                       s._status === SCOOTER_STATUSES.IN_USE && "is-in-use",
                       s._status !== SCOOTER_STATUSES.AVAILABLE && s._status !== SCOOTER_STATUSES.IN_USE && "is-maintenance"
@@ -666,7 +668,7 @@ export default function BookingPage() {
         </Card>
 
         {/* ============== CỘT PHẢI: RIDE STATUS + ALERTS ============== */}
-        <div style={{ display: 'grid', gap: '1.2rem' }}>
+        <div className="grid gap-5">
           <Card variant="glow">
             <div className="flex items-center justify-between gap-[0.6rem] mb-[0.6rem]">
               <SectionHeader eyebrow="Ride Status" title="" />
@@ -684,7 +686,7 @@ export default function BookingPage() {
                 <p className="text-(--text-strong) font-bold text-3xl">
                   {selectedScooter.name || `Scooter #${selectedScooter.id}`}
                 </p>
-                <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.88rem' }}>
+                <p className="m-0 text-text-muted text-[0.88rem]">
                   {formatCoordinates(selectedScooter._lat, selectedScooter._lng)}{' '}
                   · Battery {formatBatteryLevel(selectedScooter.batteryLevel) || '—'}
                   {selectedScooter._distance != null && <> · Distance: {fmtKm(selectedScooter._distance)}</>}
@@ -776,7 +778,6 @@ export default function BookingPage() {
               eyebrow="System Alert Simulation"
               title="Report Scooter Issues"
               description="Use this when the scooter encounters issues. The system will log and automatically end your current ride."
-              actions={<AlertTriangle size={18} strokeWidth={1.7} style={{ color: 'var(--warning)' }} />}
             />
             <div className="mt-2.5 grid gap-3">
               <Button
@@ -805,7 +806,7 @@ export default function BookingPage() {
                 Delete local Reports
               </Button>
             </div>
-            <p className="empty-state__text" style={{ marginTop: 10, fontSize: '0.82rem' }}>
+            <p className="mt-2.5 text-[0.82rem]" >
               Updating scooter status on the server requires admin privileges. This report is saved locally and
               will automatically end your current ride (rental). The operations team will receive and process it.
             </p>
