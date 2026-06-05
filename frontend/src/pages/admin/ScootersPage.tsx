@@ -3,15 +3,15 @@ import { useEffect, useMemo, useState } from 'react'
 // FIX 1: Thêm type-only import cho các Event React
 import type { SyntheticEvent, ChangeEvent } from 'react'
 
-import { SectionHeader } from '../../components/layout'
-import ScooterMap from '../../components/map/ScooterMap'
-import { Alert, Button, Card, Modal, Table, TextField } from '../../components/ui'
-import { SCOOTER_STATUSES } from '../../constants/statuses'
-import { createScooter, getAllScooters, updateScooter } from '../../features/scooters'
-import { formatBatteryLevel, formatDateTime } from '../../utils/formatters'
-import { getApiErrorMessage } from '../../utils/apiError'
-// FIX 2: Re-use lại Type Scooter chính xác của hệ thống
-import type { Scooter } from '../../types/models'
+import { SectionHeader,
+  Alert, Button, Card, Modal, Table, TextField,
+  ScooterMap
+ } from '@/components'
+import { SCOOTER_STATUSES } from '@/constants'
+import { createScooter, getAllScooters, updateScooter } from '@/features/scooters'
+import { formatBatteryLevel, formatDateTime, getApiErrorMessage } from '@/utils'
+
+import type { Scooter } from '@/types/models'
 
 // FIX 3: Định nghĩa Interface riêng cho Form State (Cho phép batteryLevel tạm thời nhận cả chuỗi khi đang gõ)
 interface ScooterFormState {
@@ -129,7 +129,7 @@ export default function ScootersPage() {
       key: 'actions',
       label: 'Actions',
       render: (row: Scooter) => (
-        <div className="table-actions">
+        <div className="flex items-center gap-3">
           <Button variant="secondary" onClick={() => openEdit(row)}>
             Edit
           </Button>
@@ -201,7 +201,7 @@ export default function ScootersPage() {
   }
 
   return (
-    <div className="page-stack">
+    <div className="grid gap-6">
       <SectionHeader
         eyebrow="Admin"
         title="Scooters"
@@ -209,22 +209,26 @@ export default function ScootersPage() {
         actions={<Button onClick={openCreate}>New scooter</Button>}
       />
 
-      <div className="stats-grid stats-grid--compact">
+      <div className="grid gap-[1.1rem] grid-cols-4 max-[980px]:grid-cols-2 max-sm:grid-cols-1">
         {summary.map((item) => (
           <Card key={item.label}>
-            <p className="stat-card__label">{item.label}</p>
-            <div className="stat-card__value">{loading ? '—' : item.value}</div>
+            <p className="text-text-faded font-semibold text-sm uppercase tracking-[0.12em]">
+              {item.label}
+            </p>
+            <div className="mt-2 text-4xl font-extrabold tracking-[-0.04em] bg-[linear-gradient(135deg,#fff,var(--color-cyan-soft)_120%)] bg-clip-text text-transparent leading-[1.1]">
+              {loading ? '—' : item.value}
+            </div>
           </Card>
         ))}
       </div>
 
-      {error && <Alert>{error}</Alert>}
+      {error && <Alert tone="error">{error}</Alert>}
 
       <Card>
-        <div style={{ height: 420 }}>
+        <div>
           <ScooterMap scooters={scooters} onMapClick={handleMapClick} />
         </div>
-        <p className="muted small" style={{ marginTop: 8 }}>
+        <p className="mt-2">
           Click on the map to add a scooter at that location.
         </p>
       </Card>
@@ -234,7 +238,7 @@ export default function ScootersPage() {
           columns={columns}
           rows={scooters}
           rowKey={(row: Scooter) => row.id?.toString() ?? ''}
-          emptyMessage={loading ? 'Loading scooters…' : 'No scooters available.'}
+          emptyMessage={loading ? 'Loading scooters...' : 'No scooters available.'}
         />
       </Card>
 
@@ -243,17 +247,17 @@ export default function ScootersPage() {
         title={form.id ? 'Edit scooter' : 'New scooter'}
         onClose={() => setIsModalOpen(false)}
         footer={
-          <div className="modal-actions">
+          <div className="flex items-center gap-3">
             <Button variant="secondary" onClick={() => setIsModalOpen(false)}>
               Cancel
             </Button>
             <Button type="submit" form="scooter-form" disabled={saving}>
-              {saving ? 'Saving…' : 'Save'}
+              {saving ? 'Saving...' : 'Save'}
             </Button>
           </div>
         }
       >
-        <form id="scooter-form" className="form-grid" onSubmit={handleSubmit}>
+        <form id="scooter-form" className="grid gap-5" onSubmit={handleSubmit}>
           <TextField
             label="Scooter name"
             name="name"
@@ -269,7 +273,6 @@ export default function ScootersPage() {
             min="0"
             max="100"
             value={form.batteryLevel}
-            // Giải quyết triệt để lỗi ép sai kiểu (Dòng 233)
             onChange={(event: ChangeEvent<HTMLInputElement>) => setForm((current) => ({ ...current, batteryLevel: event.target.value }))}
             required
           />
@@ -294,10 +297,16 @@ export default function ScootersPage() {
             placeholder="105.84330"
           />
 
-          <label className="ui-field">
-            <span className="ui-field__label">Status</span>
+          <label className="grid gap-2">
+            <span className="text-sm font-semibold text-(--text)">Status</span>
             <select
-              className="ui-input"
+              className="w-full min-h-13 p-4 border border-(--border) rounded-[14px]
+                       bg-[rgba(11,17,32,0.65)] text-(--text-strong)
+                         transition-[border-color,box-shadow,background] duration-200 ease-out
+                         placeholder:text-(--text-faded) hover:border-(--border-strong)
+                         focus:outline-none focus:border-(--border-glow)
+                         focus:bg-[rgba(11,17,32,0.85)]
+                         focus:shadow-[0_0_0_4px_rgba(0,209,255,0.15),0_0_24px_rgba(0,82,255,0.18)]"
               value={form.status}
               onChange={(event: ChangeEvent<HTMLSelectElement>) => setForm((current) => ({ ...current, status: event.target.value }))}
             >

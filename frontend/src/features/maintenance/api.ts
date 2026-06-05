@@ -1,5 +1,5 @@
 // API helpers for maintenance log creation, lookup, and resolution.
-import { axiosClient } from '../../config/axiosClient'
+import { axiosClient } from '@/config/axiosClient'
 
 // Bổ sung kiểu any cho request
 export async function createMaintenanceLog(request: any) {

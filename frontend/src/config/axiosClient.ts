@@ -2,7 +2,7 @@ import axios from 'axios'
 import type { InternalAxiosRequestConfig, AxiosResponse, AxiosError } from 'axios'
 
 import { APP_ENV } from './env'
-import { getAuthToken, removeAuthToken } from '../utils/authSession'
+import { getAuthToken, removeAuthToken } from '@/utils'
 
 function getToken() {
   return getAuthToken()

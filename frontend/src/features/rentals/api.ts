@@ -1,4 +1,4 @@
-import { axiosClient } from '../../config/axiosClient'
+import { axiosClient } from '@/config/axiosClient'
 
 export async function startRental(request: any) {
   const { data } = await axiosClient.post('/api/rentals/start', request)

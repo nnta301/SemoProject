@@ -1,5 +1,5 @@
 // API helpers for user management, password actions, and wallet deposit.
-import { axiosClient } from '../../config/axiosClient'
+import { axiosClient } from '@/config/axiosClient'
 
 export async function createUser(request: any) {
   const { data } = await axiosClient.post('/api/users', request)

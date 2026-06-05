@@ -1,17 +1,18 @@
 // Admin analytics page using the optimal-stations API.
 import { useState } from 'react'
-// FIX 1: Dùng type-only import cho FormEvent và ChangeEvent
+// FIX 1: Dùng type-only import cho SyntheticEvent và ChangeEvent
 import type { SyntheticEvent, ChangeEvent } from 'react'
 
-import { SectionHeader } from '../../components/layout'
-import { Alert, Button, Card, Table, TextField } from '../../components/ui'
-import ScooterMap from '../../components/map/ScooterMap'
-import { getAllScooters } from '../../features/scooters'
-import { getOptimalStations } from '../../features/analytics'
-import { getApiErrorMessage } from '../../utils/apiError'
+import { SectionHeader,
+  Alert, Button, Card, Table, TextField,
+  ScooterMap
+ } from '@/components'
+import { getAllScooters } from '@/features/scooters'
+import { getOptimalStations } from '@/features/analytics'
+import { getApiErrorMessage } from '@/utils'
 
 // FIX 2: Import đúng Type Scooter của dự án thay vì tự định nghĩa bừa
-import type { Scooter, LatLngPos } from '../../types/models'
+import type { Scooter, LatLngPos } from '@/types/models'
 
 
 export default function AnalyticsPage() {
@@ -50,17 +51,17 @@ export default function AnalyticsPage() {
   ]
 
   return (
-    <div className="page-stack">
+    <div className="grid gap-6">
       <SectionHeader
         eyebrow="Admin"
         title="Analytics"
         description="Calculate optimal charging stations from the analytics endpoint."
       />
 
-      {error && <Alert>{error}</Alert>}
+      {error && <Alert tone="error">{error}</Alert>}
 
       <Card>
-        <form className="analytics-form" onSubmit={handleSubmit}>
+        <form className="grid gap-4 grid-cols-[minmax(0,1fr)_auto] items-end max-sm:grid-cols-1" onSubmit={handleSubmit}>
           <TextField
             label="Number of stations (k)"
             type="number"
@@ -72,20 +73,20 @@ export default function AnalyticsPage() {
             required
           />
           <Button type="submit" disabled={loading}>
-            {loading ? 'Calculating…' : 'Calculate'}
+            {loading ? 'Calculating...' : 'Calculate'}
           </Button>
         </form>
       </Card>
 
       <Card>
-        <div style={{ height: 420 }}>
+        <div>
           <ScooterMap
             scooters={scooters}
             // 5. TypeScript now safely reads .lat and .lng from points array
             stations={points.map((p, i) => ({ lat: p.lat, lng: p.lng, name: `Station ${i + 1}` }))}
           />
         </div>
-        <p className="muted small" style={{ marginTop: 8 }}>
+        <p className="mt-2">
           KMeans cluster centers shown on the map as stations.
         </p>
       </Card>

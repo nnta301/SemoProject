@@ -6,11 +6,10 @@ import type { SyntheticEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom'
 import { Mail, Lock, User, Phone, Eye, EyeOff, UserPlus } from 'lucide-react'
 
-import { useAuth } from '../../hooks/useAuth'
-import { ROUTES } from '../../constants/routes'
-import { Alert, Button, Card, TextField } from '../../components/ui'
-import { AuthShell } from '../../components/layout'
-import { getApiErrorMessage } from '../../utils/apiError'
+import { useAuth } from '@/hooks/useAuth'
+import { ROUTES } from '@/constants'
+import { Alert, Button, Card, TextField, AuthShell } from '@/components'
+import { getApiErrorMessage } from '@/utils'
 
 export default function Register() {
   const navigate = useNavigate()
@@ -27,7 +26,7 @@ export default function Register() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
-  // FIX 3: Định nghĩa FormEvent cho e
+  // FIX 3: Định nghĩa SyntheticEvent cho e
   async function handleSubmit(e: SyntheticEvent<HTMLFormElement>) {
     e.preventDefault()
     setError(null)
@@ -66,15 +65,7 @@ export default function Register() {
       type="button"
       aria-label={label}
       onClick={() => setter((v) => !v)}
-      style={{
-        background: 'transparent',
-        border: 0,
-        color: 'var(--text-muted)',
-        cursor: 'pointer',
-        display: 'grid',
-        placeItems: 'center',
-        padding: 0,
-      }}
+      className="bg-transparent border-0 text-text-muted cursor-pointer grid place-items-center p-0"
     >
       {togglePwdIcon(visible)}
     </button>
@@ -87,15 +78,17 @@ export default function Register() {
         description="Sign up to access the smart e-scooter network, manage your wallet, and rent history — all in one place."
       >
       <Card variant="glow">
-        <form className="auth-form" onSubmit={handleSubmit}>
-          <div className="auth-form__header">
-            <h2 className="auth-form__title">Create Account</h2>
-            <p className="auth-form__subtitle">
+        <form className="grid gap-[1.1rem]" onSubmit={handleSubmit}>
+          <div className="grid gap-2 mb-2">
+            <h2 className="m-0 text-[2.1rem] tracking-[-0.03em] bg-linear-to-br from-white to-cyan-soft bg-clip-text text-transparent">
+              Create Account
+            </h2>
+            <p className="m-0 text-(--text-muted) leading-[1.6]">
               Fill in your information to create a new customer account.
             </p>
           </div>
 
-          {error && <Alert>{error}</Alert>}
+          {error && <Alert tone="error">{error}</Alert>}
 
           <TextField
             label="Full Name"
@@ -114,7 +107,7 @@ export default function Register() {
             name="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="ban@vidu.com"
+            placeholder="you@example.com"
             autoComplete="email"
             required
             leadingIcon={<Mail size={18} strokeWidth={1.7} />}
@@ -158,7 +151,7 @@ export default function Register() {
             trailingAction={eyeButton(showConfirmPwd, setShowConfirmPwd, 'Show/Hide confirm password')}
           />
 
-          <div className="auth-form__actions">
+          <div className="flex flex-col gap-[0.8rem]">
             <Button
               type="submit"
               disabled={loading}
@@ -166,9 +159,9 @@ export default function Register() {
             >
               {loading ? 'Creating account...' : 'Create Account'}
             </Button>
-            <p className="auth-form__hint">
+            <p className="m-0 text-(--text-muted) text-[0.92rem] leading-[1.6] text-center">
               Already have an account?{' '}
-              <Link className="auth-form__link" to={ROUTES.LOGIN}>
+              <Link className="text-cyan-soft font-bold relative transition-colors duration-200 ease-in-out hover:text-white hover:[text-shadow:0_0_12px_var(--color-cyan)]" to={ROUTES.LOGIN}>
                 Sign in
               </Link>
             </p>

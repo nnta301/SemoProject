@@ -1,23 +1,13 @@
-// Router tree: public, authenticated, admin-only routes.
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 
-import AdminLayout from '../layouts/AdminLayout'
-import AppLayout from '../layouts/AppLayout'
-import AuthLayout from '../layouts/AuthLayout'
+import { AdminLayout, AppLayout, AuthLayout } from '@/layouts'
 import ProtectedRoute from './ProtectedRoute'
-import { ROUTES } from '../constants/routes'
-import { ROLES } from '../constants/roles'
-import { useAuth } from '../hooks/useAuth'
-import Login from '../pages/auth/Login'
-import Register from '../pages/auth/Register'
-import DashboardPage from '../pages/dashboard/DashboardPage'
-import ProfilePage from '../pages/profile/ProfilePage'
-import BookingPage from '../pages/user/BookingPage'
-import AnalyticsPage from '../pages/admin/AnalyticsPage'
-import MaintenancePage from '../pages/admin/MaintenancePage'
-import RentalsPage from '../pages/admin/RentalsPage'
-import ScootersPage from '../pages/admin/ScootersPage'
-import UsersPage from '../pages/admin/UsersPage'
+import { ROUTES, ROLES } from '@/constants'
+import { useAuth } from '@/hooks/useAuth'
+import { 
+  Login, Register, DashboardPage, ProfilePage, BookingPage, 
+  AnalyticsPage, MaintenancePage, RentalsPage, ScootersPage, UsersPage 
+} from '@/pages'
 
 function RoleHomeRedirect() {
   const { user } = useAuth()
