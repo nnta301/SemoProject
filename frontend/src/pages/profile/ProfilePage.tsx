@@ -1,22 +1,22 @@
 // Trang Hồ sơ & Ví — Tech Blue Luxury (tiếng Việt).
 // Liên kết với API:
 //   - depositToWallet → POST /api/users/wallet/deposit (qua features/users)
-//   - changePassword  → PUT  /api/users/{id}/change-password
+//   - changePassword  → PUT  /api/users/change-password
 // Số dư hiển thị bằng định dạng VNĐ (vi-VN) qua utils/formatters.formatCurrency.
 import { useState } from 'react'
 // FIX 1: Import type-only chống lỗi verbatimModuleSyntax
-import type { FormEvent, ChangeEvent } from 'react'
+import type { SyntheticEvent, ChangeEvent } from 'react'
 import {
   Wallet, ShieldCheck, User, Mail, BadgeCheck, Sparkles, Plus, KeyRound, Lock, Eye, EyeOff,
 } from 'lucide-react'
 
-import { SectionHeader } from '../../components/layout'
-import { Alert, Button, Card, TextField } from '../../components/ui'
-import { useAuth } from '../../hooks/useAuth'
-import { changePassword, depositToWallet } from '../../features/users'
-import { formatCurrency } from '../../utils/formatters'
-import { getApiErrorMessage } from '../../utils/apiError'
-import { ROLES } from '../../constants/roles'
+import { SectionHeader,
+  Alert, Button, Card, TextField
+} from '@/components'
+import { useAuth } from '@/hooks/useAuth'
+import { changePassword, depositToWallet } from '@/features/users'
+import { formatCurrency, getApiErrorMessage } from '@/utils'
+import { ROLES } from '@/constants'
 
 const QUICK_AMOUNTS = [50000, 100000, 200000, 500000]
 
@@ -35,10 +35,10 @@ export default function ProfilePage() {
   const [success, setSuccess] = useState('')
 
   const balance = typeof user?.balance === 'number' ? user.balance : null
-  const balanceDisplay = balance === null ? 'Chưa có dữ liệu' : formatCurrency(balance)
+  const balanceDisplay = balance === null ? 'No data available' : formatCurrency(balance)
 
-  // FIX 2: Khai báo FormEvent cho tham số event
-  async function handleDeposit(event: FormEvent<HTMLFormElement>) {
+  // FIX 2: Khai báo SyntheticEvent cho tham số event
+  async function handleDeposit(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault()
     setLoadingDeposit(true)
     setError('')
@@ -47,7 +47,7 @@ export default function ProfilePage() {
     try {
       const amount = Number(depositAmount)
       if (!Number.isFinite(amount) || amount < 10000) {
-        setError('Số tiền nạp tối thiểu là 10.000 VNĐ.')
+        setError('The minimum top-up amount is 10,000 VND.')
         return
       }
 
@@ -62,18 +62,18 @@ export default function ProfilePage() {
       setSuccess(
         response?.message
           ? `${response.message} (+${niceAmount})`
-          : `Nạp ${niceAmount} thành công.`,
+          : `Successfully topped up ${niceAmount}.`,
       )
       setDepositAmount('')
     } catch (err) {
-      setError(getApiErrorMessage(err, 'Không thể nạp tiền vào ví.'))
+      setError(getApiErrorMessage(err, 'Failed to deposit money into wallet.'))
     } finally {
       setLoadingDeposit(false)
     }
   }
 
-  // FIX 2: Khai báo FormEvent cho tham số event
-  async function handlePasswordChange(event: FormEvent<HTMLFormElement>) {
+  // FIX 2: Khai báo SyntheticEvent cho tham số event
+  async function handlePasswordChange(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault()
     setLoadingPwd(true)
     setError('')
@@ -81,19 +81,19 @@ export default function ProfilePage() {
 
     try {
       if (!user?.id) {
-        setError('Không xác định được tài khoản hiện tại.')
+        setError('Current user account could not be determined.')
         return
       }
       if (newPassword.length < 8) {
-        setError('Mật khẩu mới phải có ít nhất 8 ký tự.')
+        setError('New password must be at least 8 characters long.')
         return
       }
-      await changePassword(user.id, { currentPassword, newPassword })
-      setSuccess('Đổi mật khẩu thành công.')
+      await changePassword({ currentPassword, newPassword })
+      setSuccess('Password changed successfully.')
       setCurrentPassword('')
       setNewPassword('')
     } catch (err) {
-      setError(getApiErrorMessage(err, 'Không thể đổi mật khẩu.'))
+      setError(getApiErrorMessage(err, 'Failed to change password.'))
     } finally {
       setLoadingPwd(false)
     }
@@ -114,59 +114,72 @@ export default function ProfilePage() {
       type="button"
       aria-label={label}
       onClick={() => setter((v) => !v)}
-      style={{
-        background: 'transparent', border: 0, color: 'var(--text-muted)',
-        cursor: 'pointer', display: 'grid', placeItems: 'center', padding: 0,
-      }}
+      className="bg-transparent border-0 text-text-muted cursor-pointer grid place-items-center p-0"
     >
       {visible ? <EyeOff size={18} strokeWidth={1.7} /> : <Eye size={18} strokeWidth={1.7} />}
     </button>
   )
 
-  const roleLabel = user?.role === ROLES.ADMIN ? 'Quản trị viên' : 'Khách hàng'
+  const roleLabel = user?.role === ROLES.ADMIN ? 'Administrator' : 'Customer'
 
   return (
-    <div className="page-stack">
+    <div className="grid gap-6">
       <SectionHeader
-        eyebrow="Tài khoản"
-        title="Hồ sơ & Ví của bạn"
-        description="Quản lý số dư, lịch sử và bảo mật tài khoản tại một nơi duy nhất."
-      />
-
-      {error && <Alert>{error}</Alert>}
+        eyebrow="Account Profile"
+        title="Your Account & Wallet"
+        description="Manage your balance, history, and account security all in one place."/>
+      {error && <Alert tone="error">{error}</Alert>}
       {success && <Alert tone="success">{success}</Alert>}
 
       {/* Wallet hero */}
-      <section className="wallet-card">
-        <p className="wallet-card__label">Số dư ví Semo</p>
-        <p className="wallet-card__balance">{balanceDisplay}</p>
-        <p className="wallet-card__meta">
-          Đơn vị tiền tệ: <strong style={{ color: '#fff' }}>VNĐ</strong> &nbsp;•&nbsp;
-          Chủ tài khoản:{' '}
-          <strong style={{ color: '#fff' }}>{user?.fullName || user?.email || '—'}</strong>
+      <section className="relative p-8 rounded-lg
+        bg-[radial-gradient(circle_at_90%_0%,rgba(0,209,255,0.35),transparent_50%),linear-gradient(135deg,rgba(0,82,255,0.8)_0%,rgba(17,28,52,0.95)_100%)]
+        border border-border-glow text-white overflow-hidden shadow-glow-cyan
+        before:content-[''] before:absolute before:-top-1/2 before:right-[-20%]
+        before:w-95 before:h-95 before:rounded-full
+        before:bg-[radial-gradient(circle,rgba(0,209,255,0.3),transparent_70%)] before:blur-[20px] before:pointer-events-none"
+      >
+        <p className="relative m-0 text-[0.78rem] uppercase tracking-[0.2em] font-bold text-cyan-soft">
+          Balance
         </p>
-        <span className="wallet-card__chip">
+        <p className="relative mt-[0.45rem] mr-0 mb-[0.6rem] ml-0
+          text-[clamp(2.2rem,4vw,3rem)] font-extrabold tracking-[-0.04em] leading-[1.05]"
+        >
+          {balanceDisplay}
+        </p>
+        <p className="relative m-0 text-[#e6eeff]/78 text-[0.92rem]">
+          Currency: <strong className="text-white">VND</strong> &nbsp;•&nbsp;
+          Account holder:{' '}
+          <strong className="text-white">{user?.fullName || user?.email || '—'}</strong>
+        </p>
+        <span className="relative inline-flex items-center gap-[0.4rem] mt-4 padding
+          px-[0.8rem] py-[0.35rem] rounded-full bg-black/28 border border-white/20
+          text-[0.78rem] tracking-[0.08em] font-semibold"
+        >
           <Sparkles size={14} strokeWidth={1.9} /> SEMO • {roleLabel.toUpperCase()}
         </span>
       </section>
 
-      <div className="two-column-grid">
+      <div className="grid gap-[1.2rem] grid-cols-2 max-sm:grid-cols-1">
         {/* Deposit card */}
         <Card>
           <SectionHeader
-            eyebrow="Ví"
-            title="Nạp tiền vào ví"
-            description="Nạp tối thiểu 10.000 VNĐ. Số dư cập nhật tức thì sau khi giao dịch thành công."
-            actions={<Wallet size={20} strokeWidth={1.7} style={{ color: 'var(--color-cyan-soft)' }} />}
+            eyebrow="Wallet"
+            title="Top Up Wallet"
+            description="Minimum top-up amount is 10,000 VND. Balance updates immediately after successful transaction."
+            actions={<Wallet size={20} strokeWidth={1.7} className="text-cyan-soft" />}
           />
 
-          <form className="form-grid" onSubmit={handleDeposit}>
-            <div className="quick-amounts">
+          <form className="grid gap-5" onSubmit={handleDeposit}>
+            <div className="flex gap-2 flex-wrap">
               {QUICK_AMOUNTS.map((v) => (
                 <button
                   key={v}
                   type="button"
-                  className="quick-amount"
+                  className="p-[0.45rem_0.85rem] rounded-full border border-border-strong
+                  bg-surface-muted text-text cursor-pointer text-[0.85rem] font-semibold
+                    transition-all duration-180 ease-out hover:border-border-glow
+                  hover:text-white hover:bg-brand-soft"
                   onClick={() => pickQuickAmount(v)}
                 >
                   + {formatCurrency(v)}
@@ -175,20 +188,20 @@ export default function ProfilePage() {
             </div>
 
             <TextField
-              label="Số tiền nạp (VNĐ)"
+              label="Deposit Amount (VND)"
               type="number"
               min="10000"
               step="1000"
               name="depositAmount"
               value={depositAmount}
               onChange={(event: ChangeEvent<HTMLInputElement>) => setDepositAmount(event.target.value)}
-              placeholder="Ví dụ: 100000"
+              placeholder="e.g., 100000"
               required
               leadingIcon={<Wallet size={18} strokeWidth={1.7} />}
               helpText={
                 depositAmount && Number(depositAmount) >= 10000
-                  ? `Sẽ nạp ${formatCurrency(Number(depositAmount))} vào ví.`
-                  : 'Tối thiểu 10.000 VNĐ.'
+                  ? `Will deposit ${formatCurrency(Number(depositAmount))} into your wallet.`
+                  : 'Minimum 10,000 VND.'
               }
             />
 
@@ -197,7 +210,7 @@ export default function ProfilePage() {
               disabled={loadingDeposit}
               leadingIcon={<Plus size={18} strokeWidth={1.8} />}
             >
-              {loadingDeposit ? 'Đang nạp…' : 'Nạp ngay'}
+              {loadingDeposit ? 'Loading...' : 'Top Up Now'}
             </Button>
           </form>
         </Card>
@@ -205,33 +218,33 @@ export default function ProfilePage() {
         {/* Password card */}
         <Card>
           <SectionHeader
-            eyebrow="Bảo mật"
-            title="Đổi mật khẩu"
-            description="Đổi mật khẩu thường xuyên để bảo vệ tài khoản của bạn."
-            actions={<ShieldCheck size={20} strokeWidth={1.7} style={{ color: 'var(--color-cyan-soft)' }} />}
+            eyebrow="Security"
+            title="Change Password"
+            description="Change your password regularly to protect your account."
+            actions={<ShieldCheck size={20} strokeWidth={1.7} className="text-cyan-soft" />}
           />
 
-          <form className="form-grid" onSubmit={handlePasswordChange}>
+          <form className="grid gap-5" onSubmit={handlePasswordChange}>
             <TextField
-              label="Mật khẩu hiện tại"
+              label="Current Password"
               type={showCurrent ? 'text' : 'password'}
               name="currentPassword"
               value={currentPassword}
               onChange={(event: ChangeEvent<HTMLInputElement>) => setCurrentPassword(event.target.value)}
               required
               leadingIcon={<Lock size={18} strokeWidth={1.7} />}
-              trailingAction={eyeBtn(showCurrent, setShowCurrent, 'Hiện/ẩn mật khẩu hiện tại')}
+              trailingAction={eyeBtn(showCurrent, setShowCurrent, 'Show/Hide Current Password')}
             />
             <TextField
-              label="Mật khẩu mới"
+              label="New Password"
               type={showNew ? 'text' : 'password'}
               name="newPassword"
               value={newPassword}
               onChange={(event: ChangeEvent<HTMLInputElement>) => setNewPassword(event.target.value)}
               required
               leadingIcon={<KeyRound size={18} strokeWidth={1.7} />}
-              trailingAction={eyeBtn(showNew, setShowNew, 'Hiện/ẩn mật khẩu mới')}
-              helpText="Tối thiểu 8 ký tự, nên dùng chữ hoa, chữ thường và số."
+              trailingAction={eyeBtn(showNew, setShowNew, 'Show/Hide New Password')}
+              helpText="Minimum 8 characters, use uppercase, lowercase and numbers."
             />
             <Button
               type="submit"
@@ -239,7 +252,7 @@ export default function ProfilePage() {
               variant="secondary"
               leadingIcon={<ShieldCheck size={18} strokeWidth={1.8} />}
             >
-              {loadingPwd ? 'Đang lưu…' : 'Cập nhật mật khẩu'}
+              {loadingPwd ? 'Loading...' : 'Update Password'}
             </Button>
           </form>
         </Card>
@@ -247,11 +260,11 @@ export default function ProfilePage() {
 
       {/* Account details */}
       <Card>
-        <SectionHeader eyebrow="Thông tin" title="Tài khoản đã đăng nhập" />
-        <div className="profile-details" style={{ marginTop: '0.6rem' }}>
+        <SectionHeader eyebrow="Information" title="Logged-in Account" />
+        <div className="grid gap-3 mt-2 text-text [&_strong]:text-text-strong">
           <div style={detailsRow}>
             <User size={18} strokeWidth={1.7} style={iconStyle} />
-            <span><strong>Họ tên:</strong> {user?.fullName || '—'}</span>
+            <span><strong>Name:</strong> {user?.fullName || '—'}</span>
           </div>
           <div style={detailsRow}>
             <Mail size={18} strokeWidth={1.7} style={iconStyle} />
@@ -259,7 +272,7 @@ export default function ProfilePage() {
           </div>
           <div style={detailsRow}>
             <BadgeCheck size={18} strokeWidth={1.7} style={iconStyle} />
-            <span><strong>Vai trò:</strong> {roleLabel}</span>
+            <span><strong>Role:</strong> {roleLabel}</span>
           </div>
         </div>
       </Card>

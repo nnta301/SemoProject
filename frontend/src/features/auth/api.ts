@@ -1,5 +1,5 @@
 // API helpers for auth login and registration requests.
-import { axiosClient } from '../../config/axiosClient'
+import { axiosClient } from '@/config/axiosClient'
 
 // Bổ sung kiểu 'any' cho tham số request
 export async function login(request: any) {

@@ -1,16 +1,15 @@
 // Trang Đăng nhập — Tech Blue Luxury (tiếng Việt).
 // Sử dụng `useAuth().login()` → gọi POST /api/auth/login qua features/auth.
 import { useState } from 'react'
-// FIX 1: Thêm type-only import cho FormEvent chống lỗi verbatimModuleSyntax
-import type { FormEvent } from 'react'
+// FIX 1: Thêm type-only import cho SyntheticEvent chống lỗi verbatimModuleSyntax
+import type { SyntheticEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Mail, Lock, Eye, EyeOff, ArrowRight, LogIn } from 'lucide-react'
 
-import { ROUTES } from '../../constants/routes'
-import { useAuth } from '../../hooks/useAuth'
-import { Alert, Button, Card, TextField } from '../../components/ui'
-import { AuthShell } from '../../components/layout'
-import { getApiErrorMessage } from '../../utils/apiError'
+import { ROUTES } from '@/constants'
+import { useAuth } from '@/hooks/useAuth'
+import { Alert, Button, Card, TextField, AuthShell } from '@/components'
+import { getApiErrorMessage } from '@/utils'
 
 export default function Login() {
   const navigate = useNavigate()
@@ -23,8 +22,8 @@ export default function Login() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
-  // FIX 3: Thêm kiểu dữ liệu FormEvent cho tham số e
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  // FIX 3: Thêm kiểu dữ liệu SyntheticEvent cho tham số e
+  async function handleSubmit(e: SyntheticEvent<HTMLFormElement>) {
     e.preventDefault()
     setError(null)
     setLoading(true)
@@ -32,7 +31,7 @@ export default function Login() {
       await login({ email, password })
       navigate(ROUTES.HOME, { replace: true })
     } catch (err) {
-      setError(getApiErrorMessage(err, 'Đăng nhập thất bại. Vui lòng kiểm tra lại email và mật khẩu.'))
+      setError(getApiErrorMessage(err, 'Login failed. Please check your email and password.'))
     } finally {
       setLoading(false)
     }
@@ -41,40 +40,41 @@ export default function Login() {
   return (
     <AuthShell
       eyebrow="Semo • Tech Mobility"
-      title="Chào mừng trở lại."
-      description="Đăng nhập để quản lý xe điện, chuyến đi và ví của bạn trên một giao diện thông minh, an toàn và sang trọng."
+      title="Welcome back."
+      description="Log in to manage your electric scooter, trips, and wallet on a smart, safe, and luxurious interface."
     >
       <Card variant="glow">
-        <form className="auth-form" onSubmit={handleSubmit}>
-          <div className="auth-form__header">
-            <h2 className="auth-form__title">Đăng nhập</h2>
-            <p className="auth-form__subtitle">
-              Sử dụng email và mật khẩu đã đăng ký để tiếp tục.
+        <form className="grid gap-4" onSubmit={handleSubmit}>
+          <div className="grid gap-2 mb-2">
+            <h2 className="text-3xl tracking-[-0.03em] bg-linear-to-br from-white to-cyan-soft bg-clip-text text-transparent">
+              Log in
+            </h2>
+            <p className="text-text-muted leading-[1.6]">
+              Use your registered email and password to continue.
             </p>
           </div>
 
-          {error && <Alert>{error}</Alert>}
+          {error && <Alert tone="error">{error}</Alert>}
 
           <TextField
             label="Email"
             type="email"
             name="email"
             value={email}
-            // TypeScript có khả năng tự suy luận inline event (e) ở đây nên không cần gán type thủ công
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="ban@vidu.com"
+            placeholder="you@example.com"
             autoComplete="email"
             required
             leadingIcon={<Mail size={18} strokeWidth={1.7} />}
           />
 
           <TextField
-            label="Mật khẩu"
+            label="Password"
             type={showPassword ? 'text' : 'password'}
             name="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Nhập mật khẩu của bạn"
+            placeholder="Enter your password"
             autoComplete="current-password"
             required
             leadingIcon={<Lock size={18} strokeWidth={1.7} />}
@@ -82,35 +82,27 @@ export default function Login() {
               <button
                 type="button"
                 onClick={() => setShowPassword((v) => !v)}
-                aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
-                style={{
-                  background: 'transparent',
-                  border: 0,
-                  color: 'var(--text-muted)',
-                  cursor: 'pointer',
-                  display: 'grid',
-                  placeItems: 'center',
-                  padding: 0,
-                }}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                className="bg-transparent border-0 text-(--text-muted) cursor-pointer grid place-items-center p-0"
               >
                 {showPassword ? <EyeOff size={18} strokeWidth={1.7} /> : <Eye size={18} strokeWidth={1.7} />}
               </button>
             }
           />
 
-          <div className="auth-form__actions">
+          <div className="flex flex-col gap-[0.8rem]">
             <Button
               type="submit"
               disabled={loading}
               leadingIcon={<LogIn size={18} strokeWidth={1.8} />}
               trailingIcon={!loading ? <ArrowRight size={18} strokeWidth={1.8} /> : null}
             >
-              {loading ? 'Đang đăng nhập…' : 'Đăng nhập'}
+              {loading ? 'Logging in...' : 'Log in'}
             </Button>
-            <p className="auth-form__hint">
-              Chưa có tài khoản?{' '}
-              <Link className="auth-form__link" to={ROUTES.REGISTER}>
-                Tạo tài khoản mới
+            <p className="text-(--text-muted) text-[0.92rem] leading-[1.6] text-center">
+              Don't have an account?{' '}
+              <Link className="text-cyan-soft font-bold relative transition-colors duration-200 ease-in-out hover:text-white hover:[text-shadow:0_0_12px_var(--color-cyan)]" to={ROUTES.REGISTER}>
+                Create a new account
               </Link>
             </p>
           </div>

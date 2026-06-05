@@ -1,13 +1,13 @@
 // Admin rentals page for starting and ending rental sessions.
 import { useState } from 'react'
 // FIX 1: Import type-only chống lỗi verbatimModuleSyntax
-import type { FormEvent, ChangeEvent } from 'react'
+import type { SyntheticEvent, ChangeEvent } from 'react'
 
-import { SectionHeader } from '../../components/layout'
-import { Alert, Button, Card, Modal, TextField } from '../../components/ui'
-import { endRental, startRental } from '../../features/rentals'
-import { formatDateTime, formatCurrency } from '../../utils/formatters'
-import { getApiErrorMessage } from '../../utils/apiError'
+import { SectionHeader,
+  Alert, Button, Card, Modal, TextField
+ } from '@/components'
+import { endRental, startRental } from '@/features/rentals'
+import { formatDateTime, formatCurrency, getApiErrorMessage } from '@/utils'
 
 // FIX 2: Định nghĩa cấu trúc dữ liệu trả về của một Rental Session
 interface RentalResult {
@@ -35,8 +35,8 @@ export default function RentalsPage() {
   const [result, setResult] = useState<RentalResult | null>(null)
   const [isResultOpen, setIsResultOpen] = useState<boolean>(false)
 
-  // FIX 4: Khai báo kiểu dữ liệu FormEvent cho tham số event
-  async function handleStart(event: FormEvent<HTMLFormElement>) {
+  // FIX 4: Khai báo kiểu dữ liệu SyntheticEvent cho tham số event
+  async function handleStart(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault()
     setLoading(true)
     setError('')
@@ -44,7 +44,6 @@ export default function RentalsPage() {
 
     try {
       const response = await startRental({
-        userId: Number(startForm.userId),
         scooterId: Number(startForm.scooterId),
       })
 
@@ -59,8 +58,8 @@ export default function RentalsPage() {
     }
   }
 
-  // FIX 4: Khai báo kiểu dữ liệu FormEvent cho tham số event
-  async function handleEnd(event: FormEvent<HTMLFormElement>) {
+  // FIX 4: Khai báo kiểu dữ liệu SyntheticEvent cho tham số event
+  async function handleEnd(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault()
     setLoading(true)
     setError('')
@@ -80,24 +79,24 @@ export default function RentalsPage() {
   }
 
   return (
-    <div className="page-stack">
+    <div className="grid gap-6">
       <SectionHeader
         eyebrow="Admin"
         title="Rentals"
         description="Start a rental or end it by rental ID using the backend rental endpoints."
       />
 
-      {error && <Alert>{error}</Alert>}
+      {error && <Alert tone="error">{error}</Alert>}
       {success && <Alert tone="success">{success}</Alert>}
 
-      <div className="two-column-grid">
+      <div className="grid gap-[1.2rem] grid-cols-2 max-sm:grid-cols-1">
         <Card>
           <SectionHeader
             eyebrow="Start"
             title="New rental"
             description="Select the user and scooter that should be connected for a new rental session."
           />
-          <form className="form-grid" onSubmit={handleStart}>
+          <form className="grid gap-5" onSubmit={handleStart}>
             <TextField
               label="User ID"
               type="number"
@@ -115,7 +114,7 @@ export default function RentalsPage() {
               required
             />
             <Button type="submit" disabled={loading}>
-              {loading ? 'Starting…' : 'Start rental'}
+              {loading ? 'Starting...' : 'Start rental'}
             </Button>
           </form>
         </Card>
@@ -126,7 +125,7 @@ export default function RentalsPage() {
             title="Close rental"
             description="Enter the rental ID to complete the trip and receive the final total price."
           />
-          <form className="form-grid" onSubmit={handleEnd}>
+          <form className="grid gap-5" onSubmit={handleEnd}>
             <TextField
               label="Rental ID"
               type="number"
@@ -136,7 +135,7 @@ export default function RentalsPage() {
               required
             />
             <Button type="submit" disabled={loading}>
-              {loading ? 'Ending…' : 'End rental'}
+              {loading ? 'Ending...' : 'End rental'}
             </Button>
           </form>
         </Card>
@@ -147,13 +146,13 @@ export default function RentalsPage() {
         title="Rental result"
         onClose={() => setIsResultOpen(false)}
         footer={
-          <div className="modal-actions">
+          <div className="flex items-center gap-3">
             <Button onClick={() => setIsResultOpen(false)}>Close</Button>
           </div>
         }
       >
         {result && (
-          <div className="result-list">
+          <div className="grid gap-3 text-text [&_strong]:text-text-strong">
             <div>
               <strong>Rental ID:</strong> {result.id}
             </div>

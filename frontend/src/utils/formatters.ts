@@ -2,7 +2,6 @@
 const DEFAULT_LOCALE = 'vi-VN'
 const DEFAULT_TIME_ZONE = 'Asia/Ho_Chi_Minh'
 
-// FIX 1: Định nghĩa kiểu dữ liệu cho value (số hoặc chuỗi số), currency và locale
 export function formatCurrency(
   value: string | number, 
   currency: string = 'VND', 
@@ -21,7 +20,6 @@ export function formatCurrency(
   }).format(amount)
 }
 
-// FIX 2: Định nghĩa value có thể là Date, chuỗi hoặc số timestamp
 export function formatDate(value: Date | string | number | null | undefined, locale: string = DEFAULT_LOCALE): string {
   if (!value) {
     return ''
@@ -40,7 +38,6 @@ export function formatDate(value: Date | string | number | null | undefined, loc
   }).format(date)
 }
 
-// FIX 3: Tương tự formatDate, thêm định nghĩa kiểu cho value, locale và timeZone
 export function formatDateTime(
   value: Date | string | number | null | undefined, 
   locale: string = DEFAULT_LOCALE, 
@@ -66,7 +63,6 @@ export function formatDateTime(
   }).format(date)
 }
 
-// FIX 4: Định nghĩa value là số hoặc chuỗi đại diện mức pin
 export function formatBatteryLevel(value: string | number): string {
   const level = Number(value)
 
@@ -78,7 +74,7 @@ export function formatBatteryLevel(value: string | number): string {
 }
 
 export function formatCoordinates(
-  lat: string | number | null | undefined, // Thêm null | undefined vào đây
+  lat: string | number | null | undefined,
   lng: string | number | null | undefined
 ): string {
   if (lat === null || lat === undefined || lng === null || lng === undefined) {

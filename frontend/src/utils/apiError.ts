@@ -1,6 +1,3 @@
-// Normalizes backend validation and runtime errors into a displayable string.
-
-// FIX: Khai báo tường minh kiểu dữ liệu cho 'error' là any và 'fallback' là string
 export function getApiErrorMessage(error: any, fallback: string = 'An unexpected error occurred'): string {
   const responseData = error?.response?.data
 

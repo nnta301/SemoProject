@@ -4,18 +4,15 @@ import { useCallback, useMemo, useState } from 'react'
 import type { ReactNode } from 'react' 
 
 // 1. Import kiểu dữ liệu User chính thống của dự án
-import type { User } from '../types/models'
+import type { User } from '@/types/models'
 
-import { ROLES } from '../constants/roles'
-import { decodeJwtPayload } from '../utils/jwt'
+import { ROLES } from '@/constants'
 import {
-  clearAuthSession,
-  getAuthToken,
-  getAuthUser,
-  setAuthToken,
-  setAuthUser,
-} from '../utils/authSession'
-import { login as loginRequest, register as registerRequest } from '../features/auth/api'
+  decodeJwtPayload, clearAuthSession, getAuthToken,
+  getAuthUser, setAuthToken, setAuthUser
+} from '@/utils'
+
+import { login as loginRequest, register as registerRequest } from '@/features/auth/api'
 import { AuthContext } from './authContext'
 
 interface AuthProviderProps {

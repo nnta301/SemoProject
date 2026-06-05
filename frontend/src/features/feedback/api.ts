@@ -1,0 +1,7 @@
+// API helpers for feedback submission.
+import { axiosClient } from '@/config/axiosClient'
+
+export async function submitFeedback(request: any) {
+  const { data } = await axiosClient.post('/api/feedbacks', request)
+  return data
+}

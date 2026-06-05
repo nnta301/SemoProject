@@ -1,9 +1,9 @@
 // Layout wrapper for authenticated user pages.
 import { Outlet } from 'react-router-dom'
 
-import { AppShell } from '../components/layout'
-import { ROLES } from '../constants/roles'
-import { useAuth } from '../hooks/useAuth'
+import { AppShell } from '@/components'
+import { ROLES } from '@/constants'
+import { useAuth } from '@/hooks/useAuth'
 
 export default function AppLayout() {
   const { user } = useAuth()

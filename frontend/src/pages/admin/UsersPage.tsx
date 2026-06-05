@@ -1,20 +1,20 @@
 // Admin users management page with create, update, delete, and reset-password actions.
 import { useEffect, useMemo, useState } from 'react'
 // FIX 1: Import type-only chống lỗi verbatimModuleSyntax
-import type { FormEvent, ChangeEvent } from 'react'
+import type { SyntheticEvent, ChangeEvent } from 'react'
 
-import { SectionHeader } from '../../components/layout'
-import { Alert, Button, Card, Modal, Table, TextField } from '../../components/ui'
-import { ROLES } from '../../constants/roles'
+import { SectionHeader,
+  Alert, Button, Card, Modal, Table, TextField
+} from '@/components'
+import { ROLES } from '@/constants'
 import {
   adminResetPassword,
   createUser,
   deleteUser,
   getAllUsers,
   updateUser,
-} from '../../features/users'
-import { formatDateTime } from '../../utils/formatters'
-import { getApiErrorMessage } from '../../utils/apiError'
+} from '@/features/users'
+import { formatDateTime, getApiErrorMessage } from '@/utils'
 
 // FIX 2: Định nghĩa cấu trúc chuẩn của đối tượng User trong hệ thống
 interface User {
@@ -102,7 +102,7 @@ export default function UsersPage() {
     { key: 'fullName', label: 'Name' },
     { key: 'email', label: 'Email' },
     { key: 'phoneNumber', label: 'Phone' },
-    { key: 'balance', label: 'Balance', render: (row: User) => (row.balance == null ? '-' : `${row.balance.toFixed(0)} VND`) },
+    { key: 'balance', label: 'Balance', render: (row: User) => (row.balance == null ? '-' : `VND ${row.balance.toFixed(0)}`) },
     { key: 'role', label: 'Role' },
     { key: 'createdAt', label: 'Created', render: (row: User) => formatDateTime(row.createdAt) || '-' },
     { key: 'updatedAt', label: 'Updated', render: (row: User) => formatDateTime(row.updatedAt || row.createdAt) || '-' },
@@ -110,14 +110,14 @@ export default function UsersPage() {
       key: 'actions',
       label: 'Actions',
       render: (row: User) => (
-        <div className="table-actions table-actions--wrap">
-          <Button variant="secondary" onClick={() => openEdit(row)}>
+        <div className="flex items-center gap-3 flex-wrap">
+          <Button className="w-45" onClick={() => openEdit(row)}>
             Edit
           </Button>
-          <Button variant="secondary" onClick={() => openReset(row)}>
+          <Button className="w-45" variant="secondary" onClick={() => openReset(row)}>
             Reset password
           </Button>
-          <Button variant="destructive" onClick={() => openDelete(row)}>
+          <Button className="w-45" variant="destructive" onClick={() => openDelete(row)}>
             Delete
           </Button>
         </div>
@@ -157,8 +157,8 @@ export default function UsersPage() {
     setUsers(Array.isArray(data) ? data : [])
   }
 
-  // FIX 6: Thêm FormEvent cho các hàm xử lý submit form
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  // FIX 6: Thêm SyntheticEvent cho các hàm xử lý submit form
+  async function handleSubmit(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault()
     setSaving(true)
     setError('')
@@ -202,8 +202,8 @@ export default function UsersPage() {
     }
   }
 
-  // FIX 6: Thêm FormEvent cho các hàm xử lý submit form
-  async function handleResetPassword(event: FormEvent<HTMLFormElement>) {
+  // FIX 6: Thêm SyntheticEvent cho các hàm xử lý submit form
+  async function handleResetPassword(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault()
     if (!selectedUser || selectedUser.id === null) return
 
@@ -221,7 +221,7 @@ export default function UsersPage() {
   }
 
   return (
-    <div className="page-stack">
+    <div className="grid gap-6">
       <SectionHeader
         eyebrow="Admin"
         title="Users"
@@ -229,24 +229,27 @@ export default function UsersPage() {
         actions={<Button onClick={openCreate}>New user</Button>}
       />
 
-      <div className="stats-grid stats-grid--compact">
+      <div className="grid gap-[1.1rem] grid-cols-4 max-[980px]:grid-cols-2 max-sm:grid-cols-1">
         {summary.map((item) => (
           <Card key={item.label}>
-            <p className="stat-card__label">{item.label}</p>
-            <div className="stat-card__value">{loading ? '—' : item.value}</div>
+            <p className="text-text-faded font-semibold text-sm uppercase tracking-[0.12em]">
+              {item.label}
+            </p>
+            <div className="mt-[0.6rem] mr-0 mb-[0.4rem] ml-0 text-[2.2rem] font-extrabold tracking-[-0.04em] bg-[linear-gradient(135deg,#fff,var(--color-cyan-soft)_120%)] bg-clip-text text-transparent leading-[1.1]">
+              {loading ? '—' : item.value}
+            </div>
           </Card>
         ))}
       </div>
 
-      {error && <Alert>{error}</Alert>}
+      {error && <Alert tone="error">{error}</Alert>}
 
       <Card>
         <Table
           columns={columns}
           rows={users}
-          // FIX 7: Tránh lỗi check strictNull bằng optional chaining kết hợp fallback index phòng hờ
           rowKey={(row: User, index: number) => row.id?.toString() ?? `user-idx-${index}`}
-          emptyMessage={loading ? 'Loading users…' : 'No users found.'}
+          emptyMessage={loading ? 'Loading users...' : 'No users found.'}
         />
       </Card>
 
@@ -255,17 +258,17 @@ export default function UsersPage() {
         title={form.id ? 'Edit user' : 'New user'}
         onClose={() => setIsFormOpen(false)}
         footer={
-          <div className="modal-actions">
+          <div className="flex items-center gap-3">
             <Button variant="secondary" onClick={() => setIsFormOpen(false)}>
               Cancel
             </Button>
             <Button type="submit" form="user-form" disabled={saving}>
-              {saving ? 'Saving…' : 'Save'}
+              {saving ? 'Saving...' : 'Save'}
             </Button>
           </div>
         }
       >
-        <form id="user-form" className="form-grid" onSubmit={handleSubmit}>
+        <form id="user-form" className="grid gap-5" onSubmit={handleSubmit}>
           <TextField
             label="Full name"
             name="fullName"
@@ -304,17 +307,17 @@ export default function UsersPage() {
         title="Delete user"
         onClose={() => setIsDeleteOpen(false)}
         footer={
-          <div className="modal-actions">
+          <div className="flex items-center gap-3">
             <Button variant="secondary" onClick={() => setIsDeleteOpen(false)}>
               Cancel
             </Button>
             <Button variant="destructive" onClick={handleDelete} disabled={saving}>
-              {saving ? 'Deleting…' : 'Delete'}
+              {saving ? 'Deleting...' : 'Delete'}
             </Button>
           </div>
         }
       >
-        <p className="modal-copy">
+        <p className="text-text-muted">
           Are you sure you want to delete {selectedUser?.fullName || 'this user'}?
         </p>
       </Modal>
@@ -324,17 +327,17 @@ export default function UsersPage() {
         title="Reset password"
         onClose={() => setIsResetOpen(false)}
         footer={
-          <div className="modal-actions">
+          <div className="flex items-center gap-3">
             <Button variant="secondary" onClick={() => setIsResetOpen(false)}>
               Cancel
             </Button>
             <Button type="submit" form="reset-password-form" disabled={saving}>
-              {saving ? 'Resetting…' : 'Reset password'}
+              {saving ? 'Resetting...' : 'Reset password'}
             </Button>
           </div>
         }
       >
-        <form id="reset-password-form" className="form-grid" onSubmit={handleResetPassword}>
+        <form id="reset-password-form" className="grid gap-5" onSubmit={handleResetPassword}>
           <TextField
             label="Temporary password"
             type="password"
