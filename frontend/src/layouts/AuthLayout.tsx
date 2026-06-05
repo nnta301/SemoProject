@@ -1,8 +1,8 @@
 // Layout wrapper for login and register routes.
 import { Navigate, Outlet } from 'react-router-dom'
 
-import { ROUTES } from '../constants/routes'
-import { useAuth } from '../hooks/useAuth'
+import { ROUTES } from '@/constants'
+import { useAuth } from '@/hooks/useAuth'
 
 export default function AuthLayout() {
   const { isAuthenticated } = useAuth()

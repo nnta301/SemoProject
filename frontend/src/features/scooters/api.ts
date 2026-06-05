@@ -1,5 +1,5 @@
 // API helpers for scooter CRUD and status-based retrieval.
-import { axiosClient } from '../../config/axiosClient'
+import { axiosClient } from '@/config/axiosClient'
 
 export async function createScooter(request: any) {
   const { data } = await axiosClient.post('/api/scooters', request)

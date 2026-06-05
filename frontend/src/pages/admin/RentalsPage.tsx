@@ -3,11 +3,11 @@ import { useState } from 'react'
 // FIX 1: Import type-only chống lỗi verbatimModuleSyntax
 import type { SyntheticEvent, ChangeEvent } from 'react'
 
-import { SectionHeader } from '../../components/layout'
-import { Alert, Button, Card, Modal, TextField } from '../../components/ui'
-import { endRental, startRental } from '../../features/rentals'
-import { formatDateTime, formatCurrency } from '../../utils/formatters'
-import { getApiErrorMessage } from '../../utils/apiError'
+import { SectionHeader,
+  Alert, Button, Card, Modal, TextField
+ } from '@/components'
+import { endRental, startRental } from '@/features/rentals'
+import { formatDateTime, formatCurrency, getApiErrorMessage } from '@/utils'
 
 // FIX 2: Định nghĩa cấu trúc dữ liệu trả về của một Rental Session
 interface RentalResult {
@@ -87,7 +87,7 @@ export default function RentalsPage() {
         description="Start a rental or end it by rental ID using the backend rental endpoints."
       />
 
-      {error && <Alert>{error}</Alert>}
+      {error && <Alert tone="error">{error}</Alert>}
       {success && <Alert tone="success">{success}</Alert>}
 
       <div className="two-column-grid">

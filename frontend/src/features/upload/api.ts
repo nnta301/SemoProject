@@ -1,4 +1,4 @@
-import { axiosClient } from '../../config/axiosClient'
+import { axiosClient } from '@/config/axiosClient'
 
 function createMultipartPayload(file: File): FormData {
   const formData = new FormData()

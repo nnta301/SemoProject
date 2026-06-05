@@ -3,9 +3,9 @@ import 'leaflet/dist/leaflet.css'
 import { CircleMarker, MapContainer, Popup, TileLayer, Tooltip, useMapEvents } from 'react-leaflet'
 import type { LeafletMouseEvent } from 'leaflet'
 
-import { SCOOTER_STATUSES } from '../../constants/statuses'
-import { formatBatteryLevel, formatCoordinates } from '../../utils/formatters'
-import type { Scooter, LatLngPos, Station } from '../../types/models'
+import { SCOOTER_STATUSES } from '@/constants'
+import { formatBatteryLevel, formatCoordinates } from '@/utils'
+import type { Scooter, LatLngPos, Station } from '@/types/models'
 
 const BACH_KHOA_CENTER: [number, number] = [21.0052, 105.8433]
 const NORTHERN_VIETNAM_BOUNDS: [[number, number], [number, number]] = [
@@ -100,7 +100,7 @@ export default function ScooterMap({ scooters = [], stations = [], onMapClick }:
           >
             <Popup>
               <div className="grid gap-1.5 min-w-50 text-(--text)">
-                <strong className="text-(--color-cyan-soft)">Selected Point</strong>
+                <strong className="text-cyan-soft">Selected Point</strong>
                 <div>{formatCoordinates(preview.lat, preview.lng)}</div>
               </div>
             </Popup>
@@ -127,7 +127,7 @@ export default function ScooterMap({ scooters = [], stations = [], onMapClick }:
                 </Tooltip>
                 <Popup>
                   <div className="grid gap-1.5 min-w-50 text-(--text)">
-                    <strong className="text-(--color-cyan-soft)">{station.name || `Station #${idx + 1}`}</strong>
+                    <strong className="text-cyan-soft">{station.name || `Station #${idx + 1}`}</strong>
                     <p>Location: {formatCoordinates(station.lat, station.lng)}</p>
                   </div>
                 </Popup>
@@ -156,7 +156,7 @@ export default function ScooterMap({ scooters = [], stations = [], onMapClick }:
               </Tooltip>
               <Popup>
                 <div className="grid gap-1.5 min-w-50 text-(--text)">
-                  <strong className="text-(--color-cyan-soft)">{scooter.name || `Scooter #${scooter.id}`}</strong>
+                  <strong className="text-cyan-soft">{scooter.name || `Scooter #${scooter.id}`}</strong>
                   <p>Status: {statusLabels[scooter.status] || scooter.status || '—'}</p>
                   <p>Battery: {formatBatteryLevel(scooter.batteryLevel) || '—'}</p>
                   <p>Location: {formatCoordinates(scooter.currentLat, scooter.currentLng) || '—'}</p>
@@ -175,7 +175,7 @@ export default function ScooterMap({ scooters = [], stations = [], onMapClick }:
           <i className="w-3 h-3 rounded-full inline-block shadow-[0_0_8px_currentColor] bg-[#0052FF] text-[rgba(0,82,255,0.5)]" /> In Use
         </span>
         <span className="inline-flex items-center gap-2">
-          <i className="w-3 h-3 rounded-full inline-block shadow-[0_0_8px_currentColor] bg-[#FF5C7A] text-[rgba(255,92,122,0.5)]" /> Maintenance
+          <i className="w-3 h-3 rounded-full inline-block shadow-[0_0_8px_currentColor] bg-danger text-[rgba(255,92,122,0.5)]" /> Maintenance
         </span>
       </div>
 

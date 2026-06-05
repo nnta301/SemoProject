@@ -3,11 +3,11 @@ import { useState } from 'react'
 // FIX 1: Import type-only cho các sự kiện React chống lỗi verbatimModuleSyntax
 import type { SyntheticEvent, ChangeEvent } from 'react'
 
-import { SectionHeader } from '../../components/layout'
-import { Alert, Button, Card, Modal, Table, TextField } from '../../components/ui'
-import { createMaintenanceLog, getMaintenanceLogsByScooterId, resolveMaintenance } from '../../features/maintenance'
-import { formatCurrency, formatDateTime } from '../../utils/formatters'
-import { getApiErrorMessage } from '../../utils/apiError'
+import { SectionHeader,
+  Alert, Button, Card, Modal, Table, TextField
+ } from '@/components'
+import { createMaintenanceLog, getMaintenanceLogsByScooterId, resolveMaintenance } from '@/features/maintenance'
+import { formatCurrency, formatDateTime, getApiErrorMessage } from '@/utils'
 
 // FIX 2: Định nghĩa cấu trúc dữ liệu cho một dòng Maintenance Log
 interface MaintenanceLog {
@@ -114,7 +114,7 @@ export default function MaintenancePage() {
         actions={<Button onClick={() => setIsResolveOpen(true)}>Resolve scooter</Button>}
       />
 
-      {error && <Alert>{error}</Alert>}
+      {error && <Alert tone="error">{error}</Alert>}
       {success && <Alert tone="success">{success}</Alert>}
 
       <div className="two-column-grid">

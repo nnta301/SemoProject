@@ -13,11 +13,10 @@ import {
 } from 'lucide-react'
 import SemoIcon from '@/assets/semo-icon.svg?react';
 
-import { ROUTES } from '@/constants/routes'
-import { ROLES } from '@/constants/roles'
+import { ROUTES, ROLES } from '@/constants'
 import { useAuth } from '@/hooks/useAuth'
 import { Button } from '../ui'
-import { cn } from '@/utils/cn'; // Đường dẫn tới hàm cn của bạn
+import { cn } from '@/utils'; // Đường dẫn tới hàm cn của bạn
 
 
 // 1. Định nghĩa kiểu cho một phần tử menu

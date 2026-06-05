@@ -6,11 +6,10 @@ import type { SyntheticEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Mail, Lock, Eye, EyeOff, ArrowRight, LogIn } from 'lucide-react'
 
-import { ROUTES } from '../../constants/routes'
-import { useAuth } from '../../hooks/useAuth'
-import { Alert, Button, Card, TextField } from '../../components/ui'
-import { AuthShell } from '../../components/layout'
-import { getApiErrorMessage } from '../../utils/apiError'
+import { ROUTES } from '@/constants'
+import { useAuth } from '@/hooks/useAuth'
+import { Alert, Button, Card, TextField, AuthShell } from '@/components'
+import { getApiErrorMessage } from '@/utils'
 
 export default function Login() {
   const navigate = useNavigate()
@@ -55,7 +54,7 @@ export default function Login() {
             </p>
           </div>
 
-          {error && <Alert>{error}</Alert>}
+          {error && <Alert tone="error">{error}</Alert>}
 
           <TextField
             label="Email"

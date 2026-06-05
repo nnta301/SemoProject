@@ -20,15 +20,16 @@ import {
   Battery, Gauge, Thermometer, AlertTriangle, ShieldAlert, Sparkles, Clock,
 } from 'lucide-react'
 
-import { SectionHeader } from '@/components/layout'
-import { Alert, Button, Card, TextField } from '@/components/ui'
+import { SectionHeader,
+  Alert, Button, Card, TextField
+} from '@/components'
 import { getAllScooters } from '@/features/scooters'
 import { startRental, endRental } from '@/features/rentals'
 import { useAuth } from '@/hooks/useAuth'
-import { SCOOTER_STATUSES, SCOOTER_STATUS_OPTIONS } from '@/constants/statuses'
-import { formatBatteryLevel, formatCoordinates, formatCurrency, formatDateTime } from '@/utils/formatters'
-import { getApiErrorMessage } from '@/utils/apiError'
-import { cn } from '@/utils/cn';
+import { SCOOTER_STATUSES, SCOOTER_STATUS_OPTIONS } from '@/constants'
+import { formatBatteryLevel, formatCoordinates, formatCurrency,
+  formatDateTime, getApiErrorMessage, cn
+ } from '@/utils'
 
 
 // ----- Interfaces & Types -----
@@ -392,8 +393,8 @@ export default function BookingPage() {
         </div>
       </div>
 
-      {scootersError && <Alert>{scootersError}</Alert>}
-      {actionError && <Alert>{actionError}</Alert>}
+      {scootersError && <Alert tone="error">{scootersError}</Alert>}
+      {actionError && <Alert tone="error">{actionError}</Alert>}
       {completedInfo && (
         <div className="flex items-center justify-between gap-2.5 p-[0.8rem_1rem] rounded-[14px] bg-linear-to-br from-[rgba(0,224,164,0.18)] to-[rgba(0,82,255,0.18)] border border-[rgba(0,224,164,0.4)] mb-[0.7rem] text-(--text-strong) [&_strong]:text-white">
           <span>
@@ -474,7 +475,7 @@ export default function BookingPage() {
               </Button>
             </div>
 
-            {geoError && <Alert>{geoError}</Alert>}
+            {geoError && <Alert tone="error">{geoError}</Alert>}
           </form>
 
           <div className="grid gap-1 max-h-[56vh] overflow-y-auto pr-0.5 max-xl:max-h-none [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-[rgba(0,209,255,0.25)] [&::-webkit-scrollbar-thumb]:rounded-full">

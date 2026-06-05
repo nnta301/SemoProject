@@ -3,15 +3,16 @@ import { useState } from 'react'
 // FIX 1: Dùng type-only import cho SyntheticEvent và ChangeEvent
 import type { SyntheticEvent, ChangeEvent } from 'react'
 
-import { SectionHeader } from '../../components/layout'
-import { Alert, Button, Card, Table, TextField } from '../../components/ui'
-import ScooterMap from '../../components/map/ScooterMap'
-import { getAllScooters } from '../../features/scooters'
-import { getOptimalStations } from '../../features/analytics'
-import { getApiErrorMessage } from '../../utils/apiError'
+import { SectionHeader,
+  Alert, Button, Card, Table, TextField,
+  ScooterMap
+ } from '@/components'
+import { getAllScooters } from '@/features/scooters'
+import { getOptimalStations } from '@/features/analytics'
+import { getApiErrorMessage } from '@/utils'
 
 // FIX 2: Import đúng Type Scooter của dự án thay vì tự định nghĩa bừa
-import type { Scooter, LatLngPos } from '../../types/models'
+import type { Scooter, LatLngPos } from '@/types/models'
 
 
 export default function AnalyticsPage() {
@@ -57,7 +58,7 @@ export default function AnalyticsPage() {
         description="Calculate optimal charging stations from the analytics endpoint."
       />
 
-      {error && <Alert>{error}</Alert>}
+      {error && <Alert tone="error">{error}</Alert>}
 
       <Card>
         <form className="analytics-form" onSubmit={handleSubmit}>

@@ -10,13 +10,13 @@ import {
   Wallet, ShieldCheck, User, Mail, BadgeCheck, Sparkles, Plus, KeyRound, Lock, Eye, EyeOff,
 } from 'lucide-react'
 
-import { SectionHeader } from '../../components/layout'
-import { Alert, Button, Card, TextField } from '../../components/ui'
-import { useAuth } from '../../hooks/useAuth'
-import { changePassword, depositToWallet } from '../../features/users'
-import { formatCurrency } from '../../utils/formatters'
-import { getApiErrorMessage } from '../../utils/apiError'
-import { ROLES } from '../../constants/roles'
+import { SectionHeader,
+  Alert, Button, Card, TextField
+} from '@/components'
+import { useAuth } from '@/hooks/useAuth'
+import { changePassword, depositToWallet } from '@/features/users'
+import { formatCurrency, getApiErrorMessage } from '@/utils'
+import { ROLES } from '@/constants'
 
 const QUICK_AMOUNTS = [50000, 100000, 200000, 500000]
 
@@ -131,7 +131,7 @@ export default function ProfilePage() {
         eyebrow="Account Profile"
         title="Your Account & Wallet"
         description="Manage your balance, history, and account security all in one place."/>
-      {error && <Alert>{error}</Alert>}
+      {error && <Alert tone="error">{error}</Alert>}
       {success && <Alert tone="success">{success}</Alert>}
 
       {/* Wallet hero */}

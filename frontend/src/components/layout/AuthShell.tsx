@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { Zap, ShieldCheck, Activity } from 'lucide-react'
-import SemoIcon from '../../assets/semo-icon.svg?react';
+import SemoIcon from '@/assets/semo-icon.svg?react';
 
 // 1. Định nghĩa kiểu dữ liệu cho Props
 interface AuthShellProps {

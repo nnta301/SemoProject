@@ -3,18 +3,18 @@ import { useEffect, useMemo, useState } from 'react'
 // FIX 1: Import type-only chống lỗi verbatimModuleSyntax
 import type { SyntheticEvent, ChangeEvent } from 'react'
 
-import { SectionHeader } from '../../components/layout'
-import { Alert, Button, Card, Modal, Table, TextField } from '../../components/ui'
-import { ROLES } from '../../constants/roles'
+import { SectionHeader,
+  Alert, Button, Card, Modal, Table, TextField
+} from '@/components'
+import { ROLES } from '@/constants'
 import {
   adminResetPassword,
   createUser,
   deleteUser,
   getAllUsers,
   updateUser,
-} from '../../features/users'
-import { formatDateTime } from '../../utils/formatters'
-import { getApiErrorMessage } from '../../utils/apiError'
+} from '@/features/users'
+import { formatDateTime, getApiErrorMessage } from '@/utils'
 
 // FIX 2: Định nghĩa cấu trúc chuẩn của đối tượng User trong hệ thống
 interface User {
@@ -238,7 +238,7 @@ export default function UsersPage() {
         ))}
       </div>
 
-      {error && <Alert>{error}</Alert>}
+      {error && <Alert tone="error">{error}</Alert>}
 
       <Card>
         <Table

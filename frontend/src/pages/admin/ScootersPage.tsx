@@ -3,15 +3,15 @@ import { useEffect, useMemo, useState } from 'react'
 // FIX 1: Thêm type-only import cho các Event React
 import type { SyntheticEvent, ChangeEvent } from 'react'
 
-import { SectionHeader } from '../../components/layout'
-import ScooterMap from '../../components/map/ScooterMap'
-import { Alert, Button, Card, Modal, Table, TextField } from '../../components/ui'
-import { SCOOTER_STATUSES } from '../../constants/statuses'
-import { createScooter, getAllScooters, updateScooter } from '../../features/scooters'
-import { formatBatteryLevel, formatDateTime } from '../../utils/formatters'
-import { getApiErrorMessage } from '../../utils/apiError'
-// FIX 2: Re-use lại Type Scooter chính xác của hệ thống
-import type { Scooter } from '../../types/models'
+import { SectionHeader,
+  Alert, Button, Card, Modal, Table, TextField,
+  ScooterMap
+ } from '@/components'
+import { SCOOTER_STATUSES } from '@/constants'
+import { createScooter, getAllScooters, updateScooter } from '@/features/scooters'
+import { formatBatteryLevel, formatDateTime, getApiErrorMessage } from '@/utils'
+
+import type { Scooter } from '@/types/models'
 
 // FIX 3: Định nghĩa Interface riêng cho Form State (Cho phép batteryLevel tạm thời nhận cả chuỗi khi đang gõ)
 interface ScooterFormState {
@@ -218,7 +218,7 @@ export default function ScootersPage() {
         ))}
       </div>
 
-      {error && <Alert>{error}</Alert>}
+      {error && <Alert tone="error">{error}</Alert>}
 
       <Card>
         <div style={{ height: 420 }}>

@@ -7,7 +7,7 @@
 // dữ liệu user-side để UI không bị "câm" sau khi reload.
 
 
-import type { Rental } from '../types/models'
+import type { Rental } from '@/types/models'
 
 interface LocalRentalData extends Rental {
   scooterName?: string

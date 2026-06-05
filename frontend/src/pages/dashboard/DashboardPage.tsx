@@ -1,5 +1,4 @@
 // Dashboard người dùng — Tech Blue Luxury (phong cách cockpit phi thuyền / EV).
-// Dữ liệu lấy trực tiếp từ API getAllScooters → /api/scooters.
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
@@ -13,21 +12,19 @@ import {
   Gauge,
 } from 'lucide-react'
 
-import { SectionHeader } from '@/components/layout'
-import { Alert, Button, Card, Table } from '@/components/ui'
-import ScooterMap from '@/components/map/ScooterMap'
+import { SectionHeader,
+  Alert, Button, Card, Table,
+  ScooterMap
+} from '@/components'
 import { getAllScooters } from '@/features/scooters'
-import { SCOOTER_STATUSES } from '@/constants/statuses'
+import { SCOOTER_STATUSES, ROUTES } from '@/constants'
 import { useAuth } from '@/hooks/useAuth'
-import { ROUTES } from '@/constants/routes'
-import { formatBatteryLevel, formatDateTime } from '@/utils/formatters'
-import { getApiErrorMessage } from '@/utils/apiError'
+import { formatBatteryLevel, formatDateTime, getApiErrorMessage, cn } from '@/utils'
 import type { Scooter } from '@/types/models'
-import { cn } from '@/utils/cn';
 
 const statusMeta: Record<string, { label: string; className: string }> = {
   [SCOOTER_STATUSES.AVAILABLE]:   { label: 'Available',     className: 'is-available' },
-  [SCOOTER_STATUSES.IN_USE]:      { label: 'In Use',      className: 'is-in-use' },
+  [SCOOTER_STATUSES.IN_USE]:      { label: 'In Use',        className: 'is-in-use' },
   [SCOOTER_STATUSES.MAINTENANCE]: { label: 'Under Maintenance', className: 'is-maintenance' },
 }
 
@@ -127,8 +124,8 @@ export default function DashboardPage() {
       key: 'name',
       label: 'Scooter',
       render: (row: Scooter) => (
-        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600 }}>
-          <Bike size={16} strokeWidth={1.8} style={{ color: 'var(--color-cyan-soft)' }} />
+        <span className="inline-flex items-center gap-2 font-semibold">
+          <Bike size={16} strokeWidth={1.8} className="text-cyan-soft" />
           {row.name || `#${row.id}`}
         </span>
       ),
@@ -137,7 +134,7 @@ export default function DashboardPage() {
       key: 'status',
       label: 'Status',
       render: (row: Scooter) => (
-        <span className={`status-pill ${getStatusClassName(row.status)}`}>
+        <span className={cn("status-pill", getStatusClassName(row.status))}>
           {getStatusLabel(row.status)}
         </span>
       ),
@@ -146,11 +143,10 @@ export default function DashboardPage() {
       key: 'batteryLevel',
       label: 'Battery',
       render: (row: Scooter) => {
-        const lvl = Number(row.batteryLevel);
-        const colorClass = 
+        const lvl = Number(row.batteryLevel)
+        const colorClass =
           Number.isFinite(lvl) && lvl >= 50 ? 'text-success' :
           Number.isFinite(lvl) && lvl >= 25 ? 'text-warning' : 'text-danger';
-
         return (
           <span className={cn("inline-flex items-center gap-[0.45rem] font-semibold", colorClass)}>
             <BatteryFull size={16} strokeWidth={1.8} />
@@ -188,7 +184,7 @@ export default function DashboardPage() {
             >
               Refresh Data
             </Button>
-            <Link to={ROUTES.PROFILE} style={{ textDecoration: 'none' }}>
+            <Link to={ROUTES.PROFILE} className="no-underline">
               <Button leadingIcon={<Gauge size={16} strokeWidth={1.8} />}>
                 Manage Wallet
               </Button>
@@ -197,7 +193,7 @@ export default function DashboardPage() {
         </div>
       </section>
 
-      {error && <Alert>{error}</Alert>}
+      {error && <Alert tone="error">{error}</Alert>}
 
       <div className="stats-grid stats-grid--compact">
         {summaryCards.map((card) => (
@@ -212,7 +208,6 @@ export default function DashboardPage() {
         ))}
       </div>
 
-      {/* Map view */}
       <Card>
         <SectionHeader
           eyebrow="Live map"
@@ -224,11 +219,12 @@ export default function DashboardPage() {
             </span>
           )}
         />
-        <div style={{ height: 12 }} />
-        <ScooterMap scooters={scooters} />
+        <div className="mt-3">
+          <ScooterMap scooters={scooters} />
+        </div>
       </Card>
 
-      {/* Recent list */}
+
       <Card>
         <SectionHeader
           eyebrow="Scooter List"
@@ -240,13 +236,14 @@ export default function DashboardPage() {
             </span>
           )}
         />
-        <div style={{ height: 12 }} />
-        <Table
-          columns={scooterColumns}
-          rows={scooterRows}
-          rowKey={(row: Scooter, idx: number) => row.id?.toString() ?? `dash-scooter-idx-${idx}`}
-          emptyMessage={loading ? 'Loading scooter list...' : 'No scooters available.'}
-        />
+        <div className="mt-3">
+          <Table
+            columns={scooterColumns}
+            rows={scooterRows}
+            rowKey={(row: Scooter, idx: number) => row.id?.toString() ?? `dash-scooter-idx-${idx}`}
+            emptyMessage={loading ? 'Loading scooter list...' : 'No scooters available.'}
+          />
+        </div>
       </Card>
     </div>
   )
