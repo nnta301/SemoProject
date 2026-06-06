@@ -72,4 +72,11 @@ public class ScooterController {
         ScooterResponseDTO responseDTO = scooterService.updateScooter(id, requestDTO);
         return ResponseEntity.ok(responseDTO);
     }
+
+    // Endpoint: DELETE /api/scooters/{id}
+    @org.springframework.web.bind.annotation.DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteScooter(@PathVariable Integer id) {
+        scooterService.deleteScooter(id);
+        return ResponseEntity.ok("Đã xóa thành công xe với ID: " + id);
+    }
 }

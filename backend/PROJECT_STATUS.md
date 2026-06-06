@@ -1,6 +1,6 @@
 # 🛵 SEMO (Smart E-Scooter Fleet Management & Battery Optimization) - Backend Project Status
 
-**Tech Stack:** Java, Spring Boot, Spring Data JPA, Spring Security (JWT), MySQL, WebSocket, Spring Cache.
+**Tech Stack:** Java, Spring Boot, Spring Data JPA, Spring Security (JWT), MySQL, WebSocket, Spring Cache, Spring Mail.
 
 ---
 
@@ -11,6 +11,7 @@
 * Xử lý lỗi truy cập (403 Forbidden, 401 Unauthorized).
 * Chống IDOR tuyệt đối cho các API tài khoản và nghiệp vụ thuê xe (chuẩn `/me`).
 * **Global Exception Handling:** Xử lý lỗi tập trung chuẩn Clean Code, bắt mọi ngoại lệ (như `RuntimeException`) trả về chuẩn JSON không cần try-catch thủ công.
+* **Identity & Access Management (IAM) & Email Verification:** Tách biệt luồng xác thực công khai (`AuthController`) và luồng quản trị nội bộ (`UserController`). Tích hợp gửi mã OTP xác thực qua Email (Google SMTP) để kích hoạt tài khoản. Sử dụng `SecureRandom` để sinh mã chuẩn mật mã học và xử lý bất đồng bộ (`@Async`) giúp tối ưu hiệu năng đăng ký.
 
 **🚀 Chưa làm:**
 * (Hiện tại hạ tầng bảo mật đã hoàn chỉnh).
@@ -19,7 +20,7 @@
 
 ## II. Nhóm Quản Lý Cơ Bản (CRUD)
 **✅ Đã hoàn thành:**
-* **User CRUD:** Đăng ký, xem thông tin cá nhân, xem danh sách (Admin).
+* **User CRUD:** Đăng ký (kết hợp OTP), xem thông tin cá nhân, xem danh sách (Admin).
 * **User Profile:** Cập nhật thông tin (Partial Update - `UserUpdateRequestDTO`).
 * **Scooter CRUD:** Admin thêm xe mới, cập nhật trạng thái/pin/tọa độ, xem danh sách (có phân trang).
 * **Feedback CRUD:** Khách hàng đánh giá (1-5 sao) và bình luận chuyến đi đã hoàn thành (Unique constraint).
@@ -34,7 +35,7 @@
 * **Ví điện tử:** Nạp tiền (Deposit), quản lý số dư (`balance`).
 * **Luồng Thuê Xe (Rental Core):** Bắt đầu chuyến (`IN_USE`), kết thúc chuyến (`AVAILABLE`).
 * **Tính toán cước:** Tự động trừ cọc (50.000 VNĐ), hoàn cọc, tính cước thời gian thực (1.000 VNĐ/phút).
-* **Lịch sử giao dịch:** Ghi vết tự động minh bạch (`DEPOSIT`, `RENTAL_DEPOSIT`, `RENTAL_REFUND`, `RENTAL_PAYMENT`).
+* **Lịch sử giao dịch & Đối soát (Audit):** Ghi vết tự động minh bạch (`DEPOSIT`, `RENTAL_DEPOSIT`, `RENTAL_REFUND`, `RENTAL_PAYMENT`). Bổ sung luồng API đặc quyền cho phép Admin xem toàn cảnh biến động số dư của toàn hệ thống và tra cứu chéo theo từng tài khoản khách hàng.
 * **Tài khoản nâng cao:** Khách hàng tự đổi mật khẩu, Admin cấp lại mật khẩu.
 * **Quản lý Nợ (Debt Management):** Ghi nhận số dư âm, chặn khách hàng đang nợ thuê chuyến mới.
 * **Cấu hình hệ thống động (System Config):** Triển khai bảng Key-Value linh hoạt kết hợp Spring Cache và chuẩn hóa DTO để quản lý các tham số tài chính (Giá thuê, Giá cọc) hiệu năng cao mà không cần can thiệp mã nguồn.
@@ -46,10 +47,10 @@
 
 ## IV. Nhóm Quản Trị & Thống Kê & Phân Tích Dữ Liệu (Admin & Analytics)
 **✅ Đã hoàn thành:**
-* **Admin Dashboard:** Thống kê tổng doanh thu, tổng số chuyến đi, số xe đang chạy, tỷ lệ xe theo trạng thái.
+* **Admin Dashboard:** Thống kê tổng doanh thu, tổng số chuyến đi, số xe đang chạy, tỷ lệ xe theo trạng thái, và tổng chi phí bảo trì.
 * **Quản lý lịch sử:** Admin xem toàn bộ lịch sử thuê xe (hỗ trợ bộ lọc filter).
 * **Kiểm duyệt User:** Khóa (Ban) và Mở khóa (Unban) tài khoản vi phạm.
-* **Khôi phục xe (Maintenance):** API chuyển trạng thái xe từ `MAINTENANCE` về `AVAILABLE` sau khi bảo trì/sửa chữa xong, tự động đưa các chỉ số pin và nhiệt độ về mức an toàn tối ưu.
+* **Quy trình Bảo trì (Maintenance Workflow):** Tách biệt luồng báo hỏng (Create) và luồng nghiệm thu (Resolve). Tự động ghi nhận chi phí sửa chữa vào Dashboard. Ứng dụng thành công cơ chế **Dirty Checking** của Hibernate/JPA với `@Transactional` để tối ưu hóa hiệu năng cập nhật trạng thái xe.
 * **Phân tích dữ liệu không gian (K-Means Clustering):** 🚨 *Tính năng đột phá:* Hoàn tất tích hợp thuật toán K-Means thuần (hiệu năng cao) để gom cụm tọa độ kết thúc của hàng ngàn chuyến đi lịch sử, tự động đề xuất K vị trí tối ưu để xây dựng trạm sạc mới trên Dashboard.
 
 **🚀 Chưa làm:**
