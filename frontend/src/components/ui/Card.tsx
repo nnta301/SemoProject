@@ -35,4 +35,4 @@ export default function Card({ children, className, variant }: CardProps) {
       {children}
     </section>
   )
-}
+} 
