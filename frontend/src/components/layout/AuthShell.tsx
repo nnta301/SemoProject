@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { Zap, ShieldCheck, Activity } from 'lucide-react'
 import SemoIcon from '@/assets/semo-icon.svg?react';
+import { ModeToggle } from '@/components';
 
 interface AuthShellProps {
   eyebrow?: string;
@@ -15,7 +16,8 @@ export default function AuthShell({ eyebrow, title, description, children }: Aut
       overflow-hidden max-[980px]:grid-cols-1 bg-bg-accent theme-transition
       before:content-[''] before:absolute before:inset-0 before:bg-gradient-hero before:pointer-events-none before:z-0
     ">
-      
+      <ModeToggle className="fixed! left-auto! right-4! top-4! z-1000" />
+
       {/* Cột giới thiệu bên trái - Tự động đổi màu nền theo Theme */}
       <aside className="
         relative z-10 flex flex-col justify-between p-12 overflow-hidden theme-transition
@@ -41,7 +43,7 @@ export default function AuthShell({ eyebrow, title, description, children }: Aut
       ">
         {/* Top Header Logo */}
         <div className="relative z-10 flex items-center gap-4">
-          <SemoIcon className="w-16 h-16 text-brand" />
+          <SemoIcon className="w-16 h-16" />
           <div>
             <p className="tracking-[0.18em] uppercase text-xs font-extrabold text-brand">
               {eyebrow || 'Semo • Tech Mobility'}

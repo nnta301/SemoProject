@@ -12,6 +12,7 @@ import {
   MapPinned,
 } from 'lucide-react'
 import SemoIcon from '@/assets/semo-icon.svg?react';
+import { ModeToggle } from '@/components';
 
 import { ROUTES, ROLES } from '@/constants'
 import { useAuth } from '@/hooks/useAuth'
@@ -135,7 +136,7 @@ export default function AppShell({ mode = 'user', children }: AppShellProps) {
             className="inline-flex items-center font-extrabold text-base text-text-strong"
           >
             <span className="inline-flex items-center gap-2">
-              <SemoIcon className="w-9 h-9 text-brand" />
+              <SemoIcon className="w-9 h-9" />
               <span className="tracking-wider">SEMO</span>
             </span>
           </Link>
@@ -190,13 +191,14 @@ export default function AppShell({ mode = 'user', children }: AppShellProps) {
             </h1>
           </div>
 
-          <div className="flex items-center flex-wrap">
+          <div className="flex items-center flex-wrap gap-3">
             <span className="inline-flex items-center justify-center min-h-8 px-4
               rounded-full text-sm font-bold tracking-wider bg-brand-soft 
               border border-border-strong text-brand"
             >
               {user?.email || 'guest@example.com'}
             </span>
+            <ModeToggle className="static!" />
           </div>
         </header>
 

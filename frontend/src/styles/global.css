@@ -58,77 +58,66 @@
 }
 
 /* Light mode */
-
-/* :root { */
-.light {
+:root {
   color-scheme: light;
 
-  /* Nền và Bề mặt */
-  --bg-main: #F1F5F9;          /* slate-100: Hạ xuống 1 tone giúp nền web đậm hơn, làm nổi bật các khối màu trắng */
+  /* Nền và bề mặt */
+  --bg-main: #F1F5F9;
   --bg-accent: #FFFFFF;        
 
-  /* TĂNG ĐỘ ĐẬM TẠI ĐÂY: Thay vì 0.75 và 0.92, ta đưa về gần như đặc hoàn toàn */
-  --surface: rgba(243, 221, 253, 0.94);        /* Khối nền rõ ràng, che bớt dải gradient của body phía sau */
-  --surface-strong: #fef1f1;                   /* Trắng đặc 100% cho các khối quan trọng như Modal, Card lớn */
-  --surface-muted: rgba(15, 23, 42, 0.05);     /* Đậm hơn một chút để phân biệt */
-  --surface-elevated: rgba(15, 23, 42, 0.08);  /* Đậm hơn để làm nổi bật input/button secondary
+  --surface: rgba(243, 221, 253, 0.94);
+  --surface-strong: #fef1f1;
+  --surface-muted: rgba(15, 23, 42, 0.05);
+  --surface-elevated: rgba(15, 23, 42, 0.08);
 
-  /* Hệ thống chữ */
-  --text-main: #334155;        /* slate-700 đọc rất dịu mắt */
-  --text-strong: #4a1179;      /* slate-900 cho tiêu đề */
-  --text-muted: #64748B;       /* slate-500 */
-  --text-faded: #869bb8;       /* slate-400 */
+  /* Màu chữ */
+  --text-main: #334155;
+  --text-strong: #4a1179;
+  --text-muted: #64748B;
+  --text-faded: #869bb8;
 
-  /* Thương hiệu & Trạng thái */
-  --brand: #0052FF;            /* Electric Blue giữ nguyên định dạng thương hiệu */
+  --brand: #0052FF;
   --brand-dark: #003EB3;
   --brand-soft: rgba(0, 82, 255, 0.08);
-  --accent-color: #00A3C4;     /* Cyan tối ưu lại độ tương phản cho nền sáng */
-  --success: #12c78e;          /* Xanh emerald chuẩn tương phản AA */
-  --warning: #b3670f;          /* Cam đậm rõ ràng trên nền sáng */
+  --accent-color: #00A3C4;
+  --success: #12c78e;
+  --warning: #b3670f;
   --danger: #850808;
 
-  /* Text cho Badge / Alert (Màu sẫm trên nền pastel) */
   --alert-text-success: #065F46;
   --alert-text-warning: #92400E;
   --alert-text-danger: #991B1B;
   --alert-text-info: #1E40AF;
 
-  /* Đường viền hệ thống */
   --border-main: rgba(15, 23, 42, 0.12);
   --border-strong: rgba(15, 23, 42, 0.22);
   --border-glow: rgba(0, 82, 255, 0.25);
 
-  /* Đổ bóng đổ cao cấp (Sử dụng tone xám/slate thay vì đen đặc) */
   --sh-card: 0 24px 60px rgba(15, 23, 42, 0.08);
   --sh-soft: 0 16px 32px rgba(15, 23, 42, 0.04);
   --sh-glow-blue: 0 0 20px rgba(0, 82, 255, 0.15);
   --sh-glow-cyan: 0 0 20px rgba(0, 163, 196, 0.15);
 
-  /* Cấu hình Gradients cho Light Mode */
   --grad-brand: linear-gradient(135deg, #0052FF 0%, #00A3C4 100%);
   --grad-brand-soft: linear-gradient(135deg, rgba(0, 82, 255, 0.05), rgba(0, 163, 196, 0.05));
   --grad-border: linear-gradient(135deg, rgba(0, 82, 255, 0.2), rgba(0, 163, 196, 0.2));
   --grad-hero: radial-gradient(circle at 20% 0%, rgba(0, 163, 196, 0.06), transparent 50%),
                radial-gradient(circle at 100% 20%, rgba(0, 82, 255, 0.08), transparent 50%);
 
-  /* Bản đồ Leaflet ở trạng thái Sáng */
+
   --leaflet-tiles-filter: none;
   --leaflet-pop-bg: rgba(255, 255, 255, 0.95);
   --leaflet-thumb-bg: #FFFFFF;
 
-  --scooter-available: #11da9a;    /* Xanh emerald đậm dễ nhìn trên nền sáng */
-  --scooter-inuse: #0052FF;        /* Electric Blue thương hiệu */
-  --scooter-maintenance: #DC2626;  /* Đỏ danger rõ ràng */
+  --scooter-available: #11da9a;
+  --scooter-inuse: #0052FF;
+  --scooter-maintenance: #DC2626;
 }
 
 /* Dark mode */
-
-/* .dark { */
-:root {
+.dark {
   color-scheme: dark;
 
-  /* Nền và Bề mặt */
   --bg-main: #0B1120;
   --bg-accent: #060a16;
   --surface: rgba(17, 28, 52, 0.55);
@@ -136,13 +125,11 @@
   --surface-muted: rgba(255, 255, 255, 0.04);
   --surface-elevated: rgba(255, 255, 255, 0.07);
 
-  /* Hệ thống chữ */
   --text-main: #E6EEFF;
   --text-strong: #FFFFFF;
   --text-muted: #8BA0C7;
   --text-faded: #5B7099;
 
-  /* Thương hiệu & Trạng thái */
   --brand: #4a83ff;
   --brand-dark: #0040c8;
   --brand-soft: rgba(0, 82, 255, 0.16);
@@ -151,24 +138,20 @@
   --warning: #FF9F43;
   --danger: #ee1b42;
 
-  /* Text trạng thái */
   --alert-text-success: #bbf7d0;
   --alert-text-warning: #fed7aa;
   --alert-text-danger: #fecdd3;
   --alert-text-info: #bfdbfe;
 
-  /* Đường viền */
   --border-main: rgba(120, 160, 230, 0.16);
   --border-strong: rgba(120, 160, 230, 0.28);
   --border-glow: rgba(0, 209, 255, 0.45);
 
-  /* Đổ bóng */
   --sh-card: 0 24px 80px rgba(2, 10, 30, 0.55);
   --sh-soft: 0 16px 40px rgba(2, 10, 30, 0.45);
   --sh-glow-blue: 0 0 24px rgba(0, 82, 255, 0.45), 0 0 56px rgba(0, 82, 255, 0.18);
   --sh-glow-cyan: 0 0 24px rgba(0, 209, 255, 0.45), 0 0 64px rgba(0, 209, 255, 0.18);
 
-  /* Gradients */
   --grad-brand: linear-gradient(135deg, #0052FF 0%, #00D1FF 50%, #0052FF 100%);
   --grad-brand-soft: linear-gradient(135deg, rgba(0, 82, 255, 0.2), rgba(0, 209, 255, 0.2));
   --grad-border: linear-gradient(135deg, rgba(0, 209, 255, 0.6), rgba(0, 82, 255, 0.2) 60%, rgba(109, 93, 255, 0.5));
@@ -186,9 +169,6 @@
   --scooter-maintenance: #ee1b42;  /* Đỏ neon */
 }
 
-/* ======================================================= */
-/* 3. BASE LAYERS & LIÊN KẾT ĐỘNG VỚI TAILWIND            */
-/* ======================================================= */
 @layer base {
   html, body, #root {
     min-height: 100%;
@@ -198,14 +178,8 @@
     margin: 0;
     min-height: 100vh;
     background-attachment: fixed;
-    
-    /* Đồng bộ Typography thông qua lớp Tiện ích của Tailwind */
     @apply font-sans font-normal antialiased text-text leading-[1.65];
-    
-    /* Hiệu ứng chuyển mượt mà giữa Sáng và Tối khi toggle */
     transition: background 400ms ease, color 300ms ease, border-color 300ms ease;
-
-    /* Nền gradient động dựa vào cấu hình từng chế độ */
     background: var(--background-image-gradient-hero), var(--bg-main);
   }
 
@@ -229,9 +203,7 @@
   }
 }
 
-/* ======================================================= */
-/* 4. TỐI ƯU HÓA MAPS COMPONENT (LEAFLET) QUẢN LÝ TẬP TRUNG*/
-/* ======================================================= */
+/* Css cho Leaflet */
 .leaflet-container {
   background: var(--bg-accent) !important;
   font-family: inherit;
@@ -269,9 +241,6 @@
   box-shadow: var(--shadow-soft) !important;
 }
 
-/* ======================================================= */
-/* 5. TIỆN ÍCH CHUYỂN ĐỔI THEME CHUYÊN NGHIỆP             */
-/* ======================================================= */
 @utility theme-transition {
   transition: background-color 300ms ease, border-color 300ms ease, color 300ms ease, box-shadow 300ms ease;
 }
