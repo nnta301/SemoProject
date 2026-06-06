@@ -51,6 +51,10 @@
   --background-image-gradient-brand-soft: var(--grad-brand-soft);
   --background-image-gradient-border: var(--grad-border);
   --background-image-gradient-hero: var(--grad-hero);
+
+  --color-status-available: var(--scooter-available);
+  --color-status-inuse: var(--scooter-inuse);
+  --color-status-maintenance: var(--scooter-maintenance);
 }
 
 /* Light mode */
@@ -64,25 +68,25 @@
   --bg-accent: #FFFFFF;        
 
   /* TĂNG ĐỘ ĐẬM TẠI ĐÂY: Thay vì 0.75 và 0.92, ta đưa về gần như đặc hoàn toàn */
-  --surface: rgba(255, 255, 255, 0.94);        /* Khối nền rõ ràng, che bớt dải gradient của body phía sau */
-  --surface-strong: #FFFFFF;                   /* Trắng đặc 100% cho các khối quan trọng như Modal, Card lớn */
+  --surface: rgba(243, 221, 253, 0.94);        /* Khối nền rõ ràng, che bớt dải gradient của body phía sau */
+  --surface-strong: #fef1f1;                   /* Trắng đặc 100% cho các khối quan trọng như Modal, Card lớn */
   --surface-muted: rgba(15, 23, 42, 0.05);     /* Đậm hơn một chút để phân biệt */
   --surface-elevated: rgba(15, 23, 42, 0.08);  /* Đậm hơn để làm nổi bật input/button secondary
 
   /* Hệ thống chữ */
   --text-main: #334155;        /* slate-700 đọc rất dịu mắt */
-  --text-strong: #0F172A;      /* slate-900 cho tiêu đề */
+  --text-strong: #4a1179;      /* slate-900 cho tiêu đề */
   --text-muted: #64748B;       /* slate-500 */
-  --text-faded: #94A3B8;       /* slate-400 */
+  --text-faded: #869bb8;       /* slate-400 */
 
   /* Thương hiệu & Trạng thái */
   --brand: #0052FF;            /* Electric Blue giữ nguyên định dạng thương hiệu */
   --brand-dark: #003EB3;
   --brand-soft: rgba(0, 82, 255, 0.08);
   --accent-color: #00A3C4;     /* Cyan tối ưu lại độ tương phản cho nền sáng */
-  --success: #059669;          /* Xanh emerald chuẩn tương phản AA */
-  --warning: #D97706;          /* Cam đậm rõ ràng trên nền sáng */
-  --danger: #DC2626;
+  --success: #12c78e;          /* Xanh emerald chuẩn tương phản AA */
+  --warning: #b3670f;          /* Cam đậm rõ ràng trên nền sáng */
+  --danger: #850808;
 
   /* Text cho Badge / Alert (Màu sẫm trên nền pastel) */
   --alert-text-success: #065F46;
@@ -112,6 +116,10 @@
   --leaflet-tiles-filter: none;
   --leaflet-pop-bg: rgba(255, 255, 255, 0.95);
   --leaflet-thumb-bg: #FFFFFF;
+
+  --scooter-available: #11da9a;    /* Xanh emerald đậm dễ nhìn trên nền sáng */
+  --scooter-inuse: #0052FF;        /* Electric Blue thương hiệu */
+  --scooter-maintenance: #DC2626;  /* Đỏ danger rõ ràng */
 }
 
 /* Dark mode */
@@ -141,7 +149,7 @@
   --accent-color: #00D1FF;
   --success: #00E0A4;
   --warning: #FF9F43;
-  --danger: #FF5C7A;
+  --danger: #ee1b42;
 
   /* Text trạng thái */
   --alert-text-success: #bbf7d0;
@@ -172,6 +180,10 @@
   --leaflet-tiles-filter: invert(0.92) hue-rotate(180deg) brightness(0.95) contrast(0.95) saturate(0.7);
   --leaflet-pop-bg: rgba(17, 28, 52, 0.95);
   --leaflet-thumb-bg: rgba(11, 17, 32, 0.85);
+
+  --scooter-available: #00D1FF;    /* Cyan neon phát quang */
+  --scooter-inuse: #4a83ff;        /* Blue sáng */
+  --scooter-maintenance: #ee1b42;  /* Đỏ neon */
 }
 
 /* ======================================================= */

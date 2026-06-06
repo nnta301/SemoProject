@@ -13,7 +13,7 @@ export default function SectionHeader({ eyebrow, title, description, actions }: 
     <div className="flex justify-between max-sm:flex-col max-sm:items-start">
       <div>
         {eyebrow && (
-          <p className="mb-3 text-cyan-soft text-[0.72rem] uppercase tracking-[0.18em] font-bold">
+          <p className="mb-3 text-cyan-soft text-xs uppercase tracking-[0.18em] font-bold">
             {eyebrow}
           </p>
         )}

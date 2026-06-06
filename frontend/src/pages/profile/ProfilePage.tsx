@@ -123,7 +123,7 @@ export default function ProfilePage() {
   const roleLabel = user?.role === ROLES.ADMIN ? 'Administrator' : 'Customer'
 
   return (
-    <div className="grid gap-6">
+<div className="grid gap-6">
       <SectionHeader
         eyebrow="Account Profile"
         title="Your Account & Wallet"
@@ -131,55 +131,60 @@ export default function ProfilePage() {
       {error && <Alert tone="error">{error}</Alert>}
       {success && <Alert tone="success">{success}</Alert>}
 
-      {/* Wallet hero */}
-      <section className="relative p-8 rounded-lg
-        bg-[radial-gradient(circle_at_90%_0%,rgba(0,209,255,0.35),transparent_50%),linear-gradient(135deg,rgba(0,82,255,0.8)_0%,rgba(17,28,52,0.95)_100%)]
-        border border-border-glow text-white overflow-hidden shadow-glow-cyan
+      {/* 1. WALLET HERO: Light mode dùng nền sáng nhẹ dịu mắt, Dark mode kích hoạt lại khối Gradient nguyên bản */}
+      <section className="relative p-8 rounded-lg transition-all duration-300
+        bg-brand-soft border border-border-strong text-text overflow-hidden shadow-soft
+        dark:bg-[radial-gradient(circle_at_90%_0%,rgba(0,209,255,0.35),transparent_50%),linear-gradient(135deg,rgba(0,82,255,0.8)_0%,rgba(17,28,52,0.95)_100%)]
+        dark:border-border-glow dark:text-white dark:shadow-glow-cyan
         before:content-[''] before:absolute before:-top-1/2 before:right-[-20%]
         before:w-95 before:h-95 before:rounded-full
         before:bg-[radial-gradient(circle,rgba(0,209,255,0.3),transparent_70%)] before:blur-[20px] before:pointer-events-none"
       >
-        <p className="relative m-0 text-[0.78rem] uppercase tracking-[0.2em] font-bold text-cyan-soft">
+        <p className="relative m-0 text-[0.78rem] uppercase tracking-[0.2em] font-bold text-brand dark:text-cyan-soft">
           Balance
         </p>
-        <p className="relative mt-[0.45rem] mr-0 mb-[0.6rem] ml-0
+        <p className="relative mt-[0.45rem] mr-0 mb-[0.6rem] ml-0 text-text-strong dark:text-white
           text-[clamp(2.2rem,4vw,3rem)] font-extrabold tracking-[-0.04em] leading-[1.05]"
         >
           {balanceDisplay}
         </p>
-        <p className="relative m-0 text-[#e6eeff]/78 text-[0.92rem]">
-          Currency: <strong className="text-white">VND</strong> &nbsp;•&nbsp;
+        <p className="relative m-0 text-text-muted dark:text-[#e6eeff]/78 text-[0.92rem]">
+          Currency: <strong className="text-text-strong dark:text-white">VND</strong> &nbsp;•&nbsp;
           Account holder:{' '}
-          <strong className="text-white">{user?.fullName || user?.email || '—'}</strong>
+          <strong className="text-text-strong dark:text-white">{user?.fullName || user?.email || '—'}</strong>
         </p>
-        <span className="relative inline-flex items-center gap-[0.4rem] mt-4 padding
-          px-[0.8rem] py-[0.35rem] rounded-full bg-black/28 border border-white/20
-          text-[0.78rem] tracking-[0.08em] font-semibold"
+        {/* Pill nhãn góc dưới: Light mode dùng nền xám nhạt, chữ tối; Dark mode dùng nền black/28 và viền trắng mờ */}
+        <span className="relative inline-flex items-center gap-[0.4rem] mt-4
+          px-[0.8rem] py-[0.35rem] rounded-full bg-surface-muted border border-border-strong
+          text-[0.78rem] tracking-[0.08em] font-semibold text-text-strong
+          dark:bg-black/28 dark:border-white/20 dark:text-white"
         >
           <Sparkles size={14} strokeWidth={1.9} /> SEMO • {roleLabel.toUpperCase()}
         </span>
       </section>
 
       <div className="grid gap-[1.2rem] grid-cols-2 max-sm:grid-cols-1">
-        {/* Deposit card */}
+        {/* ================== DEPOSIT CARD ================== */}
         <Card>
           <SectionHeader
             eyebrow="Wallet"
             title="Top Up Wallet"
             description="Minimum top-up amount is 10,000 VND. Balance updates immediately after successful transaction."
-            actions={<Wallet size={20} strokeWidth={1.7} className="text-cyan-soft" />}
+            actions={<Wallet size={20} strokeWidth={1.7} className="text-brand dark:text-cyan-soft" />}
           />
 
           <form className="grid gap-5" onSubmit={handleDeposit}>
             <div className="flex gap-2 flex-wrap">
               {QUICK_AMOUNTS.map((v) => (
+                /* Nút chọn nhanh tiền nạp: Light mode hover chữ trắng nền xanh; Dark mode hover màu neon */
                 <button
                   key={v}
                   type="button"
                   className="p-[0.45rem_0.85rem] rounded-full border border-border-strong
-                  bg-surface-muted text-text cursor-pointer text-[0.85rem] font-semibold
-                    transition-all duration-180 ease-out hover:border-border-glow
-                  hover:text-white hover:bg-brand-soft"
+                    bg-surface-muted text-text cursor-pointer text-[0.85rem] font-semibold
+                    transition-all duration-180 ease-out hover:border-brand
+                    hover:text-white hover:bg-brand
+                    dark:hover:border-border-glow dark:hover:text-white dark:hover:bg-brand-soft"
                   onClick={() => pickQuickAmount(v)}
                 >
                   + {formatCurrency(v)}
@@ -215,13 +220,13 @@ export default function ProfilePage() {
           </form>
         </Card>
 
-        {/* Password card */}
+        {/* ================== PASSWORD CARD ================== */}
         <Card>
           <SectionHeader
             eyebrow="Security"
             title="Change Password"
             description="Change your password regularly to protect your account."
-            actions={<ShieldCheck size={20} strokeWidth={1.7} className="text-cyan-soft" />}
+            actions={<ShieldCheck size={20} strokeWidth={1.7} className="text-brand dark:text-cyan-soft" />}
           />
 
           <form className="grid gap-5" onSubmit={handlePasswordChange}>
@@ -258,7 +263,7 @@ export default function ProfilePage() {
         </Card>
       </div>
 
-      {/* Account details */}
+      {/* ================== ACCOUNT DETAILS ================== */}
       <Card>
         <SectionHeader eyebrow="Information" title="Logged-in Account" />
         <div className="grid gap-3 mt-2 text-text [&_strong]:text-text-strong">

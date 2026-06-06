@@ -80,10 +80,10 @@ export default function Register() {
       <Card variant="glow">
         <form className="grid gap-[1.1rem]" onSubmit={handleSubmit}>
           <div className="grid gap-2 mb-2">
-            <h2 className="m-0 text-[2.1rem] tracking-[-0.03em] bg-linear-to-br from-white to-cyan-soft bg-clip-text text-transparent">
+            <h2 className="text-4xl tracking-[-0.03em] bg-linear-to-br from-white to-cyan-soft bg-clip-text text-strong">
               Create Account
             </h2>
-            <p className="m-0 text-(--text-muted) leading-[1.6]">
+            <p className="m-0 text-text-muted leading-[1.6]">
               Fill in your information to create a new customer account.
             </p>
           </div>
@@ -159,9 +159,14 @@ export default function Register() {
             >
               {loading ? 'Creating account...' : 'Create Account'}
             </Button>
-            <p className="m-0 text-(--text-muted) text-[0.92rem] leading-[1.6] text-center">
+            <p className="m-0 text-text-muted text-[0.92rem] leading-[1.6] text-center">
               Already have an account?{' '}
-              <Link className="text-cyan-soft font-bold relative transition-colors duration-200 ease-in-out hover:text-white hover:[text-shadow:0_0_12px_var(--color-cyan)]" to={ROUTES.LOGIN}>
+              <Link 
+                className="relative font-bold text-brand transition-colors duration-200
+                  ease-in-out hover:text-brand-dark dark:text-cyan-soft dark:hover:text-white
+                  dark:hover:[text-shadow:0_0_12px_var(--color-accent)]" 
+                to={ROUTES.LOGIN}
+              >
                 Sign in
               </Link>
             </p>

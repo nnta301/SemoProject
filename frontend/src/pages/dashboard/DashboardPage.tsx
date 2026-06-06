@@ -185,21 +185,26 @@ export default function DashboardPage() {
 
   return (
     <div className="grid gap-6">
+      {/* 1. SECTION HERO: Ở Light mode dùng tone sáng/brand soft, sang Dark mode trả lại gradient huyền ảo ban đầu */}
       <section className="relative p-8 px-[2.2rem] rounded-lg
-        bg-[radial-gradient(circle_at_90%_-20%,rgba(0,209,255,0.4),transparent_55%),radial-gradient(circle_at_-10%_120%,rgba(109,93,255,0.4),transparent_60%),linear-gradient(135deg,rgba(0,82,255,0.85),rgba(11,17,32,0.92))]
-        border border-border-glow shadow-glow-blue overflow-hidden
-        text-white after:content-[''] after:absolute after:inset-0
+        bg-brand-soft border border-border-strong shadow-soft overflow-hidden
+        text-text transition-all duration-300
+        dark:bg-[radial-gradient(circle_at_90%_-20%,rgba(0,209,255,0.4),transparent_55%),radial-gradient(circle_at_-10%_120%,rgba(109,93,255,0.4),transparent_60%),linear-gradient(135deg,rgba(0,82,255,0.85),rgba(11,17,32,0.92))]
+        dark:border-border-glow dark:shadow-glow-blue dark:text-white
+        after:content-[''] after:absolute after:inset-0
         after:pointer-events-none after:opacity-60"
       >
         <div className="relative flex items-center justify-between gap-6 flex-wrap">
           <div>
-            <p className="text-cyan-soft uppercase tracking-[0.2em] text-[0.72rem] font-bold">
+            {/* Thay text-cyan-soft (màu sáng) thành màu brand ở light mode */}
+            <p className="text-brand dark:text-accent uppercase tracking-[0.2em] text-[0.72rem] font-bold">
               Hello, {greetingName}
             </p>
-            <h2 className="mt-[0.3rem] mr-0 mb-[0.6rem] ml-0 text-[clamp(1.8rem,3vw,2.5rem)] tracking-[-0.03em]">
+            <h2 className="mt-[0.3rem] mr-0 mb-[0.6rem] ml-0 text-[clamp(1.8rem,3vw,2.5rem)] tracking-[-0.03em] text-text-strong dark:text-white">
               System is fully operational.
             </h2>
-            <p className="text-[#e6eeff]/78 max-w-[50ch]">
+            {/* Sử dụng text-text-muted ở light mode và text-text-main đè opacity ở dark mode */}
+            <p className="text-text-muted dark:text-text-main/78 max-w-[50ch]">
               Track e-scooter fleet status in real-time, manage trips, and top
               up your wallet — all in one high-tech dashboard.
             </p>
@@ -223,6 +228,7 @@ export default function DashboardPage() {
 
       {error && <Alert tone="error">{error}</Alert>}
 
+      {/* 2. KHU VỰC SUMMARY CARDS */}
       <div className="grid gap-[1.1rem] grid-cols-4 max-[980px]:grid-cols-2 max-sm:grid-cols-1">
         {summaryCards.map((card) => (
           <Card key={card.label} variant="glow">
@@ -232,18 +238,21 @@ export default function DashboardPage() {
                 >
                   {card.label}
                 </p>
+                {/* Icon box: Light mode dùng border-strong thông thường, Dark mode bật shadow-glow */}
                 <span className="w-10 h-10 rounded-[12px] grid
                   place-items-center bg-gradient-brand-soft border
-                  border-border-strong text-cyan-soft
-                  shadow-[inset_0_0_12px_rgba(0,209,255,0.18)]"
+                  border-border-strong text-brand dark:text-accent
+                  dark:shadow-[inset_0_0_12px_rgba(0,209,255,0.18)]"
                 >
                   {card.icon}
                 </span>
               </div>
+              {/* Text lớn hiển thị số liệu: Light mode dùng màu text-strong, Dark mode dùng Text Gradient như cũ */}
               <div className="mt-[0.6rem] mr-0 mb-[0.4rem] ml-0 text-[2.2rem]
-                font-extrabold tracking-[-0.04em]
-                bg-[linear-gradient(135deg,#fff,var(--color-cyan-soft)_120%)]
-                bg-clip-text text-transparent leading-[1.1]"
+                font-extrabold tracking-[-0.04em] leading-[1.1]
+                text-text-strong 
+                dark:bg-[linear-gradient(135deg,#fff,var(--color-accent)_120%)]
+                dark:bg-clip-text dark:text-transparent"
               >
                 {loading ? '—' : card.value}
               </div>
@@ -254,6 +263,7 @@ export default function DashboardPage() {
         ))}
       </div>
 
+      {/* 3. LIVE MAP CARD */}
       <Card>
         <SectionHeader
           eyebrow="Live map"
@@ -261,7 +271,8 @@ export default function DashboardPage() {
           description="Scooter locations are plotted in real-time
             on OpenStreetMap based on current coordinates."
           actions={(
-            <span className="inline-flex items-center gap-1.5 text-cyan-soft font-semibold">
+            /* Đổi từ text-cyan-soft (chỉ hợp với nền tối) sang text-brand (Sáng) / dark:text-accent (Tối) */
+            <span className="inline-flex items-center gap-1.5 text-brand dark:text-accent font-semibold">
               <Navigation size={20} strokeWidth={1.8} /> Live
             </span>
           )}
@@ -271,7 +282,7 @@ export default function DashboardPage() {
         </div>
       </Card>
 
-
+      {/* 4. SCOOTER LIST CARD */}
       <Card>
         <SectionHeader
           eyebrow="Scooter List"

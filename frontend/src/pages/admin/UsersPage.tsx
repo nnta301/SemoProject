@@ -221,7 +221,7 @@ export default function UsersPage() {
   }
 
   return (
-    <div className="grid gap-6">
+<div className="grid gap-6">
       <SectionHeader
         eyebrow="Admin"
         title="Users"
@@ -229,13 +229,18 @@ export default function UsersPage() {
         actions={<Button onClick={openCreate}>New user</Button>}
       />
 
+      {/* KHU VỰC SUMMARY CARDS */}
       <div className="grid gap-[1.1rem] grid-cols-4 max-[980px]:grid-cols-2 max-sm:grid-cols-1">
         {summary.map((item) => (
           <Card key={item.label}>
             <p className="text-text-faded font-semibold text-sm uppercase tracking-[0.12em]">
               {item.label}
             </p>
-            <div className="mt-[0.6rem] mr-0 mb-[0.4rem] ml-0 text-[2.2rem] font-extrabold tracking-[-0.04em] bg-[linear-gradient(135deg,#fff,var(--color-cyan-soft)_120%)] bg-clip-text text-transparent leading-[1.1]">
+            {/* Tối ưu chữ số liệu: Mặc định Light mode dùng màu chữ sẫm, Dark mode bật lại text gradient đổ khối */}
+            <div className="mt-[0.6rem] mr-0 mb-[0.4rem] ml-0 text-[2.2rem] font-extrabold tracking-[-0.04em] leading-[1.1]
+              text-text-strong dark:bg-[linear-gradient(135deg,#fff,var(--color-accent)_120%)]
+              dark:bg-clip-text dark:text-transparent"
+            >
               {loading ? '—' : item.value}
             </div>
           </Card>
@@ -244,6 +249,7 @@ export default function UsersPage() {
 
       {error && <Alert tone="error">{error}</Alert>}
 
+      {/* TABLE LIST */}
       <Card>
         <Table
           columns={columns}
@@ -253,6 +259,7 @@ export default function UsersPage() {
         />
       </Card>
 
+      {/* MODAL: CREATE / EDIT USER */}
       <Modal
         open={isFormOpen}
         title={form.id ? 'Edit user' : 'New user'}
@@ -302,6 +309,7 @@ export default function UsersPage() {
         </form>
       </Modal>
 
+      {/* MODAL: DELETE USER */}
       <Modal
         open={isDeleteOpen}
         title="Delete user"
@@ -322,13 +330,14 @@ export default function UsersPage() {
         </p>
       </Modal>
 
+      {/* MODAL: RESET PASSWORD */}
       <Modal
         open={isResetOpen}
         title="Reset password"
         onClose={() => setIsResetOpen(false)}
         footer={
           <div className="flex items-center gap-3">
-            <Button variant="secondary" onClick={() => setIsResetOpen(false)}>
+            <Button variant="secondary" onClick={() => setIsDeleteOpen(false)}>
               Cancel
             </Button>
             <Button type="submit" form="reset-password-form" disabled={saving}>

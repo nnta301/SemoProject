@@ -375,18 +375,19 @@ export default function BookingPage() {
           description="Find the nearest scooter, book - unlock - ride, and track battery life in real-time."
         />
         <div className="flex gap-2 flex-wrap">
+          {/* Trạng thái vị trí người dùng: Đồng bộ hóa màu sắc theo Light/Dark theme */}
           <span
             className={`inline-flex items-center gap-2 p-2 rounded-full border font-semibold transition-colors
               ${userPos 
-                ? 'text-cyan-soft border-(--border-glow) bg-[rgba(0,209,255,0.08)]' 
-                : 'text-(--warning) border-[rgba(218,12,12,0.4)] bg-[rgba(255,179,71,0.08)]'
+                ? 'text-brand border-border-strong bg-brand-soft dark:text-cyan-soft dark:border-border-glow dark:bg-[rgba(0,209,255,0.08)]' 
+                : 'text-warning border-warning/40 bg-warning/8 dark:text-warning dark:border-[rgba(218,12,12,0.4)] dark:bg-[rgba(255,179,71,0.08)]'
               }`}
           >
             <Crosshair size={14} strokeWidth={1.9} />
             {userPos ? 'Location available' : geoError ? 'Location error' : 'Location unavailable'}
           </span>
 
-          <span className="inline-flex items-center gap-1.5 p-2 rounded-full font-semibold text-cyan-soft border border-(--border-glow) bg-[rgba(0,209,255,0.08)]">
+          <span className="inline-flex items-center gap-1.5 p-2 rounded-full font-semibold text-brand border border-border-strong bg-brand-soft dark:text-cyan-soft dark:border-border-glow dark:bg-[rgba(0,209,255,0.08)]">
             <Zap size={14} strokeWidth={1.9} />
             {visibleScooters.length} suitable scooters
           </span>
@@ -395,8 +396,13 @@ export default function BookingPage() {
 
       {scootersError && <Alert tone="error">{scootersError}</Alert>}
       {actionError && <Alert tone="error">{actionError}</Alert>}
+      
+      {/* Alert hoàn thành chuyến đi: Light mode dùng nền pastel/text tối, Dark mode giữ nguyên tone neon */}
       {completedInfo && (
-        <div className="flex items-center justify-between gap-2.5 p-[0.8rem_1rem] rounded-[14px] bg-linear-to-br from-[rgba(0,224,164,0.18)] to-[rgba(0,82,255,0.18)] border border-[rgba(0,224,164,0.4)] mb-[0.7rem] text-(--text-strong) [&_strong]:text-white">
+        <div className="flex items-center justify-between gap-2.5 p-[0.8rem_1rem] rounded-[14px] 
+          bg-linear-to-br from-success/10 to-brand-soft border border-success/30 mb-[0.7rem] text-text-strong [&_strong]:text-text-strong
+          dark:bg-linear-to-br dark:from-[rgba(0,224,164,0.18)] dark:to-[rgba(0,82,255,0.18)] dark:border-[rgba(0,224,164,0.4)] dark:[&_strong]:text-white"
+        >
           <span>
             <Sparkles size={18} strokeWidth={1.8} />
             Trip ended on <strong>{completedInfo.scooterName}</strong> · Total fare: {' '}
@@ -411,7 +417,7 @@ export default function BookingPage() {
       <div className="grid gap-[1.2rem] items-start grid-cols-1 xl:grid-cols-[360px_minmax(0,1fr)_360px]">
         {/* ============== CỘT TRÁI: BỘ LỌC + DANH SÁCH ============== */}
         <Card>
-        <SectionHeader eyebrow="Scooter Filter" title="Find the Right Ride" description="Find scooters near you or filter by status." />
+          <SectionHeader eyebrow="Scooter Filter" title="Find the Right Ride" description="Find scooters near you or filter by status." />
           <form className="grid gap-[0.8rem] mb-4" onSubmit={(e) => e.preventDefault()}>
             <TextField
               label="Search by name / scooter ID"
@@ -424,8 +430,14 @@ export default function BookingPage() {
 
             <div>
               <span className="block mb-1.5 font-bold">Status</span>
+              {/* Thẻ select: Đồng bộ màu nền/border cho Light mode, chuyển về mã màu cũ ở Dark mode */}
               <select
-                className="w-full min-h-11 p-[0.7rem_1rem] border border-(--border) rounded-xl bg-[rgba(11,17,32,0.65)] text-(--text-strong) appearance-none bg-no-repeat bg-position-[right_1rem_center] bg-size-[10px] bg-[url('data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%228%22 viewBox=%220 0 12 8%22%3E%3Cpath fill=%22%2300D1FF%22 d=%22M6 8L0 0h12z%22/%3E%3C/svg%3E')] focus:outline-none focus:border-(--border-glow) focus:shadow-[0_0_0_4px_rgba(0,209,255,0.12)]"
+                className="w-full min-h-11 p-[0.7rem_1rem] border border-border strong rounded-xl bg-surface text-text-strong appearance-none bg-no-repeat bg-position-[right_1rem_center] bg-size-[10px] 
+                  bg-[url('data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%228%22 viewBox=%220 0 12 8%22%3E%3Cpath fill=%22%230052FF%22 d=%22M6 8L0 0h12z%22/%3E%3C/svg%3E')] 
+                  focus:outline-none focus:border-brand focus:shadow-[0_0_0_4px_rgba(0,82,255,0.12)]
+                  dark:border-(--border) dark:bg-[rgba(11,17,32,0.65)]
+                  dark:bg-[url('data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%228%22 viewBox=%220 0 12 8%22%3E%3Cpath fill=%22%2300D1FF%22 d=%22M6 8L0 0h12z%22/%3E%3C/svg%3E')] 
+                  dark:focus:border-border-glow dark:focus:shadow-[0_0_0_4px_rgba(0,209,255,0.12)]"
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
               >
@@ -436,12 +448,12 @@ export default function BookingPage() {
               </select>
             </div>
 
-            <label className="flex items-center gap-[0.6rem] text-base text-(--text) cursor-pointer select-none">
+            <label className="flex items-center gap-[0.6rem] text-base text-text cursor-pointer select-none">
               <input
                 type="checkbox"
                 checked={useRadius}
                 onChange={(e) => setUseRadius(e.target.checked)}
-                className="w-4 h-4 accent-(--color-electric) cursor-pointer"
+                className="w-4 h-4 accent-brand dark:accent-(--color-electric) cursor-pointer"
               />
               <span>
                 Show scooters within <strong className="font-bold">{radiusKm.toFixed(1)} km</strong> radius only
@@ -450,7 +462,7 @@ export default function BookingPage() {
 
             <input
               type="range"
-              className="w-full accent-(--color-electric)"
+              className="w-full accent-brand dark:accent-(--color-electric)"
               min="0.3" max="5" step="0.1"
               value={radiusKm}
               onChange={(e) => setRadiusKm(Number(e.target.value))}
@@ -478,7 +490,8 @@ export default function BookingPage() {
             {geoError && <Alert tone="error">{geoError}</Alert>}
           </form>
 
-          <div className="grid gap-1 max-h-[56vh] overflow-y-auto pr-0.5 max-xl:max-h-none [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-[rgba(0,209,255,0.25)] [&::-webkit-scrollbar-thumb]:rounded-full">
+          {/* Danh sách cuộn: Light mode chỉnh thanh cuộn xám dịu, Dark mode giữ màu neon */}
+          <div className="grid gap-1 max-h-[56vh] overflow-y-auto pr-0.5 max-xl:max-h-none [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-border-strong [&::-webkit-scrollbar-thumb]:rounded-full dark:[&::-webkit-scrollbar-thumb]:bg-[rgba(0,209,255,0.25)]">
             {scootersLoading && <p className="empty-state__text">Loading scooters...</p>}
             {!scootersLoading && visibleScooters.length === 0 && (
               <p className="empty-state__text">No scooters match your filters.</p>
@@ -491,15 +504,17 @@ export default function BookingPage() {
                 <div
                   key={s.id}
                   className={cn(
-                    // Base Layout & Định dạng thẻ bao ngoài (Card)
+                    // Base Layout & Định dạng thẻ bao ngoài (Card item)
                     "relative grid gap-2 p-[0.95rem_1rem] rounded-[14px] border border-border bg-surface-elevated cursor-pointer",
                     "transition-[border-color,transform,box-shadow,background] duration-200 ease-out",
-                    "hover:border-border-strong hover:-translate-y-px hover:bg-electric/6",
+                    "hover:border-border-strong hover:-translate-y-px hover:bg-brand-soft/50",
                     
                     // Trạng thái khi xe ĐƯỢC CHỌN (isSelected)
                     isSelected && [
-                      "border-border-glow bg-linear-to-br from-electric/18 to-cyan/6",
-                      "shadow-[0_0_0_1px_var(--color-border-glow),0_12px_28px_rgba(0,82,255,0.2)]"
+                      "border-brand bg-linear-to-br from-brand-soft to-surface-muted",
+                      "shadow-[0_0_0_1px_var(--color-brand),0_12px_28px_rgba(0,82,255,0.1)]",
+                      "dark:border-border-glow dark:bg-linear-to-br dark:from-electric/18 dark:to-cyan/6",
+                      "dark:shadow-[0_0_0_1px_var(--color-border-glow),0_12px_28px_rgba(0,82,255,0.2)]"
                     ],
                     
                     // Trạng thái khi xe BỊ KHÓA (isLocked) và không được chọn
@@ -560,10 +575,11 @@ export default function BookingPage() {
                       <button
                         type="button"
                         className={cn(
-                          "p-1 px-3 rounded-full border border-border-glow text-cyan-soft cursor-pointer", // Mẹo: Thêm px-3 để text nút không bị dính
+                          "p-1 px-3 rounded-full border border-border-strong text-brand cursor-pointer", 
                           "transition-all duration-200 ease-out bg-brand-soft",
-                          "hover:text-white hover:bg-electric/32",
-                          isSelected && "bg-gradient-brand text-white"
+                          "hover:text-white hover:bg-brand",
+                          "dark:border-border-glow dark:text-cyan-soft dark:bg-brand-soft dark:hover:text-white dark:hover:bg-electric/32",
+                          isSelected && "bg-brand text-white dark:bg-gradient-brand dark:text-white"
                         )}
                         onClick={(e) => { e.stopPropagation(); handleSelect(s) }}
                       >
@@ -589,11 +605,11 @@ export default function BookingPage() {
 
           <div className="flex items-center justify-between gap-2.5 mb-4">
             <div className="flex flex-col items-start gap-2 mt-5 mb-5">
-              <span className="inline-flex items-center gap-2"><i className="w-3 h-3 rounded-full inline-block shadow-[0_0_8px_currentColor] bg-[#00D1FF] text-[rgba(0,209,255,0.5)]" /> Available</span>
-              <span className="inline-flex items-center gap-2"><i className="w-3 h-3 rounded-full inline-block shadow-[0_0_8px_currentColor] bg-[#0052FF] text-[rgba(0,82,255,0.5)]" /> In Use</span>
-              <span className="inline-flex items-center gap-2"><i className="w-3 h-3 rounded-full inline-block shadow-[0_0_8px_currentColor] bg-danger text-[rgba(255,92,122,0.5)]" /> Maintenance</span>
+              <span className="inline-flex items-center gap-2"><i className="w-3 h-3 rounded-full inline-block bg-status-available text-accent-color/50 dark:text-[rgba(0,209,255,0.5)]" /> Available</span>
+              <span className="inline-flex items-center gap-2"><i className="w-3 h-3 rounded-full inline-block bg-status-inuse text-brand/50 dark:text-[rgba(0,82,255,0.5)]" /> In Use</span>
+              <span className="inline-flex items-center gap-2"><i className="w-3 h-3 rounded-full inline-block bg-status-maintenance text-[rgba(255,92,122,0.5)]" /> Maintenance</span>
             </div>
-            <span className="inline-flex items-center gap-1.5 p-2 rounded-full text-lg font-semibold text-cyan-soft border border-(--border-glow) bg-[rgba(0,209,255,0.08)]">
+            <span className="inline-flex items-center gap-1.5 p-2 rounded-full text-lg font-semibold text-brand border border-border-strong bg-brand-soft dark:text-cyan-soft dark:border-border-glow dark:bg-[rgba(0,209,255,0.08)]">
               <Filter size={20} strokeWidth={1.9} />
               Radius: {radiusKm.toFixed(1)} km
             </span>
@@ -606,7 +622,7 @@ export default function BookingPage() {
               minZoom={11}
               maxZoom={18}
               scrollWheelZoom
-              className="w-full h-150 rounded-2xl overflow-hidden border border-(--border-strong) shadow-(--shadow-soft)"
+              className="w-full h-150 rounded-2xl overflow-hidden border border-border-strong shadow-(--shadow-soft)"
             >
               <TileLayer
                 attribution='&copy; OpenStreetMap'
@@ -619,7 +635,7 @@ export default function BookingPage() {
                   <CircleMarker
                     center={userPos}
                     radius={8}
-                    pathOptions={{ color: '#00E0A4', fillColor: '#00E0A4', fillOpacity: 0.9, weight: 2 }}
+                    pathOptions={{ color: '#52027a', fillColor: '#52027a', fillOpacity: 0.9, weight: 2 }}
                   >
                     <Tooltip direction="top" offset={[0, -8]} permanent>You are here</Tooltip>
                   </CircleMarker>
@@ -653,7 +669,8 @@ export default function BookingPage() {
                       {s.name || `#${s.id}`}
                     </Tooltip>
                     <Popup>
-                      <div className="grid gap-1.5 min-w-50 text-(--text)">
+                      {/* Đồng bộ text của Leaflet map popup */}
+                      <div className="grid gap-1.5 min-w-50 text-text">
                         <strong>{s.name || `Scooter #${s.id}`}</strong>
                         <p>Status: {statusLabel[s._status]}</p>
                         <p>Battery: {formatBatteryLevel(s.batteryLevel) || '—'}</p>
@@ -673,7 +690,10 @@ export default function BookingPage() {
             <div className="flex items-center justify-between gap-[0.6rem] mb-[0.6rem]">
               <SectionHeader eyebrow="Ride Status" title="" />
               {ride?.state === 'riding' && (
-                <span className="inline-flex items-center p-2 rounded-full font-semibold tracking-[0.02em] text-cyan-soft border-(--border-glow) bg-[rgba(0,209,255,0.08)]">
+                <span className="inline-flex items-center p-2 rounded-full font-semibold 
+                  tracking-[0.02em] text-brand border border-border-strong bg-brand-soft
+                  dark:text-cyan-soft dark:border-border-glow dark:bg-[rgba(0,209,255,0.08)]"
+                >
                   <Clock size={14} strokeWidth={1.9} /> {fmtDuration(ridingMs)}
                 </span>
               )}
@@ -683,7 +703,7 @@ export default function BookingPage() {
               <p className="empty-state__text">Select an available scooter to start.</p>
             ) : (
               <>
-                <p className="text-(--text-strong) font-bold text-3xl">
+                <p className="text-text-strong font-bold text-3xl">
                   {selectedScooter.name || `Scooter #${selectedScooter.id}`}
                 </p>
                 <p className="m-0 text-text-muted text-[0.88rem]">
@@ -693,12 +713,19 @@ export default function BookingPage() {
                 </p>
 
                 {ride?.state === 'riding' && (
-                  <div className="[font-variant-numeric:tabular-nums] font-extrabold tracking-[-0.02em] text-3xl bg-linear-to-br from-white to-cyan-soft bg-clip-text text-transparent bg-size-[auto_120%]">
+                  <div className="[font-variant-numeric:tabular-nums] font-extrabold
+                    tracking-[-0.02em] text-3xl text-text-strong dark:bg-linear-to-br
+                    dark:from-white dark:to-cyan-soft dark:bg-clip-text
+                    dark:text-transparent dark:bg-size-[auto_120%]"
+                  >
                     {fmtDuration(ridingMs)}
                   </div>
                 )}
 
-                <div className="grid gap-2 my-3 mb-4 p-3 rounded-xl bg-[rgba(11,17,32,0.5)] border border-(--border)">
+                {/* Timeline Box: Chuyển background sang trong suốt/nhẹ ở Light mode */}
+                <div className="grid gap-2 my-3 mb-4 p-3 rounded-xl bg-surface-muted
+                  border border-border dark:bg-[rgba(11,17,32,0.5)]"
+                >
                   <TimelineRow
                     icon={<Zap size={16} strokeWidth={1.9} />}
                     label="Book Scooter"
@@ -773,6 +800,7 @@ export default function BookingPage() {
             )}
           </Card>
 
+          {/* SYSTEM SIMULATION CARD */}
           <Card>
             <SectionHeader
               eyebrow="System Alert Simulation"
@@ -783,7 +811,9 @@ export default function BookingPage() {
               <Button
                 onClick={() => reportIssue('overheat')}
                 disabled={!selectedScooter}
-                className="text-white bg-linear-to-br from-[#ffb347] to-[#443a2d] shadow-[0_0_24px_rgba(255,179,71,0.35)]"
+                className="text-white bg-linear-to-br from-[#ffb347] to-[#92400E]
+                  shadow-sm dark:bg-linear-to-br dark:from-[#ffb347]
+                  dark:to-[#443a2d] dark:shadow-[0_0_24px_rgba(255,179,71,0.35)]"
                 leadingIcon={<Thermometer size={16} strokeWidth={1.8} />}
               >
                 Battery overheating
@@ -792,7 +822,9 @@ export default function BookingPage() {
               <Button
                 onClick={() => reportIssue('battery-drop')}
                 disabled={!selectedScooter}
-                className="text-white bg-linear-to-br from-[#ff5c7a] to-[#c11d3f] shadow-[0_0_24px_rgba(255,92,122,0.35)]"
+                className="text-white bg-linear-to-br from-[#ff5c7a] to-[#991B1B]
+                  shadow-sm dark:bg-linear-to-br dark:from-[#ff5c7a] dark:to-[#c11d3f]
+                  dark:shadow-[0_0_24px_rgba(255,92,122,0.35)]"
                 leadingIcon={<Gauge size={16} strokeWidth={1.8} />}
               >
                 Rapid battery drain
@@ -806,7 +838,7 @@ export default function BookingPage() {
                 Delete local Reports
               </Button>
             </div>
-            <p className="mt-2.5 text-[0.82rem]" >
+            <p className="mt-2.5 text-[0.82rem] text-text-muted" >
               Updating scooter status on the server requires admin privileges. This report is saved locally and
               will automatically end your current ride (rental). The operations team will receive and process it.
             </p>
@@ -819,12 +851,19 @@ export default function BookingPage() {
 
 function TimelineRow({ icon, label, value, done }: TimelineRowProps) {
   return (
+    /* Đồng bộ TimelineRow component con dựa trên biến token Tailwind v4 của bạn */
     <div className={`flex items-center justify-between gap-2.5 text-xs group ${done ? 'is-done' : ''}`}>
-      <span className="inline-flex items-center gap-2 text-(--text-muted) group-[.is-done]:text-(--text) [&>svg]:text-(--text-faded) group-[.is-done]:[&>svg]:text-cyan-soft">
+      <span className="inline-flex items-center gap-2 text-text-muted
+        group-[.is-done]:text-text [&>svg]:text-text-faded
+        group-[.is-done]:[&>svg]:text-brand
+        dark:group-[.is-done]:[&>svg]:text-cyan-soft"
+      >
         {icon} 
         {label}
       </span>
-      <span className="text-(--text-muted) tabular-nums group-[.is-done]:text-(--text-strong) group-[.is-done]:font-semibold">
+      <span className="text-text-muted tabular-nums group-[.is-done]:text-text-strong
+        group-[.is-done]:font-semibold"
+      >
         {value}
       </span>
     </div>

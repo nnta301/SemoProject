@@ -46,7 +46,7 @@ export default function Login() {
       <Card variant="glow">
         <form className="grid gap-4" onSubmit={handleSubmit}>
           <div className="grid gap-2 mb-2">
-            <h2 className="text-3xl tracking-[-0.03em] bg-linear-to-br from-white to-cyan-soft bg-clip-text text-transparent">
+            <h2 className="text-3xl tracking-[-0.03em] bg-linear-to-br from-white to-cyan-soft bg-clip-text">
               Log in
             </h2>
             <p className="text-text-muted leading-[1.6]">
@@ -83,7 +83,7 @@ export default function Login() {
                 type="button"
                 onClick={() => setShowPassword((v) => !v)}
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
-                className="bg-transparent border-0 text-(--text-muted) cursor-pointer grid place-items-center p-0"
+                className="bg-transparent border-0 text-text-muted cursor-pointer grid place-items-center p-0"
               >
                 {showPassword ? <EyeOff size={18} strokeWidth={1.7} /> : <Eye size={18} strokeWidth={1.7} />}
               </button>
@@ -99,9 +99,14 @@ export default function Login() {
             >
               {loading ? 'Logging in...' : 'Log in'}
             </Button>
-            <p className="text-(--text-muted) text-[0.92rem] leading-[1.6] text-center">
+            <p className="text-text-muted text-[0.92rem] leading-[1.6] text-center">
               Don't have an account?{' '}
-              <Link className="text-cyan-soft font-bold relative transition-colors duration-200 ease-in-out hover:text-white hover:[text-shadow:0_0_12px_var(--color-cyan)]" to={ROUTES.REGISTER}>
+              <Link 
+                className="relative font-bold text-brand transition-colors duration-200
+                  ease-in-out hover:text-brand-dark dark:text-cyan-soft
+                  dark:hover:text-white dark:hover:[text-shadow:0_0_12px_var(--color-accent)]" 
+                to={ROUTES.REGISTER}
+              >
                 Create a new account
               </Link>
             </p>

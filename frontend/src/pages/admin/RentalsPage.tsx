@@ -157,7 +157,14 @@ export default function RentalsPage() {
               <strong>Rental ID:</strong> {result.id}
             </div>
             <div>
-              <strong>Status:</strong> {result.status}
+              <strong>Status:</strong>{' '}
+              <span className={
+                result.status?.toLowerCase() === 'completed' || result.status?.toLowerCase() === 'active'
+                  ? 'text-text-success font-semibold'
+                  : 'text-text-warning font-semibold'
+              }>
+                {result.status}
+              </span>
             </div>
             <div>
               <strong>Start:</strong> {formatDateTime(result.startTime) || '-'}
@@ -166,7 +173,7 @@ export default function RentalsPage() {
               <strong>End:</strong> {formatDateTime(result.endTime) || '-'}
             </div>
             <div>
-              <strong>Total price:</strong> {formatCurrency(result.totalPrice)}
+              <strong>Total price:</strong> <span className="text-brand dark:text-accent font-bold">{formatCurrency(result.totalPrice)}</span>
             </div>
           </div>
         )}

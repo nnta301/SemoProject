@@ -59,9 +59,20 @@ export default function ScooterMap({ scooters = [], stations = [], onMapClick }:
         .marker-station { color: var(--accent-color); fill: var(--accent-color); }
         
         /* Đồng bộ màu Scooter theo từng trạng thái bằng CSS Biến hóa */
-        .marker-scooter-available { color: var(--accent-color); fill: var(--accent-color); }
-        .marker-scooter-in-use { color: var(--brand); fill: var(--brand); }
-        .marker-scooter-maintenance { color: var(--danger); fill: var(--danger); }
+        .marker-scooter-available {
+          color: var(--scooter-available) !important;
+          fill: var(--scooter-available) !important;
+        }
+
+        .marker-scooter-inuse {
+          color: var(--scooter-inuse) !important;
+          fill: var(--scooter-inuse) !important;
+        }
+
+        .marker-scooter-maintenance {
+          color: var(--scooter-maintenance) !important;
+          fill: var(--scooter-maintenance) !important;
+        }
       `}</style>
 
       <MapContainer
@@ -125,7 +136,7 @@ export default function ScooterMap({ scooters = [], stations = [], onMapClick }:
                   </div>
                 </Popup>
               </CircleMarker>
-            ))}
+        ))}
 
         {mappedScooters.map((scooter) => {
           const lat = Number(scooter.currentLat)
@@ -165,13 +176,13 @@ export default function ScooterMap({ scooters = [], stations = [], onMapClick }:
       {/* Chú thích bản đồ (Legend) thích ứng toàn diện */}
       <div className="flex flex-wrap gap-10 text-base ml-4 text-text-muted font-medium">
         <span className="inline-flex items-center gap-2">
-          <i className="w-3 h-3 rounded-full inline-block bg-accent-color shadow-glow-cyan" /> Available
+          <i className="w-3 h-3 rounded-full inline-block bg-status-available shadow-glow-cyan" /> Available
         </span>
         <span className="inline-flex items-center gap-2">
-          <i className="w-3 h-3 rounded-full inline-block bg-brand shadow-glow-blue" /> In Use
+          <i className="w-3 h-3 rounded-full inline-block bg-status-inuse shadow-glow-blue" /> In Use
         </span>
         <span className="inline-flex items-center gap-2">
-          <i className="w-3 h-3 rounded-full inline-block bg-danger/90 dark:bg-danger shadow-[0_0_8px_rgba(220,38,38,0.4)] dark:shadow-[0_0_8px_rgba(255,92,122,0.5)]" /> Maintenance
+          <i className="w-3 h-3 rounded-full inline-block bg-status-maintenance shadow-[0_0_8px_rgba(220,38,38,0.4)]" /> Maintenance
         </span>
       </div>
 

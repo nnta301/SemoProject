@@ -192,7 +192,7 @@ export default function AppShell({ mode = 'user', children }: AppShellProps) {
 
           <div className="flex items-center flex-wrap">
             <span className="inline-flex items-center justify-center min-h-8 px-4
-              rounded-full text-xs font-bold tracking-wider bg-brand-soft 
+              rounded-full text-sm font-bold tracking-wider bg-brand-soft 
               border border-border-strong text-brand"
             >
               {user?.email || 'guest@example.com'}
