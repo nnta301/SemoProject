@@ -7,6 +7,7 @@ public class StatisticResponseDTO {
     private Long activeRentals;
     private Long availableScooters;
     private Long maintenanceScooters;
+    private Double totalMaintenanceCost;
 
     public StatisticResponseDTO() {
     }
@@ -49,5 +50,13 @@ public class StatisticResponseDTO {
 
     public void setMaintenanceScooters(Long maintenanceScooters) {
         this.maintenanceScooters = maintenanceScooters;
+    }
+
+    public Double getTotalMaintenanceCost() {
+        return totalMaintenanceCost;
+    }
+
+    public void setTotalMaintenanceCost(Double totalMaintenanceCost) {
+        this.totalMaintenanceCost = totalMaintenanceCost;
     }
 }

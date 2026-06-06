@@ -119,6 +119,15 @@ public class ScooterService {
         return mapToResponseDTO(updatedScooter);
     }
 
+    @Transactional
+    public void deleteScooter(Integer id) {
+        if (!scooterRepository.existsById(id)) {
+            throw new RuntimeException("Không tìm thấy xe với ID: " + id);
+        }
+
+        scooterRepository.deleteById(id);
+    }
+
     private ScooterResponseDTO mapToResponseDTO(Scooter scooter) {
         ScooterResponseDTO dto = new ScooterResponseDTO();
         if (scooter.getId() != null) {
@@ -132,7 +141,6 @@ public class ScooterService {
         dto.setStatus(scooter.getStatus());
         dto.setCurrentLat(scooter.getCurrentLat());
         dto.setCurrentLng(scooter.getCurrentLng());
-
         dto.setCreatedAt(scooter.getCreatedAt());
         dto.setUpdatedAt(scooter.getUpdatedAt());
 

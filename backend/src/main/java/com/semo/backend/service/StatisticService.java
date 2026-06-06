@@ -5,6 +5,7 @@ import com.semo.backend.entity.User;
 import com.semo.backend.repository.RentalRepository;
 import com.semo.backend.repository.ScooterRepository;
 import com.semo.backend.repository.UserRepository;
+import com.semo.backend.repository.MaintenanceLogRepository;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,11 +18,14 @@ public class StatisticService {
     private final RentalRepository rentalRepository;
     private final ScooterRepository scooterRepository;
     private final UserRepository userRepository;
+    private final MaintenanceLogRepository maintenanceLogRepository;
 
-    public StatisticService(RentalRepository rentalRepository, ScooterRepository scooterRepository, UserRepository userRepository) {
+    public StatisticService(RentalRepository rentalRepository, ScooterRepository scooterRepository,
+                            UserRepository userRepository, MaintenanceLogRepository maintenanceLogRepository) {
         this.rentalRepository = rentalRepository;
         this.scooterRepository = scooterRepository;
         this.userRepository = userRepository;
+        this.maintenanceLogRepository = maintenanceLogRepository;
     }
 
     @Transactional(readOnly = true)
@@ -45,18 +49,22 @@ public class StatisticService {
         Long availableScooters = scooterRepository.countByStatus("AVAILABLE");
         Long maintenanceScooters = scooterRepository.countByStatus("MAINTENANCE");
 
-        return mapToDTO(totalRevenue, totalCompletedRentals, activeRentals, availableScooters, maintenanceScooters);
+        Double totalMaintenanceCost = maintenanceLogRepository.sumTotalMaintenanceCost();
+        if (totalMaintenanceCost == null)
+            totalMaintenanceCost = 0.0;
+
+        return mapToDTO(totalRevenue, totalCompletedRentals, activeRentals, availableScooters, maintenanceScooters, totalMaintenanceCost);
     }
 
-    private StatisticResponseDTO mapToDTO(Double totalRevenue, Long totalCompletedRentals,
-                                          Long activeRentals, Long availableScooters,
-                                          Long maintenanceScooters) {
+    private StatisticResponseDTO mapToDTO(Double totalRevenue, Long totalCompletedRentals, Long activeRentals,
+                                          Long availableScooters, Long maintenanceScooters, Double totalMaintenanceCost) {
         StatisticResponseDTO stats = new StatisticResponseDTO();
         stats.setTotalRevenue(totalRevenue);
         stats.setTotalCompletedRentals(totalCompletedRentals);
         stats.setActiveRentals(activeRentals);
         stats.setAvailableScooters(availableScooters);
         stats.setMaintenanceScooters(maintenanceScooters);
+        stats.setTotalMaintenanceCost(totalMaintenanceCost);
         return stats;
     }
 }
