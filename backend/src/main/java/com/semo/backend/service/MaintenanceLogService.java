@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.semo.backend.dto.MaintenanceLogRequestDTO;
 import com.semo.backend.dto.MaintenanceLogResponseDTO;
+import com.semo.backend.dto.ResolveMaintenanceRequestDTO;
 import com.semo.backend.entity.MaintenanceLog;
 import com.semo.backend.entity.Scooter;
 import com.semo.backend.repository.MaintenanceLogRepository;
@@ -34,7 +35,7 @@ public class MaintenanceLogService {
 
         MaintenanceLog maintenanceLog = new MaintenanceLog();
         maintenanceLog.setDescription(requestDTO.getDescription());
-        maintenanceLog.setCost(requestDTO.getCost());
+        maintenanceLog.setCost(0.0);
         maintenanceLog.setScooter(scooter);
 
         maintenanceLog = maintenanceLogRepository.save(maintenanceLog);
@@ -58,7 +59,7 @@ public class MaintenanceLogService {
 
     private MaintenanceLogResponseDTO mapToResponseDTO(MaintenanceLog maintenanceLog) {
         MaintenanceLogResponseDTO responseDTO = new MaintenanceLogResponseDTO();
-        responseDTO.setId(maintenanceLog.getId().intValue());
+        responseDTO.setId(maintenanceLog.getId());
         responseDTO.setScooterId(maintenanceLog.getScooter().getId());
         responseDTO.setDescription(maintenanceLog.getDescription());
         responseDTO.setCost(maintenanceLog.getCost());
@@ -67,17 +68,23 @@ public class MaintenanceLogService {
     }
 
     @Transactional
-    public void resolveMaintenance(Integer scooterId) {
+    public void resolveMaintenance(Integer scooterId, ResolveMaintenanceRequestDTO requestDTO) {
         Scooter scooter = scooterRepository.findById(scooterId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy xe với ID: " + scooterId));
 
-        if (!"MAINTENANCE".equals(scooter.getStatus()))
+        if (!"MAINTENANCE".equals(scooter.getStatus())) {
             throw new RuntimeException("Xe này không nằm trong danh sách bảo trì!");
+        }
+
+        Double cost = requestDTO.getCost();
+
+        MaintenanceLog latestLog = maintenanceLogRepository.findFirstByScooterIdOrderByCreatedAtDesc(scooterId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy phiếu bảo trì nào cho xe này"));
+
+        latestLog.setCost(cost);
 
         scooter.setStatus("AVAILABLE");
         scooter.setBatteryLevel(100);
         scooter.setTemperature(25.0);
-
-        scooterRepository.save(scooter);
     }
 }

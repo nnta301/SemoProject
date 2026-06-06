@@ -47,10 +47,10 @@
 
 ## IV. Nhóm Quản Trị & Thống Kê & Phân Tích Dữ Liệu (Admin & Analytics)
 **✅ Đã hoàn thành:**
-* **Admin Dashboard:** Thống kê tổng doanh thu, tổng số chuyến đi, số xe đang chạy, tỷ lệ xe theo trạng thái.
+* **Admin Dashboard:** Thống kê tổng doanh thu, tổng số chuyến đi, số xe đang chạy, tỷ lệ xe theo trạng thái, và tổng chi phí bảo trì.
 * **Quản lý lịch sử:** Admin xem toàn bộ lịch sử thuê xe (hỗ trợ bộ lọc filter).
 * **Kiểm duyệt User:** Khóa (Ban) và Mở khóa (Unban) tài khoản vi phạm.
-* **Khôi phục xe (Maintenance):** API chuyển trạng thái xe từ `MAINTENANCE` về `AVAILABLE` sau khi bảo trì/sửa chữa xong, tự động đưa các chỉ số pin và nhiệt độ về mức an toàn tối ưu.
+* **Quy trình Bảo trì (Maintenance Workflow):** Tách biệt luồng báo hỏng (Create) và luồng nghiệm thu (Resolve). Tự động ghi nhận chi phí sửa chữa vào Dashboard. Ứng dụng thành công cơ chế **Dirty Checking** của Hibernate/JPA với `@Transactional` để tối ưu hóa hiệu năng cập nhật trạng thái xe.
 * **Phân tích dữ liệu không gian (K-Means Clustering):** 🚨 *Tính năng đột phá:* Hoàn tất tích hợp thuật toán K-Means thuần (hiệu năng cao) để gom cụm tọa độ kết thúc của hàng ngàn chuyến đi lịch sử, tự động đề xuất K vị trí tối ưu để xây dựng trạm sạc mới trên Dashboard.
 
 **🚀 Chưa làm:**

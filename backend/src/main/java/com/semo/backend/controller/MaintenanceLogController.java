@@ -2,6 +2,7 @@ package com.semo.backend.controller;
 
 import java.util.List;
 
+import com.semo.backend.dto.ResolveMaintenanceRequestDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,9 +43,11 @@ public class MaintenanceLogController {
     }
 
     @PostMapping("/{scooterId}/resolve")
-    public ResponseEntity<String> resolveEntity(@PathVariable Integer scooterId) {
-        maintenanceLogService.resolveMaintenance(scooterId);
-        return ResponseEntity.ok("Đã sửa chữa và sạc đầy xe thành công! Xe đã sẵn sàng phục vụ.");
+    public ResponseEntity<String> resolveEntity(@PathVariable Integer scooterId,
+                                                @RequestBody @Valid ResolveMaintenanceRequestDTO requestDTO) {
+        maintenanceLogService.resolveMaintenance(scooterId, requestDTO);
+
+        return ResponseEntity.ok("Đã sửa chữa, ghi nhận chi phí " + requestDTO.getCost() + " VNĐ và sạc đầy xe thành công!");
     }
 
 }
