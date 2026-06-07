@@ -4,7 +4,8 @@ export { default as Register } from './auth/Register'
 
 // Dashboard & Profile
 export { default as DashboardPage } from './dashboard/DashboardPage'
-export { default as ProfilePage } from './profile/ProfilePage'
+export { default as WalletPage } from './profile/WalletPage'
+export { default as AccountPage } from './account/AccountPage'
 
 // User
 export { default as BookingPage } from './user/BookingPage'

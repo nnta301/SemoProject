@@ -5,7 +5,7 @@ import ProtectedRoute from './ProtectedRoute'
 import { ROUTES, ROLES } from '@/constants'
 import { useAuth } from '@/hooks/useAuth'
 import { 
-  Login, Register, DashboardPage, ProfilePage, BookingPage, 
+  Login, Register, DashboardPage, WalletPage, AccountPage, BookingPage, 
   AnalyticsPage, MaintenancePage, RentalsPage, ScootersPage, UsersPage, SettingsPage 
 } from '@/pages'
 
@@ -34,7 +34,8 @@ export default function AppRouter() {
             <Route path={ROUTES.HOME} element={<RoleHomeRedirect />} />
             <Route path={ROUTES.DASHBOARD} element={<RoleDashboardRoute />} />
             <Route path={ROUTES.BOOKING} element={<BookingPage />} />
-            <Route path={ROUTES.PROFILE} element={<ProfilePage />} />
+            <Route path={ROUTES.WALLET} element={<WalletPage />} />
+            <Route path={ROUTES.ACCOUNT} element={<AccountPage />} />
           </Route>
         </Route>
 

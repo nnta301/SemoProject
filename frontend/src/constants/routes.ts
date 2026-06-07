@@ -11,5 +11,6 @@ export const ROUTES = {
   MAINTENANCE: '/maintenance',
   ANALYTICS: '/analytics',
   SETTINGS: '/settings',
-  PROFILE: '/profile',
+  WALLET: '/wallet',
+  ACCOUNT: '/account',
 }

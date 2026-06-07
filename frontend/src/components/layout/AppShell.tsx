@@ -37,7 +37,8 @@ const ICON_PROPS = { size: 18, strokeWidth: 1.7 }
 const userNavItems: NavItem[] = [
   { label: 'Dashboard', to: ROUTES.DASHBOARD, icon: <LayoutDashboard {...ICON_PROPS} /> },
   { label: 'Ride booking', to: ROUTES.BOOKING, icon: <MapPinned      {...ICON_PROPS} /> },
-  { label: 'Account & Wallet', to: ROUTES.PROFILE, icon: <UserCircle     {...ICON_PROPS} /> },
+  { label: 'Account', to: ROUTES.ACCOUNT, icon: <UserCircle     {...ICON_PROPS} /> },
+  { label: 'Wallet', to: ROUTES.WALLET, icon: <Receipt     {...ICON_PROPS} /> },
 ]
 
 const adminNavItems: NavItem[] = [
