@@ -27,6 +27,7 @@ const statusMeta: Record<string, { label: string; className: string }> = {
   [SCOOTER_STATUSES.AVAILABLE]:   { label: 'Available',     className: 'is-available' },
   [SCOOTER_STATUSES.IN_USE]:      { label: 'In Use',        className: 'is-in-use' },
   [SCOOTER_STATUSES.MAINTENANCE]: { label: 'Under Maintenance', className: 'is-maintenance' },
+  [SCOOTER_STATUSES.CHARGING]:    { label: 'Charging',      className: 'is-charging' },
 }
 
 function getStatusLabel(status: string): string {
@@ -84,6 +85,7 @@ export default function DashboardPage() {
     const available = scooters.filter((s) => s.status === SCOOTER_STATUSES.AVAILABLE).length
     const inUse = scooters.filter((s) => s.status === SCOOTER_STATUSES.IN_USE).length
     const maintenance = scooters.filter((s) => s.status === SCOOTER_STATUSES.MAINTENANCE).length
+    const charging = scooters.filter((s) => s.status === SCOOTER_STATUSES.CHARGING).length
 
     const batteryLevels = scooters
       .map((s) => Number(s.batteryLevel))
@@ -92,7 +94,7 @@ export default function DashboardPage() {
       ? Math.round(batteryLevels.reduce((a, b) => a + b, 0) / batteryLevels.length)
       : 0
 
-    return { total, available, inUse, maintenance, avgBattery }
+    return { total, available, inUse, maintenance, charging, avgBattery }
   }, [scooters])
 
   const summaryCards = useMemo(() => ([

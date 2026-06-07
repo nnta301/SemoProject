@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Bike, Clock, Calendar, CheckCircle, MessageSquare, Star, Activity, Sparkles, Send, TrendingUp, Search } from 'lucide-react'
 import { SectionHeader, Card, Alert, Button, Modal, EmptyState } from '@/components'
 import { getRentalHistory } from '@/features/rentals'
-import { submitFeedback } from '@/features/feedback/api'
+import { submitFeedback, getMyFeedbacks } from '@/features/feedback/api'
 import { formatCurrency, formatDateTime, getApiErrorMessage } from '@/utils'
 
 export default function MyRidesPage() {
@@ -10,6 +10,7 @@ export default function MyRidesPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [successMsg, setSuccessMsg] = useState('')
+  const [submittedFeedbacks, setSubmittedFeedbacks] = useState<Set<number>>(new Set())
 
   // Feedback Modal State
   const [feedbackRentalId, setFeedbackRentalId] = useState<number | null>(null)
@@ -18,17 +19,27 @@ export default function MyRidesPage() {
   const [submittingFeedback, setSubmittingFeedback] = useState(false)
 
   useEffect(() => {
-    fetchRentals()
+    fetchData()
   }, [])
 
-  const fetchRentals = async () => {
+  const fetchData = async () => {
     try {
       setLoading(true)
       setError('')
-      const data = await getRentalHistory()
+      const [data, feedbacksData] = await Promise.all([
+        getRentalHistory(),
+        getMyFeedbacks().catch(() => []) // Fallback to empty if feedback API fails
+      ])
+      
+      const feedbackSet = new Set<number>()
+      feedbacksData.forEach((f: any) => {
+        if (f.rentalId) feedbackSet.add(f.rentalId)
+      })
+      setSubmittedFeedbacks(feedbackSet)
+
       // Sắp xếp mới nhất lên đầu
-      const sorted = [...data].sort((a: any, b: any) => 
-        new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime()
+      const sorted = [...data].sort((a: any, b: any) =>
+        new Date(b.startTime).getTime() - new Date(a.startTime).getTime()
       )
       setRentals(sorted)
     } catch (err) {
@@ -40,7 +51,7 @@ export default function MyRidesPage() {
 
   // Lọc chỉ lấy những cuốc đã hoàn thành
   const completedRentals = rentals.filter(r => r.status === 'COMPLETED')
-  
+
   const totalRides = completedRentals.length
   const totalSpent = completedRentals.reduce((sum, r) => sum + (r.totalPrice || 0), 0)
 
@@ -73,7 +84,7 @@ export default function MyRidesPage() {
             </div>
           </div>
         </div>
-        
+
         <div className="rounded-xl bg-slate-800/80 backdrop-blur-md border border-white/5 p-5 relative overflow-hidden flex flex-col justify-between">
           <div className="flex items-center justify-between gap-3 mb-2">
             <p className="text-xs tracking-wider text-slate-400 uppercase font-semibold">Total Spent</p>
@@ -93,7 +104,7 @@ export default function MyRidesPage() {
         <h3 className="text-lg font-bold text-white flex items-center gap-2">
           <Clock size={18} className="text-cyan-400" /> Recent Trips
         </h3>
-        
+
         {loading ? (
           <p className="text-slate-400 text-sm text-center py-10">Loading your rides...</p>
         ) : rentals.length === 0 ? (
@@ -107,15 +118,6 @@ export default function MyRidesPage() {
           <div className="grid gap-4">
             {rentals.map((rental) => (
               <Card key={rental.id} className="rounded-3xl border-white/5 bg-slate-900/40 hover:bg-slate-900/60 transition-colors p-5 overflow-hidden relative group">
-                {/* Active Indicator */}
-                {rental.status === 'ACTIVE' && (
-                  <div className="absolute top-0 right-0 p-3">
-                    <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-500/30 text-xs font-medium text-cyan-400 animate-pulse">
-                      <span className="w-1.5 h-1.5 rounded-full bg-cyan-400"></span> Riding Now
-                    </span>
-                  </div>
-                )}
-                
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 shrink-0 rounded-2xl bg-slate-800 flex items-center justify-center border border-white/5">
@@ -128,7 +130,7 @@ export default function MyRidesPage() {
                       </h4>
                       <div className="flex flex-wrap items-center gap-3 mt-1.5 text-xs text-slate-400">
                         <span className="flex items-center gap-1">
-                          <Calendar size={12} /> {formatDateTime(rental.startedAt)}
+                          <Calendar size={12} /> {formatDateTime(rental.startTime)}
                         </span>
                         {rental.endTime && (
                           <>
@@ -144,8 +146,13 @@ export default function MyRidesPage() {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="flex flex-col md:items-end justify-center pt-3 md:pt-0 border-t border-white/5 md:border-0 mt-2 md:mt-0 gap-2">
+                    {rental.status === 'ACTIVE' && (
+                      <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-500/30 text-xs font-medium text-cyan-400 animate-pulse w-fit md:mb-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-cyan-400"></span> Riding Now
+                      </span>
+                    )}
                     <div className="text-right">
                       <p className="text-xs uppercase tracking-widest text-slate-500 font-semibold mb-1">
                         {rental.status === 'ACTIVE' ? 'Current Fare' : 'Total Fare'}
@@ -155,17 +162,23 @@ export default function MyRidesPage() {
                       </div>
                     </div>
                     {rental.status === 'COMPLETED' && (
-                      <Button 
-                        variant="secondary"
-                        leadingIcon={<MessageSquare size={14} />}
-                        onClick={() => {
-                          setFeedbackRentalId(rental.id)
-                          setRating(5)
-                          setComment('')
-                        }}
-                      >
-                        Feedback
-                      </Button>
+                      submittedFeedbacks.has(rental.id) ? (
+                        <div className="text-xs text-emerald-400 flex items-center justify-end gap-1.5 font-semibold bg-emerald-400/10 px-3 py-2 rounded-lg">
+                          <CheckCircle size={14} /> Feedback Submitted
+                        </div>
+                      ) : (
+                        <Button
+                          variant="secondary"
+                          leadingIcon={<MessageSquare size={14} />}
+                          onClick={() => {
+                            setFeedbackRentalId(rental.id)
+                            setRating(5)
+                            setComment('')
+                          }}
+                        >
+                          Feedback
+                        </Button>
+                      )
                     )}
                   </div>
                 </div>
@@ -194,10 +207,10 @@ export default function MyRidesPage() {
                   onClick={() => setRating(star)}
                   className="focus:outline-none transition-transform hover:scale-110"
                 >
-                  <Star 
-                    size={36} 
-                    fill={star <= rating ? "#22d3ee" : "transparent"} 
-                    className={star <= rating ? "text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.6)]" : "text-slate-600"} 
+                  <Star
+                    size={36}
+                    fill={star <= rating ? "#22d3ee" : "transparent"}
+                    className={star <= rating ? "text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.6)]" : "text-slate-600"}
                     strokeWidth={1.5}
                   />
                 </button>
@@ -230,6 +243,9 @@ export default function MyRidesPage() {
                   setSubmittingFeedback(true)
                   await submitFeedback({ rentalId: feedbackRentalId, rating, comment })
                   setSuccessMsg('Thank you for your feedback!')
+                  
+                  setSubmittedFeedbacks(prev => new Set(prev).add(feedbackRentalId as number))
+                  
                   setFeedbackRentalId(null)
                 } catch (err) {
                   setError(getApiErrorMessage(err, 'Could not submit feedback.'))

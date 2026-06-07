@@ -14,7 +14,9 @@ import {
   Settings,
   Bell,
   Moon,
-  GraduationCap
+  GraduationCap,
+  Zap,
+  Map
 } from 'lucide-react'
 import SemoIcon from '@/assets/semo-icon.svg?react';
 
@@ -48,6 +50,8 @@ const adminNavItems: NavItem[] = [
   { label: 'Rentals', to: ROUTES.RENTALS, icon: <Receipt  {...ICON_PROPS} /> },
   { label: 'Transactions', to: ROUTES.TRANSACTIONS, icon: <Receipt {...ICON_PROPS} /> },
   { label: 'Maintenance', to: ROUTES.MAINTENANCE, icon: <Wrench   {...ICON_PROPS} /> },
+  { label: 'Charging', to: ROUTES.CHARGING, icon: <Zap {...ICON_PROPS} /> },
+  { label: 'Geofence', to: ROUTES.GEOFENCE, icon: <Map {...ICON_PROPS} /> },
   { label: 'Feedbacks', to: ROUTES.FEEDBACKS, icon: <MessageSquare {...ICON_PROPS} /> },
   { label: 'Analytics', to: ROUTES.ANALYTICS, icon: <BarChart3 {...ICON_PROPS} /> },
   { label: 'Settings', to: ROUTES.SETTINGS, icon: <Settings {...ICON_PROPS} /> },
