@@ -8,6 +8,7 @@ import {
   Receipt,
   Wrench,
   BarChart3,
+  MessageSquare,
   LogOut,
   MapPinned,
   Settings,
@@ -37,15 +38,18 @@ const ICON_PROPS = { size: 18, strokeWidth: 1.7 }
 const userNavItems: NavItem[] = [
   { label: 'Dashboard', to: ROUTES.DASHBOARD, icon: <LayoutDashboard {...ICON_PROPS} /> },
   { label: 'Ride booking', to: ROUTES.BOOKING, icon: <MapPinned      {...ICON_PROPS} /> },
-  { label: 'Account', to: ROUTES.ACCOUNT, icon: <UserCircle     {...ICON_PROPS} /> },
+  { label: 'My Rides', to: ROUTES.MY_RIDES, icon: <Bike {...ICON_PROPS} /> },
   { label: 'Wallet', to: ROUTES.WALLET, icon: <Receipt     {...ICON_PROPS} /> },
+  { label: 'Account', to: ROUTES.ACCOUNT, icon: <UserCircle     {...ICON_PROPS} /> },
 ]
 
 const adminNavItems: NavItem[] = [
   { label: 'Users', to: ROUTES.USERS, icon: <Users    {...ICON_PROPS} /> },
   { label: 'Scooters', to: ROUTES.SCOOTERS, icon: <Bike     {...ICON_PROPS} /> },
   { label: 'Rentals', to: ROUTES.RENTALS, icon: <Receipt  {...ICON_PROPS} /> },
+  { label: 'Transactions', to: ROUTES.TRANSACTIONS, icon: <Receipt {...ICON_PROPS} /> },
   { label: 'Maintenance', to: ROUTES.MAINTENANCE, icon: <Wrench   {...ICON_PROPS} /> },
+  { label: 'Feedbacks', to: ROUTES.FEEDBACKS, icon: <MessageSquare {...ICON_PROPS} /> },
   { label: 'Analytics', to: ROUTES.ANALYTICS, icon: <BarChart3 {...ICON_PROPS} /> },
   { label: 'Settings', to: ROUTES.SETTINGS, icon: <Settings {...ICON_PROPS} /> },
 ]

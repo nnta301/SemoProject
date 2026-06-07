@@ -1,12 +1,8 @@
-// Trang Hồ sơ & Ví — Tech Blue Luxury (tiếng Việt).
-// Liên kết với API:
-//   - depositToWallet → POST /api/users/wallet/deposit (qua features/users)
-//   - changePassword  → PUT  /api/users/change-password
 // Số dư hiển thị bằng định dạng VNĐ (vi-VN) qua utils/formatters.formatCurrency.
 import { useState, useEffect } from 'react'
 import type { SyntheticEvent, ChangeEvent } from 'react'
 import {
-  Wallet, User, Mail, BadgeCheck, Sparkles, Plus, Clock, ArrowUpRight, ArrowDownRight, Activity
+  Wallet, Sparkles, Plus, Clock, ArrowUpRight, ArrowDownRight, Activity
 } from 'lucide-react'
 
 import { SectionHeader, Alert, Button, Card, TextField } from '@/components'

@@ -20,9 +20,7 @@ import {
   Battery, Gauge, Thermometer, ShieldAlert, Sparkles, Clock, Bike, Eye, EyeOff,
 } from 'lucide-react'
 
-import { SectionHeader,
-  Alert, Button, Card, TextField
-} from '@/components'
+import { Alert, Button } from '@/components'
 import { getAllScooters } from '@/features/scooters'
 import { startRental, endRental, getRentalHistory } from '@/features/rentals'
 import { useAuth } from '@/hooks/useAuth'
@@ -156,7 +154,6 @@ export default function BookingPage() {
   // Vị trí user
   const [userPos, setUserPos] = useState<LatLngTuple | null>(null)
   const [geoError, setGeoError] = useState<string | null>(null)
-  const [geoLoading, setGeoLoading] = useState<boolean>(false)
 
   // Bộ lọc
   const [query, setQuery] = useState<string>('')
@@ -262,16 +259,13 @@ export default function BookingPage() {
       setGeoError('Browser does not support geolocation.')
       return
     }
-    setGeoLoading(true)
     setGeoError(null)
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         setUserPos([pos.coords.latitude, pos.coords.longitude])
-        setGeoLoading(false)
       },
       (err) => {
         setGeoError(err.message || 'Failed to get location.')
-        setGeoLoading(false)
       },
       { enableHighAccuracy: true, timeout: 8000, maximumAge: 30000 },
     )

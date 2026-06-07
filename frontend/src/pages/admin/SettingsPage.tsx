@@ -9,6 +9,7 @@ import {
   TextField,
   Alert, DropdownMenu
 } from '@/components'
+import type { DropdownMenuItem } from '@/components/ui/DropdownMenu'
 import type { TableColumn } from '@/components/ui/Table'
 import {
   getAllConfigs,
@@ -181,7 +182,7 @@ export default function SettingsPage() {
       label: 'Actions',
       align: 'center' as const,
       render: (row) => {
-        const items = [
+        const items: DropdownMenuItem[] = [
           { label: 'Edit', icon: <Edit2 size={14} />, onClick: () => openEditModal(row) }
         ];
         if (!row.isDefault) {

@@ -6,8 +6,11 @@ import type { SyntheticEvent, ChangeEvent } from 'react'
 import { Download, Pencil, Coins, History, Ban, Unlock, KeyRound, Trash2 } from 'lucide-react'
 
 import { SectionHeader,
-  Alert, Button, Card, Modal, Table, TextField, DropdownMenu
+  Alert, Button, Card, Modal, Table,  TextField,
+  DropdownMenu
 } from '@/components'
+import type { DropdownMenuItem } from '@/components/ui/DropdownMenu'
+import type { TableColumn } from '@/components/ui/Table'
 import { ROLES } from '@/constants'
 import {
   adminResetPassword,
@@ -117,7 +120,7 @@ export default function UsersPage() {
   }, [users])
 
   // FIX 5: Định nghĩa kiểu dữ liệu row: User cho các cột hiển thị dữ liệu
-  const columns = [
+  const columns: TableColumn<User>[] = [
     { key: 'id', label: 'ID', align: 'right' as const, isNumeric: true },
     { key: 'fullName', label: 'Name' },
     { key: 'email', label: 'Email' },
@@ -144,7 +147,7 @@ export default function UsersPage() {
       label: 'Actions',
       align: 'center' as const,
       render: (row: User) => {
-        const items = [
+        const items: DropdownMenuItem[] = [
           { label: 'Edit', icon: <Pencil size={14} />, onClick: () => openEdit(row) },
           { label: 'Top Up', icon: <Coins size={14} />, onClick: () => openDeposit(row) },
           { label: 'History', icon: <History size={14} />, onClick: () => openHistory(row) },
