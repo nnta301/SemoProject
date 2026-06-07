@@ -9,7 +9,7 @@
 * Xác thực và phân quyền bằng JWT Token.
 * Phân chia 2 Role: `ADMIN` và `CUSTOMER`.
 * Xử lý lỗi truy cập (403 Forbidden, 401 Unauthorized).
-* Chống IDOR tuyệt đối cho các API tài khoản và nghiệp vụ thuê xe (chuẩn `/me`).
+* **Ủy quyền Tập trung (Centralized Authorization):** Triển khai module `AuthUtil` để quản lý tập trung toàn bộ logic phân quyền, tối ưu hóa Clean Code (DRY & SoC) và chống IDOR tuyệt đối cho các API tài khoản và nghiệp vụ.
 * **Global Exception Handling:** Xử lý lỗi tập trung chuẩn Clean Code, bắt mọi ngoại lệ (như `RuntimeException`) trả về chuẩn JSON không cần try-catch thủ công.
 * **Identity & Access Management (IAM) & Email Verification:** Tách biệt luồng xác thực công khai (`AuthController`) và luồng quản trị nội bộ (`UserController`). Tích hợp gửi mã OTP xác thực qua Email (Google SMTP) để kích hoạt tài khoản. Sử dụng `SecureRandom` để sinh mã chuẩn mật mã học và xử lý bất đồng bộ (`@Async`) giúp tối ưu hiệu năng đăng ký.
 
@@ -20,7 +20,7 @@
 
 ## II. Nhóm Quản Lý Cơ Bản (CRUD)
 **✅ Đã hoàn thành:**
-* **User CRUD:** Đăng ký (kết hợp OTP), xem thông tin cá nhân, xem danh sách (Admin).
+* **User CRUD:** Đăng ký (kết hợp OTP), xem thông tin cá nhân, xem danh sách (Admin). Triển khai cơ chế Xóa cứng an toàn (Cascading Hard Delete), tự động dọn dẹp vòng đời dữ liệu (Feedback → Transaction → Rental) để tránh lỗi toàn vẹn CSDL.
 * **User Profile:** Cập nhật thông tin (Partial Update - `UserUpdateRequestDTO`).
 * **Scooter CRUD:** Admin thêm xe mới, cập nhật trạng thái/pin/tọa độ, xem danh sách (có phân trang).
 * **Feedback CRUD:** Khách hàng đánh giá (1-5 sao) và bình luận chuyến đi đã hoàn thành (Unique constraint).
