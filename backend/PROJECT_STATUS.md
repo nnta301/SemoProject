@@ -73,6 +73,7 @@
 **✅ Đã hoàn thành:**
 * **WebSocket Tracking:** Tích hợp thành công cấu hình mạng STOMP/WebSocket công khai (`/ws`), tự động truyền tải và cập nhật luồng dữ liệu di chuyển động của dàn xe lên Admin Dashboard theo thời gian thực mà không cần reload trang.
 * **Lưu vết Tọa độ Lịch sử (GIS Tracking):** Tự động chụp và lưu trữ tọa độ `startLat`, `startLng`, `endLat`, `endLng` của từng chuyến đi để phục vụ bài toán Big Data.
+* **Geofencing (Hàng rào địa lý Đa khu vực):** 🚨 *Tính năng đột phá:* Ứng dụng thuật toán Haversine để tính toán khoảng cách không gian. Thiết kế module `GeofenceZone` (CRUD) cho phép Admin cấu hình động nhiều vùng hoạt động. Tích hợp Job quét ngầm thời gian thực (5s/lần) tự động rà soát và phát tín hiệu cảnh báo khi xe chạy ra khỏi toàn bộ các vùng an toàn.
 
 **🚀 Chưa làm:**
-* [ ] **Geofencing (Hàng rào địa lý):** Thuật toán cảnh báo thời gian thực nếu hệ thống phát hiện tọa độ xe di chuyển vượt quá ranh giới khu vực quy định (ví dụ: ra khỏi khuôn viên trường Đại học Bách Khoa Hà Nội).
+* (Các tính năng định vị không gian lõi đã hoàn thành).

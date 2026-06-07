@@ -130,9 +130,8 @@ public class ScooterService {
 
     private ScooterResponseDTO mapToResponseDTO(Scooter scooter) {
         ScooterResponseDTO dto = new ScooterResponseDTO();
-        if (scooter.getId() != null) {
-            dto.setId(scooter.getId().intValue());
-        }
+        if (scooter.getId() != null)
+            dto.setId(scooter.getId());
         dto.setName(scooter.getName());
         dto.setBatteryLevel(scooter.getBatteryLevel());
         dto.setCycleCount(scooter.getCycleCount());
