@@ -25,8 +25,8 @@
   /* ===== Văn bản ===== */
   --color-text: #E6EEFF;
   --color-text-strong: #FFFFFF;
-  --color-text-muted: #8BA0C7;
-  --color-text-faded: #5B7099;
+  --color-text-muted: #94A3B8; /* Equivalent to text-slate-400 */
+  --color-text-faded: #64748B; /* Equivalent to text-slate-500 for slight variation */
 
   /* ===== Thương hiệu & Trạng thái ===== */
   --color-brand: var(--color-electric);
@@ -70,7 +70,7 @@
   --radius-sm: 10px;
 
   /* ===== Định nghĩa Font chữ mặc định hệ thống ===== */
-  --font-sans: 'Be Vietnam Pro', 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-sans: 'Inter', 'Be Vietnam Pro', ui-sans-serif, system-ui, -apple-system, sans-serif;
 }
 
 html,
@@ -299,6 +299,16 @@ p {
   background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
   color: transparent !important;
+}
+
+/* ===== FIX BROWSER AUTOFILL BACKGROUND ===== */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 50px rgba(11, 17, 32, 0.95) inset !important;
+  -webkit-text-fill-color: white !important;
+  transition: background-color 5000s ease-in-out 0s;
 }
 
 /* Fix Table */
