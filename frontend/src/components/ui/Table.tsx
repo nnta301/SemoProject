@@ -25,7 +25,7 @@ export default function Table<T extends Record<string, any>>({
   emptyState
 }: TableProps<T>) {
   return (
-    <div className="overflow-auto max-h-[500px] rounded-md border border-border bg-[#0b1120]/50 backdrop-blur-md">
+    <div className="overflow-auto max-h-[500px] rounded-md border border-border bg-surface backdrop-blur-md">
       <table className="w-full border-collapse min-w-135">
         <thead>
           <tr>

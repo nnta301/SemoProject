@@ -480,7 +480,7 @@ export default function BookingPage() {
                   {s.name || `#${s.id}`}
                 </Tooltip>
                 <Popup>
-                  <div className="grid gap-1.5 min-w-50 text-white">
+                  <div className="grid gap-1.5 min-w-50 text-text-strong">
                     <strong>{s.name || `Scooter #${s.id}`}</strong>
                     <p>Status: {statusLabel[s._status]}</p>
                     <p>Battery: {formatBatteryLevel(s.batteryLevel) || '—'}</p>
@@ -518,7 +518,7 @@ export default function BookingPage() {
         {/* ============== PANEL TOGGLE BUTTON (Trực tiếp trên Map) ============== */}
         <button
           onClick={() => setShowPanels(!showPanels)}
-          className="absolute top-4 right-4 z-20 inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl border text-sm font-bold shadow-lg backdrop-blur-md transition-colors text-white border-white/10 bg-slate-900/80 hover:bg-slate-800/80 pointer-events-auto"
+          className="absolute top-4 right-4 z-20 inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl border text-sm font-bold shadow-lg backdrop-blur-md transition-colors text-text-strong border-white/10 bg-slate-900/80 hover:bg-slate-800/80 pointer-events-auto"
         >
           {showPanels ? <EyeOff size={16} strokeWidth={2} /> : <Eye size={16} strokeWidth={2} />}
           {showPanels ? 'Hide Panels' : 'Show Panels'}
@@ -529,9 +529,9 @@ export default function BookingPage() {
       <div className={cn("flex flex-col gap-4 overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-cyan-500/20 hover:[&::-webkit-scrollbar-thumb]:bg-cyan-500/40 transition-all duration-300 ease-in-out shrink-0", showPanels ? "w-[420px] max-xl:w-96 max-sm:w-full opacity-100 pr-2" : "w-0 opacity-0 overflow-hidden pr-0")}>
         
         {/* RIDE STATUS CARD */}
-        <div className="shrink-0 bg-slate-900/40 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-2xl p-5 pointer-events-auto transition-all">
+        <div className="shrink-0 bg-surface border-border rounded-3xl shadow-2xl p-5 pointer-events-auto transition-all">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold text-white tracking-tight">Ride Status</h2>
+            <h2 className="text-lg font-bold text-text-strong tracking-tight">Ride Status</h2>
             {ride?.state === 'riding' && (
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-bold text-cyan-400 bg-cyan-400/10 border border-cyan-400/20 animate-pulse">
                 <Clock size={14} /> {fmtDuration(ridingMs)}
@@ -540,23 +540,23 @@ export default function BookingPage() {
           </div>
 
           {!selectedScooter ? (
-            <div className="flex flex-col items-center justify-center py-6 text-slate-400 bg-slate-800/20 rounded-2xl border border-white/5 border-dashed">
+            <div className="flex flex-col items-center justify-center py-6 text-text-muted bg-slate-800/20 rounded-2xl border border-white/5 border-dashed">
               <Bike size={32} className="mb-2 opacity-50" />
               <p className="text-sm">Select a scooter on the map</p>
             </div>
           ) : (
             <>
               <div className="mb-5">
-                <p className="text-2xl font-bold text-white mb-1">
+                <p className="text-2xl font-bold text-text-strong mb-1">
                   {selectedScooter.name || `Scooter #${selectedScooter.id}`}
                 </p>
-                <div className="flex items-center gap-3 text-sm text-slate-400">
+                <div className="flex items-center gap-3 text-sm text-text-muted">
                   <span className="flex items-center gap-1"><Battery size={14} className="text-emerald-400"/> {formatBatteryLevel(selectedScooter.batteryLevel) || '—'}</span>
                   {selectedScooter._distance != null && <span className="flex items-center gap-1"><MapPin size={14} className="text-cyan-400"/> {fmtKm(selectedScooter._distance)}</span>}
                 </div>
               </div>
 
-              <div className="grid gap-2 mb-5 p-4 rounded-2xl bg-slate-950/40 border border-white/5">
+              <div className="grid gap-2 mb-5 p-4 rounded-2xl bg-surface-muted border-border">
                 <TimelineRow
                   icon={<Zap size={14} />}
                   label="Book Scooter"
@@ -602,7 +602,7 @@ export default function BookingPage() {
                   Unlock
                 </Button>
                 <Button
-                  className="rounded-xl h-11 bg-emerald-500 hover:bg-emerald-600 text-white border-none shadow-[0_0_15px_rgba(16,185,129,0.3)]"
+                  className="rounded-xl h-11 bg-emerald-500 hover:bg-emerald-600 text-text-strong border-none shadow-[0_0_15px_rgba(16,185,129,0.3)]"
                   onClick={handleStart}
                   disabled={ride?.state !== 'unlocked' || actionLoading}
                   leadingIcon={<Play size={16} />}
@@ -624,7 +624,7 @@ export default function BookingPage() {
                 <Button
                   type="button"
                   variant="ghost"
-                  className="mt-3 w-full rounded-xl text-slate-400 hover:text-white"
+                  className="mt-3 w-full rounded-xl text-text-muted hover:text-text-strong"
                   onClick={resetRide}
                 >
                   Cancel Booking
@@ -636,14 +636,14 @@ export default function BookingPage() {
 
         {/* REPORT ISSUES CARD (Chỉ hiện khi có xe) */}
         {selectedScooter && (
-          <div className="shrink-0 bg-slate-900/40 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-2xl p-5 pointer-events-auto transition-all">
+          <div className="shrink-0 bg-surface border-border rounded-3xl shadow-2xl p-5 pointer-events-auto transition-all">
             <h3 className="text-sm font-bold text-slate-300 uppercase tracking-wider mb-3 flex items-center gap-2">
               <ShieldAlert size={16} className="text-rose-400" /> Report Issue
             </h3>
             <div className="grid gap-2">
               <Button
                 variant="secondary"
-                className="justify-start bg-slate-800/40 border-white/5 hover:bg-slate-700/50 rounded-xl text-sm"
+                className="justify-start bg-surface hover:bg-surface-muted border-border rounded-xl text-sm"
                 onClick={() => reportIssue('overheat')}
                 leadingIcon={<Thermometer size={16} className="text-rose-400" />}
               >
@@ -651,7 +651,7 @@ export default function BookingPage() {
               </Button>
               <Button
                 variant="secondary"
-                className="justify-start bg-slate-800/40 border-white/5 hover:bg-slate-700/50 rounded-xl text-sm"
+                className="justify-start bg-surface hover:bg-surface-muted border-border rounded-xl text-sm"
                 onClick={() => reportIssue('battery-drop')}
                 leadingIcon={<Gauge size={16} className="text-amber-400" />}
               >
@@ -662,7 +662,7 @@ export default function BookingPage() {
         )}
 
         {/* FIND THE RIGHT RIDE (FILTER + LIST) */}
-        <div className="flex-1 flex flex-col min-h-[400px] bg-slate-900/40 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-2xl overflow-hidden p-5 pointer-events-auto">
+        <div className="flex-1 flex flex-col min-h-[400px] bg-surface border-border rounded-3xl shadow-2xl overflow-hidden p-5 pointer-events-auto">
           <div className="shrink-0">
             <div className="flex items-center gap-2 mb-4">
               <span
@@ -682,24 +682,24 @@ export default function BookingPage() {
               </span>
             </div>
 
-            <h2 className="text-xl font-bold text-white tracking-tight mb-1">Find the Right Ride</h2>
-            <p className="text-slate-400 text-sm mb-4">Find scooters near you or filter by status.</p>
+            <h2 className="text-xl font-bold text-text-strong tracking-tight mb-1">Find the Right Ride</h2>
+            <p className="text-text-muted text-sm mb-4">Find scooters near you or filter by status.</p>
             
             <form className="grid gap-3" onSubmit={(e) => e.preventDefault()}>
               <div className="relative">
-                <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted" />
                 <input
                   type="text"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Search by name / ID..."
-                  className="w-full bg-slate-800/40 border border-white/10 text-white text-sm rounded-full pl-10 pr-4 py-2.5 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all placeholder:text-slate-500"
+                  className="w-full bg-surface hover:bg-surface-muted border-border text-text-strong text-sm rounded-full pl-10 pr-4 py-2.5 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all placeholder:text-slate-500"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <select
-                  className="w-full bg-slate-800/40 border border-white/10 text-slate-200 text-sm rounded-full px-4 py-2.5 focus:outline-none focus:border-cyan-500/50 appearance-none"
+                  className="w-full bg-surface hover:bg-surface-muted border-border text-slate-200 text-sm rounded-full px-4 py-2.5 focus:outline-none focus:border-cyan-500/50 appearance-none"
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
                 >
@@ -711,7 +711,7 @@ export default function BookingPage() {
 
                 <Button
                   variant="secondary"
-                  className="w-full rounded-full border-white/10 bg-slate-800/40 hover:bg-slate-700/50 justify-center h-auto py-2.5"
+                  className="w-full rounded-full border-border bg-surface-muted hover:bg-surface-elevated justify-center h-auto py-2.5"
                   onClick={() => setRefreshKey((k) => k + 1)}
                 >
                   <RefreshCcw size={16} className="mr-2" /> Refresh
@@ -719,21 +719,21 @@ export default function BookingPage() {
               </div>
 
               <div className="px-1 py-1">
-                <label className="flex items-center justify-between text-sm text-slate-300 cursor-pointer select-none mb-2">
+                <label className="flex items-center justify-between text-sm text-text-muted cursor-pointer select-none mb-2">
                   <span className="flex items-center gap-2">
-                    <Filter size={14} className="text-cyan-400" />
-                    Radius: <strong className="text-white">{radiusKm.toFixed(1)} km</strong>
+                    <Filter size={14} className="text-brand" />
+                    Radius: <strong className="text-text-strong">{radiusKm.toFixed(1)} km</strong>
                   </span>
                   <input
                     type="checkbox"
                     checked={useRadius}
                     onChange={(e) => setUseRadius(e.target.checked)}
-                    className="w-4 h-4 accent-cyan-500 rounded cursor-pointer"
+                    className="w-4 h-4 accent-brand rounded cursor-pointer"
                   />
                 </label>
                 <input
                   type="range"
-                  className="w-full accent-cyan-500"
+                  className="w-full accent-brand cursor-pointer disabled:opacity-50"
                   min="0.3" max="40" step="0.1"
                   value={radiusKm}
                   onChange={(e) => setRadiusKm(Number(e.target.value))}
@@ -745,9 +745,9 @@ export default function BookingPage() {
 
           <div className="flex-1 overflow-y-auto pr-2 -mr-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-cyan-500/20 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-cyan-500/40">
             <div className="grid gap-3 pt-2">
-              {scootersLoading && <p className="text-slate-400 text-sm text-center py-4">Loading scooters...</p>}
+              {scootersLoading && <p className="text-text-muted text-sm text-center py-4">Loading scooters...</p>}
               {!scootersLoading && visibleScooters.length === 0 && (
-                <p className="text-slate-400 text-sm text-center py-4">No scooters match your filters.</p>
+                <p className="text-text-muted text-sm text-center py-4">No scooters match your filters.</p>
               )}
               {visibleScooters.map((s) => {
                 const isSelected = s.id === selectedId
@@ -761,18 +761,18 @@ export default function BookingPage() {
                       "transition-all duration-200 ease-out",
                       isSelected 
                         ? "border-cyan-500/50 bg-cyan-900/30 shadow-[0_0_15px_rgba(0,209,255,0.15)]" 
-                        : "border-white/5 bg-slate-800/30 hover:bg-slate-800/50 hover:border-white/10",
+                        : "border-white/5 bg-surface-elevated border-border",
                       (isLocked && !isSelected) && "opacity-60"
                     )}
                     onClick={() => handleSelect(s)}
                   >
                     <div className="flex items-start justify-between gap-2.5">
                       <div>
-                        <p className="font-bold text-white leading-tight flex items-center gap-2">
+                        <p className="font-bold text-text-strong leading-tight flex items-center gap-2">
                           {s.name || `Scooter #${s.id}`}
                           {isSelected && <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />}
                         </p>
-                        <p className="text-slate-400 text-[0.8rem] mt-0.5">
+                        <p className="text-text-muted text-[0.8rem] mt-0.5">
                           {formatCoordinates(Number(s._lat), Number(s._lng))}
                         </p>
                       </div>
@@ -812,13 +812,13 @@ export default function BookingPage() {
 function TimelineRow({ icon, label, value, done }: TimelineRowProps) {
   return (
     <div className={`flex items-center justify-between gap-3 text-sm group ${done ? 'is-done' : ''}`}>
-      <span className="inline-flex items-center gap-2.5 text-slate-500 group-[.is-done]:text-white transition-colors">
-        <span className="text-slate-600 group-[.is-done]:text-cyan-400 transition-colors">
+      <span className="inline-flex items-center gap-2.5 text-text-faded group-[.is-done]:text-text-strong transition-colors">
+        <span className="text-text-muted group-[.is-done]:text-brand transition-colors">
           {icon} 
         </span>
         {label}
       </span>
-      <span className="text-slate-500 tabular-nums font-mono text-xs group-[.is-done]:text-cyan-100 group-[.is-done]:font-semibold transition-colors">
+      <span className="text-text-muted tabular-nums font-mono text-xs group-[.is-done]:text-brand group-[.is-done]:font-semibold transition-colors">
         {value}
       </span>
     </div>

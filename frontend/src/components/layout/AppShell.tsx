@@ -13,9 +13,8 @@ import {
   MapPinned,
   Settings,
   Bell,
-  Sun,
   Moon,
-  Palette,
+  GraduationCap
 } from 'lucide-react'
 import SemoIcon from '@/assets/semo-icon.svg?react';
 
@@ -222,10 +221,10 @@ export default function AppShell({ mode = 'user', children }: AppShellProps) {
             )}
             <button 
               onClick={toggleTheme}
-              className="relative p-2 mr-4 text-text-muted hover:text-cyan-soft transition-colors rounded-full hover:bg-[rgba(255,255,255,0.05)]" 
-              title={`Current Theme: ${theme}`}
+              className="relative p-2 mr-4 text-text-muted hover:text-brand transition-colors rounded-full hover:bg-[rgba(255,255,255,0.05)] flex items-center justify-center" 
+              title={`Current Theme: ${theme.toUpperCase()}`}
             >
-              {theme === 'light' ? <Sun size={20} strokeWidth={2} /> : theme === 'dark' ? <Moon size={20} strokeWidth={2} /> : <Palette size={20} strokeWidth={2} />}
+              {theme === 'hust' ? <GraduationCap size={20} strokeWidth={2} className="text-[#ce1628]" /> : <Moon size={20} strokeWidth={2} className="text-cyan-soft" />}
             </button>
             <span className="inline-flex items-center justify-center min-h-8 px-4
               rounded-full text-sm font-semibold tracking-wider
