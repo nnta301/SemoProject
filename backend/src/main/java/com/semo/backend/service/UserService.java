@@ -271,19 +271,17 @@ public class UserService {
     public DepositResponseDTO deposit(DepositRequestDTO requestDTO) {
         User user = authUtil.requireActiveAuthenticatedUser();
 
-        user.addBalance(requestDTO.getAmount());
-
-        userRepository.save(user);
-
+        // Không cộng tiền ngay, tạo giao dịch chờ duyệt
         Transaction transaction = new Transaction();
         transaction.setUser(user);
         transaction.setAmount(requestDTO.getAmount());
         transaction.setType("DEPOSIT");
         transaction.setDescription("Nạp tiền vào ví điện tử SEMO");
+        transaction.setStatus("PENDING");
 
         transactionRepository.save(transaction);
 
-        return new DepositResponseDTO("Nạp tiền thành công!", user.getBalance());
+        return new DepositResponseDTO("Yêu cầu nạp tiền đã được gửi. Đang chờ Admin xét duyệt!", user.getBalance());
     }
 
     @Transactional

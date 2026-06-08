@@ -11,6 +11,8 @@ public class TransactionResponseDTO {
     private String description;
     private LocalDateTime createdAt;
 
+    private String status;
+
     public TransactionResponseDTO() {
     }
 
@@ -60,6 +62,14 @@ public class TransactionResponseDTO {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public LocalDateTime getCreatedAt() {

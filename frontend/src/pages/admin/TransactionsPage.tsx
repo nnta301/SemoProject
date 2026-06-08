@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
-import { ArrowUpRight, ArrowDownRight, RefreshCw, Search, Inbox } from 'lucide-react'
+import { ArrowUpRight, ArrowDownRight, RefreshCw, Search, Inbox, CheckCircle, XCircle } from 'lucide-react'
 import { SectionHeader, Card, Table, Alert, TextField, Button, EmptyState, UserCell } from '@/components'
-import { getAllTransactions } from '@/features/transactions'
+import { getAllTransactions, approveTransaction, rejectTransaction } from '@/features/transactions'
 import { formatCurrency, formatDateTime, getApiErrorMessage, cn } from '@/utils'
 import type { TableColumn } from '@/components/ui/Table'
 
@@ -32,6 +32,24 @@ export default function TransactionsPage() {
   useEffect(() => {
     fetchTransactions()
   }, [])
+
+  const handleApprove = async (id: number) => {
+    try {
+      await approveTransaction(id)
+      fetchTransactions()
+    } catch (err) {
+      setError(getApiErrorMessage(err, 'Failed to approve transaction.'))
+    }
+  }
+
+  const handleReject = async (id: number) => {
+    try {
+      await rejectTransaction(id)
+      fetchTransactions()
+    } catch (err) {
+      setError(getApiErrorMessage(err, 'Failed to reject transaction.'))
+    }
+  }
 
   const filtered = transactions.filter(t => {
     if (typeFilter !== 'ALL' && t.type !== typeFilter) return false
@@ -100,6 +118,46 @@ export default function TransactionsPage() {
       label: 'Date',
       key: 'createdAt',
       render: (t: any) => <span className="text-sm text-slate-400">{formatDateTime(t.createdAt)}</span>
+    },
+    {
+      label: 'Status',
+      key: 'status',
+      render: (t: any) => {
+        if (t.status === 'PENDING') {
+          return <span className="px-2 py-0.5 rounded text-xs font-medium bg-yellow-500/10 text-yellow-500">PENDING</span>
+        }
+        if (t.status === 'REJECTED') {
+          return <span className="px-2 py-0.5 rounded text-xs font-medium bg-red-500/10 text-red-500">REJECTED</span>
+        }
+        return <span className="px-2 py-0.5 rounded text-xs font-medium bg-emerald-500/10 text-emerald-500">COMPLETED</span>
+      }
+    },
+    {
+      label: 'Actions',
+      key: 'actions',
+      render: (t: any) => {
+        if (t.type === 'DEPOSIT' && t.status === 'PENDING') {
+          return (
+            <div className="flex gap-2">
+              <button 
+                onClick={() => handleApprove(t.id)}
+                className="p-1 rounded bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20"
+                title="Approve"
+              >
+                <CheckCircle size={16} />
+              </button>
+              <button 
+                onClick={() => handleReject(t.id)}
+                className="p-1 rounded bg-red-500/10 text-red-500 hover:bg-red-500/20"
+                title="Reject"
+              >
+                <XCircle size={16} />
+              </button>
+            </div>
+          )
+        }
+        return null
+      }
     }
   ]
 
