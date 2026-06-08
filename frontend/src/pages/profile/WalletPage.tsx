@@ -5,7 +5,7 @@ import {
   Wallet, Sparkles, Plus, ArrowUpRight, ArrowDownRight, Activity, Inbox
 } from 'lucide-react'
 
-import { SectionHeader, Alert, Button, Card, TextField, EmptyState } from '@/components'
+import { SectionHeader, Alert, Button, Card, TextField, EmptyState, Modal } from '@/components'
 import { useAuth } from '@/hooks/useAuth'
 import { depositToWallet, getUserById } from '@/features/users'
 import { getMyTransactionHistory } from '@/features/transactions'
@@ -21,6 +21,7 @@ export default function WalletPage() {
   const [loadingDeposit, setLoadingDeposit] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [qrModalOpen, setQrModalOpen] = useState(false)
 
   const [transactions, setTransactions] = useState<any[]>([])
   const [loadingTx, setLoadingTx] = useState(true)
@@ -187,14 +188,24 @@ export default function WalletPage() {
                 }
               />
 
-              <Button
-                type="submit"
-                disabled={loadingDeposit}
-                className="rounded-xl h-12 bg-brand hover:brightness-110 text-white border-none shadow-[0_0_15px_var(--color-brand-soft)]"
-                leadingIcon={<Plus size={18} strokeWidth={1.8} />}
-              >
-                {loadingDeposit ? 'Processing...' : 'Confirm Top Up'}
-              </Button>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Button
+                  type="button"
+                  disabled={!depositAmount || Number(depositAmount) < 10000}
+                  className="rounded-xl h-12 bg-white/10 hover:bg-white/20 text-text-strong border-border shadow-none"
+                  onClick={() => setQrModalOpen(true)}
+                >
+                  Show QR Code
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={loadingDeposit}
+                  className="rounded-xl h-12 bg-brand hover:brightness-110 text-white border-none shadow-[0_0_15px_var(--color-brand-soft)] flex-1"
+                  leadingIcon={<Plus size={18} strokeWidth={1.8} />}
+                >
+                  {loadingDeposit ? 'Processing...' : 'Confirm Top Up'}
+                </Button>
+              </div>
             </form>
           </Card>
           
@@ -227,12 +238,20 @@ export default function WalletPage() {
                             {isTopup ? <ArrowDownRight size={20} /> : <ArrowUpRight size={20} />}
                           </div>
                           <div>
-                            <p className="text-sm font-bold text-text-strong mb-0.5">{tx.description || tx.reason || (isTopup ? 'Wallet Top-up' : 'Ride Payment')}</p>
+                            <div className="flex items-center gap-2 mb-0.5">
+                              <p className="text-sm font-bold text-text-strong">{tx.description || tx.reason || (isTopup ? 'Wallet Top-up' : 'Ride Payment')}</p>
+                              {tx.status === 'PENDING' && (
+                                <span className="px-2 py-0.5 rounded text-[10px] font-bold tracking-wider bg-yellow-500/10 text-yellow-500">PENDING</span>
+                              )}
+                              {tx.status === 'REJECTED' && (
+                                <span className="px-2 py-0.5 rounded text-[10px] font-bold tracking-wider bg-red-500/10 text-red-500">REJECTED</span>
+                              )}
+                            </div>
                             <p className="text-xs text-text-muted">{formatDateTime(tx.createdAt)}</p>
                           </div>
                         </div>
-                        <span className={`text-base font-bold ${isTopup ? 'text-emerald-500' : 'text-text-strong'}`}>
-                          {isTopup ? '+' : ''}{formatCurrency(tx.amount)}
+                        <span className={`text-base font-bold ${tx.status === 'REJECTED' ? 'text-text-muted line-through' : (isTopup ? (tx.status === 'PENDING' ? 'text-yellow-500' : 'text-emerald-500') : 'text-text-strong')}`}>
+                          {isTopup && tx.status !== 'REJECTED' ? '+' : ''}{formatCurrency(tx.amount)}
                         </span>
                       </div>
                     )
@@ -244,6 +263,30 @@ export default function WalletPage() {
 
         </div>
       </div>
+      <Modal
+        open={qrModalOpen}
+        onClose={() => setQrModalOpen(false)}
+        title="Quick Transfer via QR Code"
+      >
+        <div className="flex flex-col items-center py-4 px-2">
+          <p className="text-sm text-center text-text-muted mb-4">
+            Scan this QR code using your Banking app for quick transfer:
+          </p>
+          <div className="p-5 bg-white rounded-2xl shadow-lg inline-block">
+            <img
+              src={`https://img.vietqr.io/image/${import.meta.env.VITE_VIETQR_BANK_ID || 'MB'}-${import.meta.env.VITE_VIETQR_ACCOUNT_NO || '0399672303'}-compact2.png?amount=${depositAmount}&addInfo=Nap%20tien%20Semo%20${user?.id || ''}&accountName=${encodeURIComponent(import.meta.env.VITE_VIETQR_ACCOUNT_NAME || 'SEMO APP')}`}
+              alt="VietQR for Deposit"
+              className="w-80 sm:w-96 h-auto rounded-xl"
+            />
+          </div>
+          <p className="text-xs text-center text-text-muted mt-6">
+            Note: After a successful bank transfer, close this popup and click "Confirm Top Up" to update your wallet balance.
+          </p>
+          <Button className="mt-6 w-full" onClick={() => setQrModalOpen(false)}>
+            Close
+          </Button>
+        </div>
+      </Modal>
     </div>
   )
 }

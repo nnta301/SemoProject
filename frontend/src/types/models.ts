@@ -57,11 +57,12 @@ export interface Station {
 // --- DTOs cho các feature mới ---
 export interface TransactionRecord {
   id: number
-  userId: number
-  userName: string
+  userId?: number
+  userName?: string
   amount: number
   type: string
-  description: string
+  description?: string
+  status?: string
   createdAt: string
 }
 

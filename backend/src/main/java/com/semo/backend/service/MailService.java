@@ -32,4 +32,23 @@ public class MailService {
             System.err.println("Lỗi khi gửi email tới " + toEmail + ": " + e.getMessage());
         }
     }
+
+    @Async
+    public void sendTransactionStatusEmail(String toEmail, String status, Double amount) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(toEmail);
+            String action = "COMPLETED".equals(status) ? "đã được DUYỆT" : "đã bị TỪ CHỐI";
+            message.setSubject("Thông báo kết quả giao dịch nạp tiền SEMO");
+            message.setText("Chào bạn,\n\n"
+                    + "Giao dịch nạp tiền trị giá " + amount + " VNĐ của bạn " + action + ".\n\n"
+                    + ("COMPLETED".equals(status) ? "Số tiền đã được cộng vào số dư ví của bạn.\n\n" : "Vui lòng liên hệ bộ phận hỗ trợ nếu có thắc mắc.\n\n")
+                    + "Trân trọng,\nĐội ngũ SEMO.");
+
+            mailSender.send(message);
+            System.out.println("Đã gửi email thông báo giao dịch thành công tới: " + toEmail);
+        } catch (Exception e) {
+            System.err.println("Lỗi khi gửi email tới " + toEmail + ": " + e.getMessage());
+        }
+    }
 }
