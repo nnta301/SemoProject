@@ -19,12 +19,14 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final UserRepository userRepository;
     private final AuthUtil authUtil;
+    private final MailService mailService;
 
     public TransactionService(TransactionRepository transactionRepository, UserRepository userRepository,
-            AuthUtil authUtil) {
+            AuthUtil authUtil, MailService mailService) {
         this.transactionRepository = transactionRepository;
         this.userRepository = userRepository;
         this.authUtil = authUtil;
+        this.mailService = mailService;
     }
 
     @Transactional(readOnly = true)
@@ -52,6 +54,50 @@ public class TransactionService {
         List<Transaction> transactions = transactionRepository.findByUserIdOrderByCreatedAtDesc(userId);
         return transactions.stream().map(this::mapToDTO).collect(Collectors.toList());
     }
+    @Transactional
+    public TransactionResponseDTO approveTransaction(Integer id) {
+        authUtil.requireAdminAccess("Lỗi phân quyền: Chỉ Quản trị viên mới được dùng tính năng này!");
+        Transaction transaction = transactionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy giao dịch"));
+        
+        if (!"PENDING".equals(transaction.getStatus())) {
+            throw new RuntimeException("Chỉ có thể duyệt giao dịch ở trạng thái PENDING");
+        }
+
+        transaction.setStatus("COMPLETED");
+        
+        // Add balance to user
+        User user = transaction.getUser();
+        user.addBalance(transaction.getAmount());
+        userRepository.save(user);
+
+        // Gửi email thông báo
+        if (user.getEmail() != null) {
+            mailService.sendTransactionStatusEmail(user.getEmail(), "COMPLETED", transaction.getAmount());
+        }
+
+        return mapToDTO(transactionRepository.save(transaction));
+    }
+
+    @Transactional
+    public TransactionResponseDTO rejectTransaction(Integer id) {
+        authUtil.requireAdminAccess("Lỗi phân quyền: Chỉ Quản trị viên mới được dùng tính năng này!");
+        Transaction transaction = transactionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy giao dịch"));
+        
+        if (!"PENDING".equals(transaction.getStatus())) {
+            throw new RuntimeException("Chỉ có thể từ chối giao dịch ở trạng thái PENDING");
+        }
+
+        transaction.setStatus("REJECTED");
+        
+        User user = transaction.getUser();
+        if (user != null && user.getEmail() != null) {
+            mailService.sendTransactionStatusEmail(user.getEmail(), "REJECTED", transaction.getAmount());
+        }
+
+        return mapToDTO(transactionRepository.save(transaction));
+    }
 
 
     private TransactionResponseDTO mapToDTO(Transaction transaction) {
@@ -60,6 +106,7 @@ public class TransactionService {
         dto.setAmount(transaction.getAmount());
         dto.setType(transaction.getType());
         dto.setDescription(transaction.getDescription());
+        dto.setStatus(transaction.getStatus());
         dto.setCreatedAt(transaction.getCreatedAt());
         if (transaction.getUser() != null) {
             dto.setUserId(transaction.getUser().getId());

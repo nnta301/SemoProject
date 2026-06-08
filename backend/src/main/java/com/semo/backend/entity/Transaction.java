@@ -24,12 +24,18 @@ public class Transaction {
     @Column(length = 255)
     private String description;
 
+    @Column(length = 50)
+    private String status = "COMPLETED"; // PENDING, COMPLETED, REJECTED
+
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
+        if (this.status == null) {
+            this.status = "COMPLETED";
+        }
     }
 
     public Transaction() {
@@ -73,6 +79,14 @@ public class Transaction {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public LocalDateTime getCreatedAt() {

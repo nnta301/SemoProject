@@ -38,4 +38,14 @@ public class TransactionController {
         List<TransactionResponseDTO> history = transactionService.getTransactionsByUserId(userId);
         return ResponseEntity.ok(history);
     }
+
+    @org.springframework.web.bind.annotation.PutMapping("/{id}/approve")
+    public ResponseEntity<TransactionResponseDTO> approveTransaction(@PathVariable Integer id) {
+        return ResponseEntity.ok(transactionService.approveTransaction(id));
+    }
+
+    @org.springframework.web.bind.annotation.PutMapping("/{id}/reject")
+    public ResponseEntity<TransactionResponseDTO> rejectTransaction(@PathVariable Integer id) {
+        return ResponseEntity.ok(transactionService.rejectTransaction(id));
+    }
 }
