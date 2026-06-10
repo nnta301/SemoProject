@@ -180,8 +180,8 @@ export default function ScooterMap({ scooters = [], stations = [], zones = [], p
           let color = '#8BA0C7';
           let fillColor = '#8BA0C7';
 
-          if (clusterAssignments && clusterAssignments[scooter.id] !== undefined) {
-            const cIdx = clusterAssignments[scooter.id];
+          if (clusterAssignments && clusterAssignments[Number(scooter.id)] !== undefined) {
+            const cIdx = clusterAssignments[Number(scooter.id)];
             const paletteColor = CLUSTER_COLORS[cIdx % CLUSTER_COLORS.length];
             color = paletteColor;
             fillColor = paletteColor;
