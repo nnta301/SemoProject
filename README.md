@@ -125,45 +125,31 @@ To test any API (e.g., `POST /api/rentals/start`), follow these steps:
 4. Start the frontend with `npm run dev`.
 5. Log in with the default admin account if you want to access the admin area.
 
-## 🚀 Demo Deployment Guide (Vercel + Ngrok)
+## 🚀 Production Deployment Guide (Render + Vercel)
 
-If you need to showcase your project online for a presentation or demo (e.g., at `https://semoo.vercel.app`), the easiest way without modifying the local `uploads` architecture is to combine **Vercel** (for Frontend) and **Ngrok** (for Backend).
+The recommended way to deploy SEMO for production is to use **Render** for the Spring Boot Backend and **Vercel** for the React Frontend.
 
-### Step 1: Expose the Backend via Ngrok
-1. Ensure your Spring Boot backend is running locally on port `8888`.
-2. Open a new terminal and start Ngrok to tunnel the backend:
-   ```bash
-   ngrok http 8888
-   ```
-3. Copy the generated `Forwarding` URL (e.g., `https://xxxx-xxxx.ngrok-free.dev`). Keep this terminal open!
+### Step 1: Deploy Backend to Render.com
+1. Create a new **Web Service** on Render and connect your GitHub repository.
+2. In the setup form, configure the following:
+   - **Root Directory**: `backend`
+   - **Environment**: `Docker` (Render will automatically detect the `Dockerfile` inside the `backend` folder).
+3. Under the **Advanced** section, add the following Environment Variables:
+   - `DB_PASSWORD`: Your Aiven MySQL database password.
+   - `JWT_SECRET`: A long random secret string.
+   - `JWT_EXPIRATION`: `86400000` (24 hours).
+   - `MAIL_PASSWORD`: Your Gmail app password.
+4. Click **Create Web Service**. Wait for the deployment to finish (it may take 5-10 minutes).
+5. Once deployed, copy your backend URL (e.g., `https://semoproject-backend.onrender.com`).
 
-### Step 2: Configure the Frontend
-1. Navigate to the `frontend/` directory.
-2. Open the `.env` file (create it if it doesn't exist) and add your Ngrok URL:
-   ```env
-   VITE_API_URL=https://xxxx-xxxx.ngrok-free.dev
-   ```
-   *(Make sure to use your actual Ngrok URL from Step 1).*
+### Step 2: Deploy Frontend to Vercel
+1. Log in to [Vercel](https://vercel.com), click **Add New** -> **Project**, and import your GitHub repository.
+2. Set the **Root Directory** to `frontend`.
+3. In the **Environment Variables** section, add a new variable:
+   - **Key**: `VITE_API_URL`
+   - **Value**: Your Render backend URL from Step 1 (e.g., `https://semoproject-backend.onrender.com` - without a trailing slash).
+4. Click **Deploy**. Vercel will automatically build the React app and inject the API URL.
+5. Vercel will generate a live URL for your frontend (e.g., `https://semoproject-frontend.vercel.app`).
 
-### Step 3: Build the Frontend
-Inside the `frontend/` directory, run the build command:
-```bash
-npm run build
-```
-This will bundle your React application into a new `dist/` directory.
-
-### Step 4: Deploy to Vercel
-**Method A: Drag & Drop (Easiest)**
-1. Open your web browser and log in to [Vercel Dashboard](https://vercel.com).
-2. Click **Add New** -> **Project**.
-3. Drag and drop the `dist/` folder from your computer directly into the Vercel import window.
-4. Go to **Settings -> Domains** to rename your project domain (e.g., to `semoo.vercel.app`).
-
-**Method B: Using Vercel CLI**
-1. In the `frontend/` directory, run:
-   ```bash
-   npx vercel dist
-   ```
-2. Follow the CLI prompts (hit `Enter` to accept defaults). Vercel will provide you with a production URL once completed.
-
-Once deployed, you can access your live application at your Vercel URL (e.g., `https://semoo.vercel.app/login`). All API calls and image uploads will safely tunnel back to your local machine!
+### Important Note on Frontend Routing
+The `frontend` directory contains a `vercel.json` file. This file is required to prevent 404 errors when refreshing pages in a Single Page Application (SPA) on Vercel. It automatically rewrites all requests to `index.html`.

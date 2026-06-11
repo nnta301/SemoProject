@@ -11,6 +11,11 @@ RUN mvn clean package -DskipTests
 
 # Stage 2: Run the application
 FROM eclipse-temurin:21-jre-alpine
+
+# Set timezone
+RUN apk add --no-cache tzdata
+ENV TZ=Asia/Ho_Chi_Minh
+
 WORKDIR /app
 
 # Copy the built jar file from the build stage
