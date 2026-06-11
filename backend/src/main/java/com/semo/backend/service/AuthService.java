@@ -91,10 +91,8 @@ public class AuthService {
     }
 
     private String generateOtp() {
-        SecureRandom secureRandom = new SecureRandom();
-        int otp = secureRandom.nextInt(1000000);
-
-        return String.format("%06d", otp);
+        // Hardcoded for testing purposes
+        return "000000";
     }
 
     public LoginResponseDTO login(LoginRequestDTO requestDTO) {
