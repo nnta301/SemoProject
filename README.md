@@ -124,3 +124,46 @@ To test any API (e.g., `POST /api/rentals/start`), follow these steps:
 3. Run `npm install` inside `frontend/`.
 4. Start the frontend with `npm run dev`.
 5. Log in with the default admin account if you want to access the admin area.
+
+## 🚀 Demo Deployment Guide (Vercel + Ngrok)
+
+If you need to showcase your project online for a presentation or demo (e.g., at `https://semoo.vercel.app`), the easiest way without modifying the local `uploads` architecture is to combine **Vercel** (for Frontend) and **Ngrok** (for Backend).
+
+### Step 1: Expose the Backend via Ngrok
+1. Ensure your Spring Boot backend is running locally on port `8888`.
+2. Open a new terminal and start Ngrok to tunnel the backend:
+   ```bash
+   ngrok http 8888
+   ```
+3. Copy the generated `Forwarding` URL (e.g., `https://xxxx-xxxx.ngrok-free.dev`). Keep this terminal open!
+
+### Step 2: Configure the Frontend
+1. Navigate to the `frontend/` directory.
+2. Open the `.env` file (create it if it doesn't exist) and add your Ngrok URL:
+   ```env
+   VITE_API_URL=https://xxxx-xxxx.ngrok-free.dev
+   ```
+   *(Make sure to use your actual Ngrok URL from Step 1).*
+
+### Step 3: Build the Frontend
+Inside the `frontend/` directory, run the build command:
+```bash
+npm run build
+```
+This will bundle your React application into a new `dist/` directory.
+
+### Step 4: Deploy to Vercel
+**Method A: Drag & Drop (Easiest)**
+1. Open your web browser and log in to [Vercel Dashboard](https://vercel.com).
+2. Click **Add New** -> **Project**.
+3. Drag and drop the `dist/` folder from your computer directly into the Vercel import window.
+4. Go to **Settings -> Domains** to rename your project domain (e.g., to `semoo.vercel.app`).
+
+**Method B: Using Vercel CLI**
+1. In the `frontend/` directory, run:
+   ```bash
+   npx vercel dist
+   ```
+2. Follow the CLI prompts (hit `Enter` to accept defaults). Vercel will provide you with a production URL once completed.
+
+Once deployed, you can access your live application at your Vercel URL (e.g., `https://semoo.vercel.app/login`). All API calls and image uploads will safely tunnel back to your local machine!
